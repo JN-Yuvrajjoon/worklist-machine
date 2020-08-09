@@ -1,5 +1,24 @@
 var Course = mongoose.model('Course', courseSchema);
 
+/*
+
+CPSC 213 2020W
+	Web-oriented courses:
+		- Section 101 (semester 1)
+			- Tuesday 1400-1530
+			- Thursday 1400-1530
+		- Section 102 (semester 1)
+			- Tuesday 1700-1830
+			- Thursday 1700-1830
+	Laboratories:
+		- Section L1A
+			- Tuesday 1530-1630
+			- Thursday 1530-1730
+		- Section L1B
+			- Wednesday 1200-1300
+			- Friday 1100-1300
+*/
+
 var CPSC213 = new Course ({
 	courseSubject: "CPSC",
 	courseNumber: 213,

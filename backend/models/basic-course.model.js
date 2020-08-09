@@ -1,8 +1,29 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-//TODO: should my custom data be in UpperCamelCase?
-//TODO: courseSchema should refer to a collection of courses probably. See https://mongoosejs.com/docs/models.html
+// IF the queries on the database would be more efficient, 
+// Make multiple nested schema instead of one huge one for a course
+
+/*		courseSchema(
+			[listOfCourse(
+				courseSubject, 
+				courseNumber, 
+				[listOfCourseActivity(		:schema
+					activityType,
+					[listOfSection(			:schema
+						sectionName,
+						semester,
+						[listOfBlock(		:schema
+							day,
+							startTime,
+							endTime
+						)]
+					)]
+				)]
+			)]
+		)
+
+*/
 
 var courseSchema = new Schema({
 	courseSubject: String, //e.g. "CPSC" 
