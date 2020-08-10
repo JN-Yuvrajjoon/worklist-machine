@@ -25,6 +25,8 @@ const Schema = mongoose.Schema;
 
 */
 
+// ENUM: https://mongoosejs.com/docs/api.html#schemanumberoptions_SchemaNumberOptions-enum
+
 var courseSchema = new Schema({
 	courseSubject: String, //e.g. "CPSC" 
 	courseNumber: Number, //e.g. 213 

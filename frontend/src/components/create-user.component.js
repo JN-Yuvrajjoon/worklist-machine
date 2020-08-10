@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-//import axios from 'axios';
+import axios from 'axios'; //FIXME:
 
 export default class CreateUser extends Component {
 	constructor(props) {
@@ -34,6 +34,9 @@ export default class CreateUser extends Component {
 			username: this.state.username,
 		}
 		console.log(user)
+
+		axios.post('http://localhost:5000/users/add', user) //FIXME:
+			.then(res => console.log(res.data));
 
 		this.setState({
 			username: '' //blank out the field so user can add another username
