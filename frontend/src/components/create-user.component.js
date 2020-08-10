@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios'; //FIXME:
 
 export default class CreateUser extends Component {

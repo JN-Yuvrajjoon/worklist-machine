@@ -43,7 +43,7 @@ var courseSchema = new Schema({
 					semester: String, //TODO: enum["1", "2", "BOTH"]
 					blocks: [ 
 						{
-							day: String, //TODO: enum[""]
+							day: String, //TODO: enum["SUNDAY", "MONDAY"...]
 							startTime: Number, //e.g. 1400
 							endTime: Number, //e.g. 1530
 						}
