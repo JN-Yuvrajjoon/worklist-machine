@@ -1,0 +1,28 @@
+{
+  "name": "worklist-machine",
+  "version": "0.0.0",
+  "description": "worklist machine go brrr",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "client": "cd client && npm start && cd ..",
+    "server": "cd server && npm start && cd .."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emily-chu/worklist-machine.git"
+  },
+  "author": "Emily Chu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emily-chu/worklist-machine/issues"
+  },
+  "homepage": "https://github.com/emily-chu/worklist-machine#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jest": "^26.3.0",
+    "mongoose": "^5.9.28"
+  }
+}
