@@ -1,4 +1,3 @@
-- Finish this list, make sure the frontend-backend connection still works, then start a new branch.
 - Set up testing
 
 ## LOGIC
@@ -11,15 +10,15 @@
 ## MISC FRONTEND
 - Design UI/UX + colour scheme
 - Create UI/UX using React components
+- Add icons: https://icons.getbootstrap.com
 
 ## MISC BACKEND/MIDDLEWARE
 - Remove axios
 - Remove Mongoose?
 
 ## MISC
-- Create a way to start frontend and backend in one terminal command
 - Make a logo
-- npm prune to get rid of unnecessary node-modules
 
 ## FOR LATER
 - Warn users if the distance between two consecutive classes is long enough (maps API) (should only search a small radius, not the whole world)
+- Deploy (frontend): https://facebook.github.io/create-react-app/docs/deployment
