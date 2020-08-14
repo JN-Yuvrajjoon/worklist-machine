@@ -1,11 +1,100 @@
-.nav-item, .tab-content, .nav-link, .active {
-	background-color: #002046;
-	color: white;
-	border-radius: 10px;
+:root {
+	/* Defining variables */
+	--dark-background: #002046;
+	--active-color: #2d5c7d;
+
+	--corner-radius: 1rem;
 }
 
+#wm-tab-menu-content {
+	background-color: var(--dark-background);
+	color: white;
+	border-radius: 
+		var(--corner-radius) 
+		var(--corner-radius) 
+		0 
+		0;
+}
+
+.nav-tabs {
+	border: none;
+}
+
+.custom-corners {
+	border-radius: var(--corner-radius);
+}
+
+#settings-tab, #courses-tab, #about-tab {
+	border-radius: 
+		0 
+		0 
+		var(--corner-radius) 
+		var(--corner-radius);
+	border: none;
+	background-color: #FFFFFF;
+	color: var(--dark-background);
+}
+
+#settings-tab:hover, #courses-tab:hover, #about-tab:hover {
+	background-color: var(--active-color);
+	color: white;
+	transition: 0.3s;
+	
+}
+
+#settings-tab.active, #courses-tab.active, #about-tab.active {
+	background-color: var(--dark-background);
+	color: white;
+}
+
+#wm-go-button {
+	background-color: var(--active-color);
+	color: white;
+	font-size: 25px;
+}
+
+@media only screen and (max-width:768px) {
+	/* Stacked column mobile layout */
+
+	#wm-input-column {
+		padding-top: 0;
+		padding-right: 0;
+		padding-left: 0;
+		padding-bottom: 1rem;
+	}
+	
+	#wm-output-column {
+		padding-top: 0;
+		padding-right: 0;
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+	
+}
+
+@media only screen and (min-width:768px) {
+	/* Side-by-side desktop layour */
+
+	#wm-input-column {
+		max-width: 300px;
+		padding-top: 0;
+		padding-right: 1rem;
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+	
+	#wm-output-column {
+		padding-top: 0;
+		padding-right: 0;
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+	
+}
+
+/* 
 #settings-tab {
 	background-color: #002046;
 	color: white;
-	border-radius: 10px;
-}
+	border-color: transparent;
+} */
