@@ -4,6 +4,9 @@
 	--active-color: #2d5c7d;
 
 	--corner-radius: 1rem;
+
+	--standard-height: 5rem;
+	--gap: 1rem;
 }
 
 #wm-tab-menu-content {
@@ -38,7 +41,7 @@
 #settings-tab:hover, #courses-tab:hover, #about-tab:hover {
 	background-color: var(--active-color);
 	color: white;
-	transition: 0.3s;
+	transition: 0.2s;
 	
 }
 
@@ -50,7 +53,27 @@
 #wm-go-button {
 	background-color: var(--active-color);
 	color: white;
-	font-size: 25px;
+	font-size: 1.5rem;
+}
+
+#wm-go-button:hover{
+	background-color:var(--primary);
+}
+
+#wm-logo-row {
+	height: var(--standard-height);
+	padding-top: 0;
+	padding-right: 0;
+	padding-bottom: 1rem;
+	padding-left: 0;
+}
+
+#wm-submit-row {
+	height: var(--standard-height);
+	padding-top: 1rem;
+	padding-right: 0;
+	padding-bottom: 0;
+	padding-left: 0;
 }
 
 @media only screen and (max-width:768px) {
@@ -59,36 +82,56 @@
 	#wm-input-column {
 		padding-top: 0;
 		padding-right: 0;
-		padding-left: 0;
 		padding-bottom: 1rem;
+		padding-left: 0;
 	}
 	
 	#wm-output-column {
 		padding-top: 0;
 		padding-right: 0;
-		padding-left: 0;
 		padding-bottom: 0;
+		padding-left: 0;
 	}
 	
 }
 
 @media only screen and (min-width:768px) {
-	/* Side-by-side desktop layour */
+	/* Side-by-side desktop layout */
 
 	#wm-input-column {
-		max-width: 300px;
+		height: 100%;
+		max-width: 18rem;
 		padding-top: 0;
 		padding-right: 1rem;
-		padding-left: 0;
 		padding-bottom: 0;
+		padding-left: 0;
 	}
 	
 	#wm-output-column {
 		padding-top: 0;
 		padding-right: 0;
-		padding-left: 0;
 		padding-bottom: 0;
+		padding-left: 0;
 	}
+
+	#wm-menu-row {
+		padding-top: 0;
+		padding-right: 0;
+		padding-bottom: 0;
+		padding-left: 0;
+		height: calc(100% - 12rem);
+		
+	} 
+
+	#wm-tab-menu-content {
+		overflow: scroll;
+		height: calc(100% - 5rem); /* it's like flexbox but bad */
+	}
+
+	#wm-tab-list {
+		height: var(--standard-height);
+	}
+
 	
 }
 
