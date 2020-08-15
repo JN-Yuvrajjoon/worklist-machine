@@ -7,27 +7,26 @@ import AboutMenu from "./tab-menus/AboutMenu";
 export default class InputMenu extends Component {
 	render() {
 		return(
-			<div className="container-fluid p-0 m-0 vh-100">
+			<div className="container-fluid p-0 m-0 h-100">
 
-				<div className="container-fluid m-0" id="wm-logo-row"> 
-					<p>[LOGO] worklist \n machine </p>
+				<div className="container-fluid" id="wm-logo-row"> 
 					<p>[LOGO] worklist \n machine </p>
 				</div>
 
 				<div className="container-fluid m-0" id="wm-menu-row">
-					<div className="container-fluid tab-content shadow wm-tab-menu" id="wm-tab-menu-content">
-						<div className="tab-pane fade in show active overflow-auto" id="settings-menu" role="tabpanel" aria-labelledby="settings-menu"> 
+					<div className="container-fluid tab-content" id="wm-tab-menu-content">
+						<div className="tab-pane fade show active" id="settings-menu" role="tabpanel" aria-labelledby="settings-menu"> 
 							<SettingsMenu />
 						</div>
-						<div className="tab-pane fade overflow-auto" id="courses-menu" role="tabpanel" aria-labelledby="courses-menu">
+						<div className="tab-pane fade" id="courses-menu" role="tabpanel" aria-labelledby="courses-menu">
 							<CoursesMenu />
 						</div>
-						<div className="tab-pane fade overflow-auto" id="about-menu" role="tabpanel" aria-labelledby="about-menu">
+						<div className="tab-pane fade" id="about-menu" role="tabpanel" aria-labelledby="about-menu">
 							<AboutMenu />
 						</div>
 					</div>
 
-					<ul className="nav nav-tabs nav-fill p-0 wm-tab-menu" id="wm-tab-list" role="tablist">
+					<ul className="nav nav-fill p-0" id="wm-tab-list" role="tablist">
 						{/* Settings tab */}
 						<li className="nav-item" role="presentation">
 							<a className="nav-link active shadow" id="settings-tab" data-toggle="tab" href="#settings-menu" role="tab" aria-controls="settings" aria-selected="true">
@@ -62,7 +61,7 @@ export default class InputMenu extends Component {
 				</div>
 
 				<div className="container-fluid m-0" id="wm-submit-row">
-					<button className="btn btn-block custom-corners shadow" type="button" id="wm-go-button">GO!</button>
+					<button className="btn btn-block custom-corners shadow-lg" type="button" id="wm-go-button">GO!</button>
 				</div>
 			</div>
 		)

@@ -1,33 +1,79 @@
 :root {
-	/* Defining variables */
 	--dark-background: #002046;
 	--active-color: #2d5c7d;
 
 	--corner-radius: 1rem;
 
-	--standard-height: 5rem;
+	--standard-height: 3rem;
 	--gap: 1rem;
-}
-
-#wm-tab-menu-content {
-	background-color: var(--dark-background);
-	color: white;
-	border-radius: 
-		var(--corner-radius) 
-		var(--corner-radius) 
-		0 
-		0;
-}
-
-.nav-tabs {
-	border: none;
 }
 
 .custom-corners {
 	border-radius: var(--corner-radius);
 }
 
+#contains-everything {
+	padding: var(--gap);
+	margin: 0;
+	width: 100%;
+	height: 100vh;
+}
+
+/**************** Left side (Logo, input menu, go button) ****************/
+
+/* Row 1: Logo */
+#wm-logo-row {
+	height: calc(var(--standard-height) + var(--standard-height));
+
+	padding: 0;
+	margin-bottom: var(--gap);
+}
+
+
+/* Row 2: Tabbed input menu */
+#wm-menu-row {
+	padding: 0;
+	height: calc(100vh 
+			- var(--standard-height)
+			- var(--standard-height)
+			- var(--standard-height)
+			- var(--gap)
+			- var(--gap)
+			- var(--gap)
+			- var(--gap)); /* it's like flexbox but bad */
+} 
+
+#wm-tab-menu-content {
+	background-color: var(--dark-background);
+	color: #FFFFFF;
+	border-radius: 
+		var(--corner-radius) 
+		var(--corner-radius) 
+		0 
+		0;
+	padding: var(--gap);
+	border: 1rem var(--dark-background);
+	overflow: scroll;
+	height: calc(100vh 
+			- var(--standard-height)
+			- var(--standard-height)
+			- var(--standard-height)
+			- var(--standard-height)
+			- var(--gap)
+			- var(--gap)
+			- var(--gap)
+			- var(--gap)); 
+	box-shadow: 
+		inset 0 0 1rem 1rem var(--dark-background), /* does not work */
+		0 .5rem 1rem rgba(0,0,0,.15); 
+}
+
+#wm-tab-list {
+	height: var(--standard-height);
+}
+
 #settings-tab, #courses-tab, #about-tab {
+	height: var(--standard-height);
 	border-radius: 
 		0 
 		0 
@@ -40,59 +86,69 @@
 
 #settings-tab:hover, #courses-tab:hover, #about-tab:hover {
 	background-color: var(--active-color);
-	color: white;
+	color: #FFFFFF;
 	transition: 0.2s;
-	
 }
 
 #settings-tab.active, #courses-tab.active, #about-tab.active {
 	background-color: var(--dark-background);
-	color: white;
+	color: #FFFFFF;
+}
+
+
+/* Row 3: Go button */
+
+#wm-submit-row {
+	height: calc(var(--gap) + var(--standard-height));
+	padding-top: var(--gap);
+	padding-right: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	margin: 0;
 }
 
 #wm-go-button {
 	background-color: var(--active-color);
-	color: white;
+	color: #FFFFFF;
 	font-size: 1.5rem;
+	height: var(--standard-height);
+	margin: 0;
+	padding: 0.5rem;
+	border: none;
+	
 }
 
 #wm-go-button:hover{
-	background-color:var(--primary);
+	background-color: var(--primary);
 }
 
-#wm-logo-row {
-	height: var(--standard-height);
-	padding-top: 0;
-	padding-right: 0;
-	padding-bottom: 1rem;
-	padding-left: 0;
+/**************** Right side (Navbars and timetables) ****************/
+
+#wm-output-panel {
+	margin: 0;
+	padding: var(--gap);
 }
 
-#wm-submit-row {
-	height: var(--standard-height);
-	padding-top: 1rem;
-	padding-right: 0;
-	padding-bottom: 0;
-	padding-left: 0;
-}
+/**************** Responsive sizing ****************/
 
 @media only screen and (max-width:768px) {
 	/* Stacked column mobile layout */
 
 	#wm-input-column {
+		margin:0;
 		padding-top: 0;
 		padding-right: 0;
-		padding-bottom: 1rem;
+		padding-bottom: var(--gap);
 		padding-left: 0;
 	}
 	
 	#wm-output-column {
 		padding-top: 0;
 		padding-right: 0;
-		padding-bottom: 0;
+		padding-bottom: var(--gap);
 		padding-left: 0;
 	}
-	
+
 }
 
 @media only screen and (min-width:768px) {
@@ -100,9 +156,9 @@
 
 	#wm-input-column {
 		height: 100%;
-		max-width: 18rem;
+		max-width: 21rem;
 		padding-top: 0;
-		padding-right: 1rem;
+		padding-right: var(--gap);
 		padding-bottom: 0;
 		padding-left: 0;
 	}
@@ -114,30 +170,4 @@
 		padding-left: 0;
 	}
 
-	#wm-menu-row {
-		padding-top: 0;
-		padding-right: 0;
-		padding-bottom: 0;
-		padding-left: 0;
-		height: calc(100% - 12rem);
-		
-	} 
-
-	#wm-tab-menu-content {
-		overflow: scroll;
-		height: calc(100% - 5rem); /* it's like flexbox but bad */
-	}
-
-	#wm-tab-list {
-		height: var(--standard-height);
-	}
-
-	
 }
-
-/* 
-#settings-tab {
-	background-color: #002046;
-	color: white;
-	border-color: transparent;
-} */
