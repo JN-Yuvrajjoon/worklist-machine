@@ -13,7 +13,7 @@ export default class InputMenu extends Component {
 					<p>[LOGO] worklist \n machine </p>
 				</div>
 
-				<div className="container-fluid m-0" id="wm-menu-row">
+				<div className="container-fluids" id="wm-menu-row">
 					<div className="container-fluid tab-content" id="wm-tab-menu-content">
 						<div className="tab-pane fade show active" id="settings-menu" role="tabpanel" aria-labelledby="settings-menu"> 
 							<SettingsMenu />
@@ -41,7 +41,7 @@ export default class InputMenu extends Component {
 						<li className="nav-item" role="presentation">
 							<a className="nav-link shadow" id="courses-tab" data-toggle="tab" href="#courses-menu" role="tab" aria-controls="courses" aria-selected="false">
 									{/*Plus icon*/}
-									<svg width="1.6em" height="1.6em" viewBox="0 0 16 16" className="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+									<svg width="1.8em" height="1.8em" viewBox="0 0 16 16" className="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 									<path fillRule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
 									<path fillRule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
 									</svg>

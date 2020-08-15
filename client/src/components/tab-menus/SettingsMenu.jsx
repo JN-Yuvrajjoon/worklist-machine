@@ -4,138 +4,158 @@ export default class SettingsMenu extends Component{
 	constructor(props) {
 		super(props);
 
-		this.onChangeSchool = this.onChangeSchool.bind(this);
-		this.onChangeCampus = this.onChangeCampus.bind(this);
-		this.onChangeSession = this.onChangeSession.bind(this);
-		this.onChangeReduceGaps = this.onChangeReduceGaps.bind(this);
-		this.onChangePreferredTime = this.onChangePreferredTime.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
+		this.handleChangeSchool = this.handleChangeSchool.bind(this);
+		this.handleChangeCampus = this.handleChangeCampus.bind(this);
+		this.handleChangeSession = this.handleChangeSession.bind(this);
+		this.handleChangePreferredTime = this.handleChangePreferredTime.bind(this);
+		this.handleChangeReduceGaps = this.handleChangeReduceGaps.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 		
-		this.state = { //in react you always use state and not let/var/const, so the page updates
+		this.state = {
 			school: "",
 			campus: "",
 			session: "",
-			reduceGaps: false,
-			preferredTime: "Any time",
-			
 			schools: [],
 			campuses: [],
-			sessions: []
+			sessions: [],
 
+			preferredTime: "afternoon",
+			reduceGaps: false
 		};
 	}
 
-	onChangeSchool(e) {
+	componentDidMount() {
+		// axios.get("http://localhost:5000/users/")
+		// .then(response => {
+		// 	if(response.data.length > 0) {
+		// 		this.setState({
+		// 			users: response.data.map(user => user.username),
+		// 			username: response.data[0].username
+		// 		})
+		// 	}
+		// })
+		// .catch((error) => {
+		// 	console.log(error);
+		// })
 		this.setState({
-			school: e.target.value 
+			schools: [null, "UBC"],
+			campuses: [null, "Vancouver", "Okanagan"],
+			sessions: [null, "2020W"],
+			school: this.state.schools[0],
+			campus: this.state.campuses[0],
+			session: this.state.sessions[0]
+		})
+	}
+
+	handleChangeSchool(event) {
+		this.setState({
+			school: event.target.value,
+			campus: null,
+			session: null
 		});
 	}
 
-	onChangeCampus(e) {
+	handleChangeCampus(event) {
 		this.setState({
-			campus: e.target.value 
+			campus: event.target.value
 		});
 	}
 
-	onChangeSession(e) {
+	handleChangeSession(event) {
 		this.setState({
-			session: e.target.value 
+			session: event.target.value 
 		});
 	}
 
-	onChangeReduceGaps(e) {
+	handleChangePreferredTime(event) {
 		this.setState({
-			reduceGaps: e.target.value 
+			preferredTime: event.target.value
 		});
 	}
 
-	onChangePreferredTime(e) {
+	handleChangeReduceGaps(event) {
 		this.setState({
-			preferredTime: e.target.value 
+			reduceGaps: event.target.checked
 		});
 	}
+	
 
-	onSubmit(e) {
-		e.preventDefault();
+	handleSubmit(event) {
+		event.preventDefault();
 		console.log("form submitted lol");
 		console.log(this);
 	}
 
 	render() {
 		return(
-			<form onSubmit={this.onSubmit}>
-				<div className="form-group">
+			<form onSubmit={this.handleSubmit}>
+
+				<div hidden={true} className="form-group"> 
 					<label>School:</label>
 					<select ref="userInput"
 						className="form-control"
 						value={this.state.school}
-						onChange={this.onChangeSchool}>
-							<option>University of British Columbia</option>
-							<option>fake school</option>
+						onChange={this.handleChangeSchool}>
+							{this.state.schools.map(function(school) {
+									return <option key={school} value={school}>
+										{school}
+									</option>;
+								})}
 					</select>
 				</div>
+				
 				<div className="form-group">
 					<label>Campus:</label>
 					<select ref="userInput"
 						className="form-control"
 						value={this.state.campus}
-						onChange={this.onChangeCampus}>
-							<option>Vancouver</option>
-							<option>Okanagan</option>
+						onChange={this.handleChangeCampus}>
+							{this.state.campuses.map(function(campus) {
+									return <option key={campus} value={campus}>
+										{campus}
+									</option>;
+								})}
 					</select>
 				</div>
+
 				<div className="form-group">
 					<label>Session:</label>
 					<select ref="userInput"
 						className="form-control"
 						value={this.state.session}
-						onChange={this.onChangeSession}>
-							<option>2020S</option>
-							<option>2020W</option>
+						onChange={this.handleChangeSession}>
+							{this.state.sessions.map(function(session) {
+									return <option key={session} value={session}>
+										{session}
+									</option>;
+								})}
+					</select>
+				</div>
+
+				<hr></hr>
+				<hr></hr>
+				<hr></hr>
+
+				<div className="form-group">
+					<label>Prefer time: </label>
+					<select ref="userInput"
+						className="form-control"
+						value={this.state.preferredTime}
+						onChange={this.handleChangePreferredTime}>
+							<option value="morning">Morning (8:00 - 11:59)</option>
+							<option value="afternoon">Afternoon (12:00 - 16:59)</option>
+							<option value="evening">Evening (17:00 - 20:00)</option>
 					</select>
 				</div>
 				<div className="form-group">
-					<label>Session:</label>
-					<select ref="userInput"
-						className="form-control"
-						value={this.state.session}
-						onChange={this.onChangeSession}>
-							<option>2020S</option>
-							<option>2020W</option>
-					</select>
-				</div>
-				<div className="form-group">
-					<label>Session:</label>
-					<select ref="userInput"
-						className="form-control"
-						value={this.state.session}
-						onChange={this.onChangeSession}>
-							<option>2020S</option>
-							<option>2020W</option>
-					</select>
-				</div>
-				<div className="form-group">
-					<label>Session:</label>
-					<select ref="userInput"
-						className="form-control"
-						value={this.state.session}
-						onChange={this.onChangeSession}>
-							<option>2020S</option>
-							<option>2020W</option>
-					</select>
-				</div>
-				<div className="form-group">
-					<label>Session:</label>
-					<select ref="userInput"
-						className="form-control"
-						value={this.state.session}
-						onChange={this.onChangeSession}>
-							<option>2020S</option>
-							<option>2020W</option>
-					</select>
+					<label>
+					<input name="reduceGaps" 
+						type="checkbox"
+						checked={this.state.reduceGaps}
+						onChange={this.handleChangeReduceGaps}/>
+					{" "}Reduce gaps?</label> 
 				</div>
 			</form>
-
 
 		);
 	}

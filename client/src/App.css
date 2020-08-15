@@ -17,6 +17,7 @@
 	margin: 0;
 	width: 100%;
 	height: 100vh;
+	min-width: 400px;
 }
 
 /**************** Left side (Logo, input menu, go button) ****************/
@@ -33,6 +34,7 @@
 /* Row 2: Tabbed input menu */
 #wm-menu-row {
 	padding: 0;
+	margin: 0;
 	height: calc(100vh 
 			- var(--standard-height)
 			- var(--standard-height)
@@ -119,7 +121,7 @@
 }
 
 #wm-go-button:hover{
-	background-color: var(--primary);
+	background-color: var(--dark-background);
 }
 
 /**************** Right side (Navbars and timetables) ****************/
