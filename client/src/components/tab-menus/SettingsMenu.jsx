@@ -45,7 +45,10 @@ export default class SettingsMenu extends Component{
 			sessions: [null, "2020W"],
 			school: this.state.schools[0],
 			campus: this.state.campuses[0],
-			session: this.state.sessions[0]
+			session: this.state.sessions[0],
+
+			preferredTime: "afternoon",
+			reduceGaps: false
 		})
 	}
 
@@ -90,12 +93,14 @@ export default class SettingsMenu extends Component{
 
 	render() {
 		return(
+
+			// Hidden 
 			<form onSubmit={this.handleSubmit}>
 				<h5>Settings</h5>
 				<hr></hr>
-				<div hidden={true} className="form-group"> 
+				<div hidden className="form-group">
 					<label>School:</label>
-					<select ref="userInput"
+					<select 
 						className="form-control"
 						value={this.state.school}
 						onChange={this.handleChangeSchool}>
@@ -109,7 +114,7 @@ export default class SettingsMenu extends Component{
 				
 				<div className="form-group">
 					<label>Campus:</label>
-					<select ref="userInput"
+					<select 
 						className="form-control"
 						value={this.state.campus}
 						onChange={this.handleChangeCampus}>
@@ -123,7 +128,7 @@ export default class SettingsMenu extends Component{
 
 				<div className="form-group">
 					<label>Session:</label>
-					<select ref="userInput"
+					<select 
 						className="form-control"
 						value={this.state.session}
 						onChange={this.handleChangeSession}>
@@ -139,7 +144,7 @@ export default class SettingsMenu extends Component{
 
 				<div className="form-group">
 					<label>Prefer time: </label>
-					<select ref="userInput"
+					<select 
 						className="form-control"
 						value={this.state.preferredTime}
 						onChange={this.handleChangePreferredTime}>
@@ -150,7 +155,8 @@ export default class SettingsMenu extends Component{
 				</div>
 				<div className="form-group">
 					<label>
-					<input name="reduceGaps" 
+					<input 
+						name="reduceGaps" 
 						type="checkbox"
 						checked={this.state.reduceGaps}
 						onChange={this.handleChangeReduceGaps}/>
