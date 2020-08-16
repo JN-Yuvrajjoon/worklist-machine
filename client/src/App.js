@@ -25,7 +25,9 @@ function App() {
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">
 				<div className="shadow custom-corners h-100" id="wm-output-panel">
 					<WorklistNavigatorBar />
+					<hr></hr>
 					<WorklistInformationBar/>
+					<hr></hr>
 					<Timetable /> <Timetable />
 				</div>
 			</div>

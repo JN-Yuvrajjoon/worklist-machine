@@ -1,4 +1,6 @@
 import React, {Component} from "react";
+//import "bootstrap/dist/css/bootstrap.min.css"
+//import '../../App.css';
 
 export default class SettingsMenu extends Component{
 	constructor(props) {
@@ -89,7 +91,8 @@ export default class SettingsMenu extends Component{
 	render() {
 		return(
 			<form onSubmit={this.handleSubmit}>
-
+				<h5>Settings</h5>
+				<hr></hr>
 				<div hidden={true} className="form-group"> 
 					<label>School:</label>
 					<select ref="userInput"
@@ -132,8 +135,6 @@ export default class SettingsMenu extends Component{
 					</select>
 				</div>
 
-				<hr></hr>
-				<hr></hr>
 				<hr></hr>
 
 				<div className="form-group">
