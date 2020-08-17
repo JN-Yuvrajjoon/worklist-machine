@@ -1,5 +1,3 @@
-- Set up testing
-
 ## LOGIC
 - Program the worklist generator that takes in course names, retreives Course documents from mongoDB, and outputs several worklists (collections of sections) (+ links, possibly)
 
@@ -8,9 +6,14 @@
 - Get the scraper to ask whether a course is full/blocked/restricted, show restrictions, show comments
 
 ## MISC FRONTEND
-- Design UI/UX + colour scheme
-- Create UI/UX using React components
-- Add icons: https://icons.getbootstrap.com
+- CoursesMenu: enable deletion of courses
+- CoursesMenu: enable addition/deletion of custom blocks
+- CoursesMenu: Make new courses appear at the top of the list
+- AboutMenu: add links
+
+- finish WorklistNavigatorBar component
+
+- Create Timetable react component
 
 ## MISC BACKEND/MIDDLEWARE
 - Remove axios
