@@ -136,6 +136,46 @@
 	padding: var(--gap);
 }
 
+
+.timetable { 
+	border-top: none;
+	border:none;
+}
+/* 	
+thead {
+	display: table-header-group;
+	vertical-align: middle;
+	border-color: inherit;
+	border-collapse: separate;
+	background: #ddd;
+}
+tr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+}
+th, td {
+	padding: 5px 4px 6px 4px; 
+	text-align: left;
+	vertical-align: top;
+	
+	
+}
+td {
+	border-left: 0.5px solid #ddd;
+	border-top: 0.5px solid #ddd;    
+}
+th {
+	background: #ddd;
+}
+thead:first-child tr:first-child th:first-child, tbody:first-child tr:first-child td:first-child {
+	border-radius: 4px 0 0 0;
+}
+thead:last-child tr:last-child th:first-child, tbody:last-child tr:last-child td:first-child {
+	border-radius: 0 0 0 4px;
+}  */
+
+
 /**************** Responsive sizing ****************/
 
 @media only screen and (max-width:768px) {
@@ -155,6 +195,11 @@
 		padding-bottom: var(--gap);
 		padding-left: 0;
 	}
+/* 
+	#worklistVariationButtons {
+		margin-right: auto;
+		margin-top: var(--gap);
+	} */
 
 }
 

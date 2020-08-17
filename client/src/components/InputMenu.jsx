@@ -61,7 +61,7 @@ export default class InputMenu extends Component {
 				</div>
 
 				<div className="container-fluid m-0" id="wm-submit-row">
-					<button className="btn btn-block custom-corners shadow-lg" type="button" id="wm-go-button"><h5>GO!</h5></button>
+					<button className="btn btn-block custom-corners shadow" type="button" id="wm-go-button"><h5>GO!</h5></button>
 				</div>
 			</div>
 		)
