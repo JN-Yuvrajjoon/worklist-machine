@@ -6,7 +6,6 @@ import React from 'react';
 import InputMenu from "./components/InputMenu"
 import Timetable from "./components/Timetable";
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
-import WorklistInformationBar from "./components/WorklistInformationBar";
 
 
 // import Navbar from "./components-deprecated/navbar.component"
@@ -25,9 +24,6 @@ function App() {
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">
 				<div className="shadow custom-corners h-100" id="wm-output-panel">
 					<WorklistNavigatorBar />
-					<hr></hr>
-					<WorklistInformationBar/>
-					<hr></hr>
 					<Timetable /> <Timetable />
 				</div>
 			</div>
