@@ -101,7 +101,7 @@ export default class SettingsMenu extends Component{
 				<div hidden className="form-group">
 					<label>School:</label>
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						value={this.state.school}
 						onChange={this.handleChangeSchool}>
 							{this.state.schools.map(function(school) {
@@ -115,7 +115,7 @@ export default class SettingsMenu extends Component{
 				<div className="form-group">
 					<label>Campus:</label>
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						value={this.state.campus}
 						onChange={this.handleChangeCampus}>
 							{this.state.campuses.map(function(campus) {
@@ -129,7 +129,7 @@ export default class SettingsMenu extends Component{
 				<div className="form-group">
 					<label>Session:</label>
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						value={this.state.session}
 						onChange={this.handleChangeSession}>
 							{this.state.sessions.map(function(session) {
@@ -145,7 +145,7 @@ export default class SettingsMenu extends Component{
 				<div className="form-group">
 					<label>Prefer time: </label>
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						value={this.state.preferredTime}
 						onChange={this.handleChangePreferredTime}>
 							<option value="morning">Morning (8:00 - 11:59)</option>

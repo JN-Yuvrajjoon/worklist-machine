@@ -49,9 +49,9 @@ export default class CoursesMenu extends Component {
 		return(
 			<div className="container-fluid m-0 p-0">
 				<h5>Courses</h5>
-				<hr></hr>
+				
 				<button className="btn btn-light btn-block my-3 " onClick={this.onAddCourse}>+ Add course</button>
-				<button className="btn btn-outline-light btn-block my-3 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
+				<button className="btn btn-sm btn-outline-light btn-block my-3 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
 				<hr></hr>
 				
 				{this.state.inputCourses.map(
@@ -101,7 +101,7 @@ class InputCourse extends Component {
 		return(
 			<form className="px-3">
 				<input
-					className="form-control"
+					className="form-control form-control-sm"
 					name="courseNameInput"
 					type="text"
 					placeholder="Course"
@@ -111,7 +111,7 @@ class InputCourse extends Component {
 			
 				<label className="">Must be in term:
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						name="courseTermInput"
 						type="dropdown"
 						value={this.state.mustBeTerm}
@@ -125,7 +125,7 @@ class InputCourse extends Component {
 
 				<label hidden>Must have sections:
 					<select 
-						className="form-control"
+						className="form-control form-control-sm"
 						name="courseSectionInput"
 						type="text"
 						//value={this.state.mustBeTerm}

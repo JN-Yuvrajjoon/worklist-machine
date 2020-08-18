@@ -1,96 +1,90 @@
 import React, {Component} from "react";
 
+// RENDERING WORKLISTS
+// WorklistRendering arranges Timetables onto the output panel
 
-export default class Timetable extends Component {
+// After taking in a Worklist object, it will:
+// 1. Decide how many Timetables to render
+// 2. Decide whether the Timetables should be extended (by adding weekends, or extending mornings, or extending evenings)
+// 3. Might need to deduce the height of an "hour"
+
+export default class WorklistRendering extends Component {
+	constructor(props) {
+		super(props);
+		
+		this.state = {
+			singleTerms = [],
+			otherSections = [],
+
+			hasWeekendCourses: false,
+			extendMorning: false, //Default 800, extended 600
+			extendEvening: false //Default 1800, extended 2200
+		};
+
+	}
+
+	render() {
+		return(<Timetable/>);
+	}
+
+}
+
+
+class Timetable extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			sections: [],
 
-			hasWeekendCourses: false,
-			extendMorning: false, //Default 800, extended 600
-			extendEvening: false //Default 1800, extended 2200
 		}
+	}
+
+	checkForWeekends() {
+	}
+
+	checkForMornings() {
+	}
+
+	checkForEvenings() {
 	}
 	
 	render() {
 		return(
-			<div class="card">
-			<div class="table-responsive">
-			<table className="timetable table table-bordered m-0" style={{borderCollapse:"separate", borderSpacing:0, borderWidth:"0.5pt"}}>
-				<thead>
-				<th colSpan="7"></th>
-				</thead>
-				<tbody>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				</tbody>
-			</table>
+			<div className="card-group">
+				<div className="card ">
+					<ul class="list-group list-group-flush">
+					<li class="list-group-item">Cras justo odio</li>
+					<li class="list-group-item">Dapibus ac facilisis in</li>
+					<li class="list-group-item">Vestibulum at eros</li>
+					</ul>
+				</div>
+				<div className="card ">
+					<ul class="list-group list-group-flush">
+					<li class="list-group-item">Cras justo odio</li>
+					<li class="list-group-item">Cras justo odio</li>
+					<li class="list-group-item">Dapibus ac facilisis in</li>
+					<li class="list-group-item">Vestibulum at eros</li>
+					</ul>
+					</div>
+				<div className="card ">e</div>
+				<div className="card ">e</div>
+				<div className="card ">e</div>
 			</div>
-			</div>
+			
 		)
+	}
+}
+
+class DayColumn {
+	DayColumn() {
+
 	}
 }
 
 
 
 // BACKUP MECHANISM: If a timetable has a course with a start or end time not ending in 00 or 30
-
-// class DayColumn {
-// }
 
 // class CourseBlock extends Component {
 // 	constructor(props) {

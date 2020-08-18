@@ -33,18 +33,16 @@ export default class WorklistNavigatorBar extends Component{
 				<hr></hr>
 
 				<div className="d-flex flex-wrap container-fluid p-0 m-0">
-						<div className="flex-grow-1 d-flex">
-							<text className="mr-2 align-self-center">Variation:</text>
-							<PageFlipper 
-								type="variation" 
-								pages={this.state.variations}
-								currentPage={this.state.currentVariation}
-							/>
-						</div>
-						
+						<div className="mx-2 align-self-center">Variation:</div>
+						<PageFlipper 
+							type="variation" 
+							pages={this.state.variations}
+							currentPage={this.state.currentVariation}
+						/>
+
 						<div className="ml-auto" id="worklistVariationButtons">
-							<button className="btn custom-corners btn-outline-danger">Warnings</button>
-							<button className="btn custom-corners btn-outline-dark mx-2">Export</button>
+							<button className="btn btn-sm btn-outline-danger">Warnings</button>
+							<button className="btn btn-sm btn-outline-dark mx-2">Export</button>
 						</div>
 				</div>
 

@@ -74,7 +74,7 @@ export default class PageFlipper extends Component {
 
 	returnSizedClasses(type) {
 		if (type === "worklist") {
-			return "form-control px-1 mx-1 col-2 text-right align-self-center";
+			return "form-control form-control-sm px-1 mx-1 col-2 text-right align-self-center";
 		} else {
 			return "form-control form-control-sm px-1 mx-1 col-1 text-right align-self-center";
 		}
@@ -85,12 +85,12 @@ export default class PageFlipper extends Component {
 			
 			<React.Fragment>
 				<button 
-					className="btn btn-light custom-corners p-1" 
+					className="btn btn-sm btn-light custom-corners p-1" 
 					name="firstPageButton" 
 					onClick={this.handleArrowPress}>&lt;&lt;
 				</button>
 				<button 
-					className="btn btn-light custom-corners p-1 mx-1" 
+					className="btn btn-sm btn-light custom-corners p-1 mx-1" 
 					name="previousPageButton" 
 					onClick={this.handleArrowPress}>&lt;
 				</button>
@@ -102,15 +102,15 @@ export default class PageFlipper extends Component {
 					value={this.state.enteredPage}
 					onChange={this.navigateToEntered}>
 				</input>
-				<text className="align-self-center">/{this.state.pages}</text>
+				<div className="align-self-center">/{" " + this.state.pages}</div>
 				
 				<button 
-				className="btn btn-light custom-corners p-1 mx-1" 
+				className="btn btn-sm btn-light custom-corners p-1 mx-1" 
 				name="nextPageButton" 
 				onClick={this.handleArrowPress}>&gt;
 				</button>
 				<button 
-					className="btn btn-light custom-corners p-1" 
+					className="btn btn-sm btn-light custom-corners p-1" 
 					name="lastPageButton" 
 					onClick={this.handleArrowPress}>&gt;&gt;
 				</button>	
