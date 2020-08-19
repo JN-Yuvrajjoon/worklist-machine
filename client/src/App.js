@@ -15,29 +15,23 @@ import WorklistRendering from "./components/Timetable";
 // import CreateUser from "./components-deprecated/create-user.component";
 
 function App() {
+	const inputMenuElement = React.createElement(InputMenu);
+	const WorklistNavBarElement = React.createElement(WorklistNavigatorBar);
+	const WorklistRenderingElement = React.createElement(WorklistRendering);
+
 	return (
 		<div className="row" id="contains-everything">
+			
 			<div className="container-fluid col-md m-0" id="wm-input-column">
-				<InputMenu />
+				{inputMenuElement}
 			</div>
 
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">
 				<div className="shadow custom-corners h-100" id="wm-output-panel">
-					<WorklistNavigatorBar />
-					<WorklistRendering />
+					{WorklistNavBarElement}
+					{WorklistRenderingElement}
 				</div>
 			</div>
-			
-			{/* <Router>
-				<Navbar />
-				<br/>
-				<Route path="/" exact component={ExercisesList} />
-				<Route path="/edit/:id" component={EditExercise} />
-				<Route path="/create" component={CreateExercise} />
-				<Route path="/user" component={CreateUser} />
-			</Router> */}
-
-
 			
 		</div>
 	);

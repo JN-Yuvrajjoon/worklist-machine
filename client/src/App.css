@@ -5,6 +5,7 @@
 	--corner-radius: 0.75rem;
 
 	--standard-height: 3rem;
+	--logo-height: 4.5rem;
 	--gap: 1rem;
 }
 
@@ -25,11 +26,15 @@ hr {
 	margin-bottom: calc(var(--gap) / 2);
 }
 
+/* * {
+	font-size: small;
+} */
+
 /**************** Left side (Logo, input menu, go button) ****************/
 
 /* Row 1: Logo */
 #wm-logo-row {
-	height: calc(var(--standard-height) + var(--standard-height));
+	height: var(--logo-height);
 
 	padding: 0;
 	margin-bottom: var(--gap);
@@ -42,8 +47,7 @@ hr {
 	margin: 0;
 	height: calc(100vh 
 		- var(--standard-height)
-		- var(--standard-height)
-		- var(--standard-height)
+		- var(--logo-height)
 		- var(--gap)
 		- var(--gap)
 		- var(--gap)
@@ -64,8 +68,7 @@ hr {
 	height: calc(100vh 
 		- var(--standard-height)
 		- var(--standard-height)
-		- var(--standard-height)
-		- var(--standard-height)
+		- var(--logo-height)
 		- var(--gap)
 		- var(--gap)
 		- var(--gap)
@@ -141,10 +144,22 @@ hr {
 	padding: var(--gap);
 }
 
+#wm-output-panel > div {
+	font-size: small;
+}
 
 .timetable { 
 	border-top: none;
 	border:none;
+}
+
+.zero-space {
+	line-height: 1;
+}
+
+.wm-course-block {
+	background: var(--primary);
+	color: white;
 }
 /* 	
 thead {
