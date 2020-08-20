@@ -101,7 +101,7 @@ export default class WorklistRendering extends Component {
 	// Returns the on-screen height of a thirty minute block
 	// should later take into account the height of the screen and the start/end times
 	findHeight() {
-		return "1.5rem"
+		return 1.5;
 	}
 
 	checkWorklistFor(extension) {
@@ -148,8 +148,6 @@ class SemesterTable extends Component {
 	constructor(props) {
 		super(props);
 
-		const what = "test";
-
 		this.state = {
 			blocks: [],
 
@@ -182,12 +180,12 @@ class SemesterTable extends Component {
 			<React.Fragment>
 			<div className="row p-0 m-0 zero-space">
 				<div className="col-xs-1  p-0 m-0">
-					<div style={{height:this.state.standardHeight}}></div>
-					<div style={{height:this.state.standardHeight}}>8</div>
-					<div style={{height:this.state.standardHeight}}></div>
-					<div style={{height:this.state.standardHeight}}>9</div>
-					<div style={{height:this.state.standardHeight}}></div>
-					<div style={{height:this.state.standardHeight}}>10</div>
+					<div style={{height:this.state.standardHeight + "rem"}}></div>
+					<div style={{height:this.state.standardHeight + "rem"}}>8</div>
+					<div style={{height:this.state.standardHeight + "rem"}}></div>
+					<div style={{height:this.state.standardHeight + "rem"}}>9</div>
+					<div style={{height:this.state.standardHeight + "rem"}}></div>
+					<div style={{height:this.state.standardHeight + "rem"}}>10</div>
 				</div>
 
 				<div className="col-10 card-group p-0 m-0">
@@ -234,22 +232,6 @@ class SemesterTable extends Component {
 							renderableBlocks={this.dayBlocksOf("Saturday")} />
 					}
 
-					{/* Testing junk column below */}
-					<div className="card">
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item p-0 m-0">test</li>
-							<li class="list-group-item p-0 m-0">30mins</li>
-							<li class="list-group-item p-0 m-0" style={{height:"1.75rem"}}>30mins</li>
-							<li class="list-group-item p-0 m-0" style={{height:"2.625rem"}}>30mins</li>
-							<li class="list-group-item p-0 m-0" style={{height:"3.5rem"}}>30mins</li>
-							<li class="list-group-item p-0 m-0" style={{height:"3.5rem"}}>
-								<div className="wm-course-block rounded" style={{height:"calc(3.5rem - 1px)"}}>CPSC</div>
-							</li>
-							<li class="list-group-item p-0 m-0">30mins</li>
-						</ul>
-					</div>
-					{/* end */}
-
 				</div>
 			</div>
 			</React.Fragment>
@@ -292,10 +274,24 @@ class DayColumn extends Component {
 
 	}
 
-	returnGap() {
-		return(<li class="list-group-item p-0 m-0" style={{height:this.state.standardHeight}}>30mins</li>);
+	// maybe later pass in "startodd?" and "startlight?" param so tables are stripey based on hours
+	// Better yet, make a gap a single block that is striped using CSS rather than using a for loop
+	returnGap(length) {
+		let gap = [];
+
+		for(let i = 0; i < length; i++) {
+			gap.push(<li class="list-group-item p-0 m-0" style={{height:this.state.standardHeight + "rem"}}>30mins</li>);
+		}
+		
+		return gap;
 	}
-	renderCourse(block) {}
+
+	renderCourse(block) {
+		let blockHeight = block.length * this.state.standardHeight;
+		let courseName = block.courseCode;
+		let courseSection = block.sectionCode;
+		return(<div className="wm-course-block rounded" style={{height:blockHeight + "rem"}}>{courseName + " section " +courseSection}</div>); //fix height
+	}
 
 	hoverGlow(block){
 		//makes all blocks of a Section glow when one block is hovered on
@@ -304,42 +300,47 @@ class DayColumn extends Component {
 
 	render() {
 		// fakeDayColumnProps should produce: 3-long block, 4-long block, 9 gaps, 2-long block, 2 gaps
-		var unrendered = this.state.renderableBlocks;
+		let unrendered = this.state.renderableBlocks;
+		let currentRow = 0;
 		let col = [];
 
-		let currentRow = 0;
-		while (currentRow <= this.state.rows) {
-			col.push(this.returnGap());
-			currentRow++;
+		while (currentRow < this.state.rows) {
+			console.log("currentRow is", currentRow, "out of", this.state.rows)
+			console.log("col has this many items so far:", col.length)
+			console.log("yet to render this many courses:", unrendered.length)
+
+			// No more courses in the day
+			if(unrendered === undefined || unrendered.length == 0) {
+				col = col.concat(this.returnGap(this.state.rows - currentRow));
+				currentRow = this.state.rows; //break
+				console.log("filled the rest of the day!");
+
+			// Need to render a course in this row
+			} else if(unrendered[0].startTime === currentRow) {
+				col.push(this.renderCourse(unrendered[0]));
+				currentRow += unrendered[0].length;
+				unrendered.shift();
+				console.log("Course rendered");
+
+			// Need to render a break before the next class
+			} else if(unrendered[0].startTime > currentRow) {
+				let difference = unrendered[0].startTime - currentRow;
+				col = col.concat(this.returnGap(difference));
+				currentRow += difference;
+				console.log("filled to the next course");
+
+			// Should not happen, indicates infinite loop
+			} else {
+				console.log("bad");
+				currentRow++;
+			}
 		}
 
 		return(
 			<div className="card">
 				<ul class="list-group list-group-flush">
-					<li class="list-group-item p-0 m-0 text-center" style={{height:this.state.standardHeight}}>{this.state.day.charAt(0)}</li>
+					<li class="list-group-item p-0 m-0 text-center" style={{height:this.state.standardHeight + "rem"}}>{this.state.day.charAt(0)}</li>
 					{col}
-					{/* <li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">30mins</li>
-					<li class="list-group-item p-0 m-0">
-						30mins
-					</li> */}
 				</ul>
 			</div>
 		)
