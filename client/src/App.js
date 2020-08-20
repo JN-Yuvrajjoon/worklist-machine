@@ -5,7 +5,7 @@ import React from 'react';
 
 import InputMenu from "./components/InputMenu"
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
-import WorklistRendering from "./components/Timetable";
+import WorklistRendering from "./components/WorklistRendering";
 
 
 // import Navbar from "./components-deprecated/navbar.component"
