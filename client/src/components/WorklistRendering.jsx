@@ -117,7 +117,7 @@ export default class WorklistRendering extends Component {
 			<div className="row p-0 m-0 container-fluid">
 				{this.state.singleTerms.map((term) => 
 					{return (
-						<div className="col-6 p-0 m-0">
+						<div className="col-lg-6 p-0 m-0">
 							<p className="m-0">{this.generateTitle(term)}</p>
 							<SemesterTable 
 								blocks={this.getBlocksIn(term)}
@@ -148,6 +148,9 @@ class SemesterTable extends Component {
 	constructor(props) {
 		super(props);
 
+		this.renderTimeRuler = this.renderTimeRuler.bind(this);
+		this.dayBlocksOf = this.dayBlocksOf.bind(this);
+
 		this.state = {
 			blocks: [],
 
@@ -156,6 +159,19 @@ class SemesterTable extends Component {
 			endAt: 1800,
 			standardHeight: this.props.standardHeight
 		}
+	}
+
+	// 1. what is this sidebar called
+	// 2. looks like a ruler to me
+	renderTimeRuler() {
+		const timeRuler = [<div class="p-0 m-0" style={{height:this.state.standardHeight + "rem"}}></div>]
+		for(let i = this.state.startAt; i < this.state.endAt; i+=100) {
+			let iColon = `${i.toString().slice(0,-2)}:00`
+			timeRuler.push(<div class="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}>{iColon}</div>);
+			timeRuler.push(<div class="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}></div>);
+		}
+
+		return timeRuler;
 	}
 
 	dayBlocksOf(){
@@ -179,13 +195,8 @@ class SemesterTable extends Component {
 		return(
 			<React.Fragment>
 			<div className="row p-0 m-0 zero-space">
-				<div className="col-xs-1  p-0 m-0">
-					<div style={{height:this.state.standardHeight + "rem"}}></div>
-					<div style={{height:this.state.standardHeight + "rem"}}>8</div>
-					<div style={{height:this.state.standardHeight + "rem"}}></div>
-					<div style={{height:this.state.standardHeight + "rem"}}>9</div>
-					<div style={{height:this.state.standardHeight + "rem"}}></div>
-					<div style={{height:this.state.standardHeight + "rem"}}>10</div>
+				<div className="col-1  p-0 m-0">
+					{this.renderTimeRuler()}
 				</div>
 
 				<div className="col-10 card-group p-0 m-0">
@@ -280,7 +291,7 @@ class DayColumn extends Component {
 		let gap = [];
 
 		for(let i = 0; i < length; i++) {
-			gap.push(<li class="list-group-item p-0 m-0" style={{height:this.state.standardHeight + "rem"}}>30mins</li>);
+			gap.push(<li class="list-group-item p-0 m-0" style={{height:this.state.standardHeight + "rem"}}></li>);
 		}
 		
 		return gap;

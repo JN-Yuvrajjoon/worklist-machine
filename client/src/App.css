@@ -142,10 +142,12 @@ hr {
 #wm-output-panel {
 	margin: 0;
 	padding: var(--gap);
+	overflow: scroll;
 }
 
 #wm-output-panel > div {
 	font-size: small;
+	
 }
 
 .timetable { 
@@ -161,40 +163,14 @@ hr {
 	background: var(--indigo);
 	color: white;
 }
-/* 	
-thead {
-	display: table-header-group;
-	vertical-align: middle;
-	border-color: inherit;
-	border-collapse: separate;
-	background: #ddd;
-}
-tr {
-	display: table-row;
-	vertical-align: inherit;
-	border-color: inherit;
-}
-th, td {
-	padding: 5px 4px 6px 4px; 
-	text-align: left;
-	vertical-align: top;
-	
-	
-}
-td {
-	border-left: 0.5px solid #ddd;
-	border-top: 0.5px solid #ddd;    
-}
-th {
-	background: #ddd;
-}
-thead:first-child tr:first-child th:first-child, tbody:first-child tr:first-child td:first-child {
-	border-radius: 4px 0 0 0;
-}
-thead:last-child tr:last-child th:first-child, tbody:last-child tr:last-child td:first-child {
-	border-radius: 0 0 0 4px;
-}  */
 
+.wm-hour-marker {
+	border-top: 1px solid #ddd;
+	color: #777;
+	background: #ffffff;
+	text-align: right;
+	padding: 0.1rem;
+}
 
 /**************** Responsive sizing ****************/
 
