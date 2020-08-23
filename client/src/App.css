@@ -170,6 +170,7 @@ hr {
 	background: #ffffff;
 	text-align: right;
 	padding: 0.1rem;
+
 }
 
 /**************** Responsive sizing ****************/
@@ -220,6 +221,7 @@ hr {
 	}
 	
 	#wm-output-column {
+		height: 100%;
 		padding-top: 0;
 		padding-right: 0;
 		padding-bottom: 0;
