@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 
+// @ts-check
+
 const fakeTerm1 = {
 	name: "Semester 1",
 	courses: [{},{},{}]
@@ -200,6 +202,7 @@ class SemesterTable extends Component {
 				</div>
 
 				<div className="card-group p-0 m-0 col-11">
+					<div className="row p-0 m-0 w-100">
 
 					{this.state.hideWeekends ? null :
 						<DayColumn 
@@ -242,9 +245,10 @@ class SemesterTable extends Component {
 							standardHeight = {this.state.standardHeight}
 							renderableBlocks={this.dayBlocksOf("Saturday")} />
 					}
+					</div>
 
 				</div>
-			</div>
+				</div>
 			</React.Fragment>
 			
 		)
@@ -348,7 +352,7 @@ class DayColumn extends Component {
 		}
 
 		return(
-			<div className="card col flex-nowrap p-0 m-0">
+			<div className="col card flex-nowrap p-0 m-0">
 				<ul className="list-group list-group-flush p-0 m-0">
 					<li className="list-group-item p-0 m-0 text-center" style={{height:this.state.standardHeight + "rem"}}>{this.state.day.charAt(0)}</li>
 					{col}
