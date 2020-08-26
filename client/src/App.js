@@ -1,7 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css"
 import './App.css';
 import React from 'react';
-// import { BrowserRouter as Router, Route } from "react-router-dom";
+
+import generateResults from "./scheduling-engine.js"
+
 
 import InputMenu from "./components/InputMenu"
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
@@ -16,9 +18,10 @@ import WorklistRendering from "./components/WorklistRendering";
 
 function App() {
 	const inputMenuElement = React.createElement(InputMenu);
-	const WorklistNavBarElement = React.createElement(WorklistNavigatorBar);
-	const WorklistRenderingElement = React.createElement(WorklistRendering);
-
+	const worklistNavBarElement = React.createElement(WorklistNavigatorBar);
+	const worklistRenderingElement = React.createElement(WorklistRendering);
+	//const scheduleFunction = require("./scheduling-engine");
+	
 	return (
 		<div className="row" id="contains-everything">
 			
@@ -28,8 +31,9 @@ function App() {
 
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">
 				<div className="shadow custom-corners h-100" id="wm-output-panel">
-					{WorklistNavBarElement}
-					{WorklistRenderingElement}
+					{worklistNavBarElement}
+					{worklistRenderingElement}
+					<p>{generateResults()}</p>
 				</div>
 			</div>
 			
