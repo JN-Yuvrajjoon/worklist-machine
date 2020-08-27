@@ -4,15 +4,23 @@ import SettingsMenu from "./tab-menus/SettingsMenu";
 import CoursesMenu from "./tab-menus/CoursesMenu";
 import AboutMenu from "./tab-menus/AboutMenu";
 
+//props = {handleClickBigGoButton: function(UserRequest)}
 export default class InputMenu extends Component {
 	constructor(props) {
 		super(props);
 
 		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
+		this.handleChangeSettings = this.handleChangeSettings.bind(this);
+		this.handleChangeCourses = this.handleChangeCourses.bind(this);
 	}
 
 	// this is really weird
 	// https://reactjs.org/docs/lifting-state-up.html
+
+	handleChangeSettings() {}
+
+	handleChangeCourses() {}
+
 	handleClickBigGoButton() {
 		this.props.goFunction();
 	}
@@ -28,10 +36,10 @@ export default class InputMenu extends Component {
 				<div className="container-fluids" id="wm-menu-row">
 					<div className="container-fluid tab-content" id="wm-tab-menu-content">
 						<div className="tab-pane fade " id="settings-menu" role="tabpanel" aria-labelledby="settings-menu"> 
-							<SettingsMenu />
+							<SettingsMenu onChangeFunction={this.handleChangeSettings}/>
 						</div>
 						<div className="tab-pane fade show active" id="courses-menu" role="tabpanel" aria-labelledby="courses-menu">
-							<CoursesMenu />
+							<CoursesMenu onChangeFunction={this.handleChangeCourses}/>
 						</div>
 						<div className="tab-pane fade" id="about-menu" role="tabpanel" aria-labelledby="about-menu">
 							<AboutMenu />

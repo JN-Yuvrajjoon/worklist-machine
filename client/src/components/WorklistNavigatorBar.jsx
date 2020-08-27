@@ -1,6 +1,15 @@
 import React, {Component} from "react";
 import PageFlipper from "./PageFlipper";
 
+/*
+props = {
+	worklistPages: number
+	currentWorklistPage: number						// Must be <= worklistPages
+	
+	currentWorklistDetails: WorklistDetails			// Includes variation number, warnings, scores
+}
+*/
+
 export default class WorklistNavigatorBar extends Component{
 	constructor(props) {
 		super(props);
@@ -34,7 +43,7 @@ export default class WorklistNavigatorBar extends Component{
 			<div className="container-fluid p-0 m-0">
 				<div className="d-flex justify-content-center p-0 m-0">
 				<PageFlipper 
-					type="worklist"
+					type="big boy"
 					changeFunction={this.handleWorklistNavigation}
 					pages={this.state.worklists}
 					currentPage={this.state.currentWorklist}
@@ -46,7 +55,7 @@ export default class WorklistNavigatorBar extends Component{
 				<div className="d-flex flex-wrap container-fluid p-0 m-0">
 						<div className="mx-2 align-self-center">Variation:</div>
 						<PageFlipper 
-							type="variation" 
+							type="small boye" 
 							changeFunction={this.handleVariationNavigation}
 							pages={this.state.variations}
 							currentPage={this.state.currentVariation}

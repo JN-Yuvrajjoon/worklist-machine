@@ -2,6 +2,7 @@ import React, {Component} from "react";
 //import "bootstrap/dist/css/bootstrap.min.css"
 //import '../../App.css';
 
+// May need refactoring
 export default class SettingsMenu extends Component{
 	constructor(props) {
 		super(props);
@@ -11,45 +12,27 @@ export default class SettingsMenu extends Component{
 		this.handleChangeSession = this.handleChangeSession.bind(this);
 		this.handleChangePreferredTime = this.handleChangePreferredTime.bind(this);
 		this.handleChangeReduceGaps = this.handleChangeReduceGaps.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
 		
 		this.state = {
-			school: "",
-			campus: "",
-			session: "",
-			schools: [],
-			campuses: [],
-			sessions: [],
-
+			schools: ["UBC"],
+			campuses: ["Vancouver", "Okanagan"],
+			sessions: ["2020W"],
+			
 			preferredTime: "afternoon",
 			reduceGaps: false
 		};
 	}
 
 	componentDidMount() {
-		// axios.get("http://localhost:5000/users/")
-		// .then(response => {
-		// 	if(response.data.length > 0) {
-		// 		this.setState({
-		// 			users: response.data.map(user => user.username),
-		// 			username: response.data[0].username
-		// 		})
-		// 	}
-		// })
-		// .catch((error) => {
-		// 	console.log(error);
-		// })
 		this.setState({
-			schools: [null, "UBC"],
-			campuses: [null, "Vancouver", "Okanagan"],
-			sessions: [null, "2020W"],
 			school: this.state.schools[0],
 			campus: this.state.campuses[0],
 			session: this.state.sessions[0],
-
-			preferredTime: "afternoon",
-			reduceGaps: false
 		})
+	}
+
+	passToParent() {
+		this.props.onChangeFunction(this.state)
 	}
 
 	handleChangeSchool(event) {
@@ -57,38 +40,36 @@ export default class SettingsMenu extends Component{
 			school: event.target.value,
 			campus: null,
 			session: null
-		});
+		}, 
+		this.passToParent() );
 	}
 
 	handleChangeCampus(event) {
 		this.setState({
 			campus: event.target.value
-		});
+		}, 
+		this.passToParent() );
 	}
 
 	handleChangeSession(event) {
 		this.setState({
 			session: event.target.value 
-		});
+		}, 
+		this.passToParent() );
 	}
 
 	handleChangePreferredTime(event) {
 		this.setState({
 			preferredTime: event.target.value
-		});
+		}, 
+		this.passToParent() );
 	}
 
 	handleChangeReduceGaps(event) {
 		this.setState({
 			reduceGaps: event.target.checked
-		});
-	}
-	
-
-	handleSubmit(event) {
-		event.preventDefault();
-		console.log("form submitted lol");
-		console.log(this);
+		}, 
+		this.passToParent() );
 	}
 
 	render() {

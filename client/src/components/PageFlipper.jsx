@@ -4,20 +4,33 @@ import React, { Component } from "react";
 // Badly needs refactoring for clarity lol
 // Works for now
 
+/*
+
+props = {
+	type: "big boy" or "small boye"			// To be deprecated
+	pages: number,
+	currentPage: number,					// Must be <= pages
+
+	changeFunction: function(number)
+}
+
+
+is it too late to switch to typescript
+*/
 export default class PageFlipper extends Component {
 	constructor(props) {
 		super(props);
 		
 		this.handleArrowPress = this.handleArrowPress.bind(this);
 		this.navigateToEntered = this.navigateToEntered.bind(this);
-		this.submitToParent = this.submitToParent.bind(this);
+		this.passToParent = this.passToParent.bind(this);
 
 		this.state = {
 			enteredPage: this.props.currentPage //unchecked input
 		}
 	}
 
-	submitToParent(newPage) {
+	passToParent(newPage) {
 		this.props.changeFunction(newPage);
 	}
 
@@ -32,14 +45,14 @@ export default class PageFlipper extends Component {
 					// currentPage: (beginningPage + 1),
 					enteredPage: (beginningPage + 1)
 				});
-				this.submitToParent(beginningPage + 1);
+				this.passToParent(beginningPage + 1);
 
 			} else {
 				this.setState({
 					// currentPage: 1,
 					enteredPage: 1
 				});
-				this.submitToParent(1);
+				this.passToParent(1);
 			}
 			
 		} else if(event.target.name === "previousPageButton") {
@@ -48,13 +61,13 @@ export default class PageFlipper extends Component {
 					// currentPage: (beginningPage - 1),
 					enteredPage: (beginningPage - 1)
 				});
-				this.submitToParent(beginningPage - 1);
+				this.passToParent(beginningPage - 1);
 			} else {
 				this.setState({
 					// currentPage: lastPage,
 					enteredPage: lastPage
 				});
-				this.submitToParent(lastPage);
+				this.passToParent(lastPage);
 			}
 			
 		} else if(event.target.name === "firstPageButton") {
@@ -62,14 +75,14 @@ export default class PageFlipper extends Component {
 				// currentPage: 1,
 				enteredPage: 1
 			});
-			this.submitToParent(1);
+			this.passToParent(1);
 
 		} else if(event.target.name === "lastPageButton") {
 			this.setState({
 				// currentPage: lastPage,
 				enteredPage: lastPage
 			});
-			this.submitToParent(lastPage);
+			this.passToParent(lastPage);
 		}
 		// I meant to call a "reset" function here to reset all navigation input fields at once.
 		// However, the "entered" state change would happen before the real thing, leading to a field that is late by one step
@@ -81,12 +94,12 @@ export default class PageFlipper extends Component {
 
 		const userChoice = parseInt(event.target.value);
 		if (userChoice >= 1 && userChoice <= this.props.pages) {
-			this.submitToParent(userChoice)
+			this.passToParent(userChoice)
 		}
 	}
 
 	returnSizedClasses(type) {
-		if (type === "worklist") {
+		if (type === "big boy") {
 			return "form-control form-control-sm px-1 mx-1 col-2 text-right align-self-center";
 		} else {
 			return "form-control form-control-sm px-1 mx-1 col-1 text-right align-self-center";

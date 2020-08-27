@@ -69,6 +69,7 @@ const fakeDayColumnProps = {
 //    (e.g. having weekend courses in one term will cause all SemesterTables to display weekend columns)
 // 3. Calculate the height of a 30-minute block
 
+// props = {worklist: Worklist}
 export default class WorklistRendering extends Component {
 	constructor(props) {
 		super(props);
