@@ -1,7 +1,5 @@
 import React, {Component} from "react";
 
-// @ts-check
-
 const fakeTerm1 = {
 	name: "Semester 1",
 	courses: [{},{},{}]
@@ -320,29 +318,23 @@ class DayColumn extends Component {
 		let col = [];
 
 		while (currentRow < this.state.rows) {
-			console.log("currentRow is", currentRow, "out of", this.state.rows)
-			console.log("col has this many items so far:", col.length)
-			console.log("yet to render this many courses:", unrendered.length)
 
 			// No more courses in the day
 			if(unrendered === undefined || unrendered.length == 0) {
 				col = col.concat(this.returnGap(this.state.rows - currentRow));
 				currentRow = this.state.rows; //break
-				console.log("filled the rest of the day!");
 
 			// Need to render a course in this row
 			} else if(unrendered[0].startTime === currentRow) {
 				col.push(this.renderCourse(unrendered[0]));
 				currentRow += unrendered[0].length;
 				unrendered.shift();
-				console.log("Course rendered");
 
 			// Need to render a break before the next class
 			} else if(unrendered[0].startTime > currentRow) {
 				let difference = unrendered[0].startTime - currentRow;
 				col = col.concat(this.returnGap(difference));
 				currentRow += difference;
-				console.log("filled to the next course");
 
 			// Should not happen, indicates infinite loop
 			} else {

@@ -1,25 +1,26 @@
-const course1 = require("./example-course-cpsc213.js");
-//const CPSC213 = require("./example-course-cspc213a.json");
+import {cpsc213, cpsc213a} from "./example-courses.js";
+//const cpsc213 = require("./example-course-cpsc213.js");
+//const cpsc213a = require("./example-course-cpsc213a.js");
 
-//console.log(course1);
 // Input: CheckedUserRequest
 // Output: Array of Result (a Result is an array of Worklists)
 const results = [["W1V1", "W1V2"],["W2V1"],["W3V1", "W3V2", "W3V3"]];
 
-export default function generateResults(checkedUserRequest) {
-	
-	return results;
+export default function generateResults(userRequest) {
+	if(isRequestBad()) {
+		return(console.error());
+	} else {
+		return results;
+	}
 }
 
-function yuh(){
-	return "test";
+function isRequestBad(){
+	return false;
 }
 
-// module.exports = {
-// 	function: generateResults,
-// 	name: "hi"
-// }
+class UserRequest {
 
+}
 
 // class dayBlockSet{
 // 	constructor() {

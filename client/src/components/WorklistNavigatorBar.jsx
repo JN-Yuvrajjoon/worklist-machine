@@ -5,6 +5,8 @@ export default class WorklistNavigatorBar extends Component{
 	constructor(props) {
 		super(props);
 
+		this.handleWorklistNavigation = this.handleWorklistNavigation.bind(this);
+		this.handleVariationNavigation = this.handleVariationNavigation.bind(this);
 
 		this.state = {
 			worklists: 100, // A worklist is a data type, but is not a Component
@@ -18,13 +20,22 @@ export default class WorklistNavigatorBar extends Component{
 		}
 
 	}
+
+	handleWorklistNavigation(newPage) {
+		this.setState({currentWorklist: newPage})
+	}
+
+	handleVariationNavigation(newPage) {
+		this.setState({currentVariation: newPage})
+	}
 	
 	render(){
 		return(
 			<div className="container-fluid p-0 m-0">
 				<div className="d-flex justify-content-center p-0 m-0">
 				<PageFlipper 
-					type="worklist" 
+					type="worklist"
+					changeFunction={this.handleWorklistNavigation}
 					pages={this.state.worklists}
 					currentPage={this.state.currentWorklist}
 				/>
@@ -36,6 +47,7 @@ export default class WorklistNavigatorBar extends Component{
 						<div className="mx-2 align-self-center">Variation:</div>
 						<PageFlipper 
 							type="variation" 
+							changeFunction={this.handleVariationNavigation}
 							pages={this.state.variations}
 							currentPage={this.state.currentVariation}
 						/>

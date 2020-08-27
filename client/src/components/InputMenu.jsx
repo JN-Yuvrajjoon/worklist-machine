@@ -5,6 +5,18 @@ import CoursesMenu from "./tab-menus/CoursesMenu";
 import AboutMenu from "./tab-menus/AboutMenu";
 
 export default class InputMenu extends Component {
+	constructor(props) {
+		super(props);
+
+		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
+	}
+
+	// this is really weird
+	// https://reactjs.org/docs/lifting-state-up.html
+	handleClickBigGoButton() {
+		this.props.goFunction();
+	}
+
 	render() {
 		return(
 			<div className="container-fluid p-0 m-0 h-100">
@@ -61,7 +73,10 @@ export default class InputMenu extends Component {
 				</div>
 
 				<div className="container-fluid m-0" id="wm-submit-row">
-					<button className="btn btn-block custom-corners shadow" type="button" id="wm-go-button"><h5>GO!</h5></button>
+					<button className="btn btn-block custom-corners shadow" 
+						type="button" 
+						id="wm-go-button"
+						onClick={this.handleClickBigGoButton}><h5>GO!</h5></button>
 				</div>
 			</div>
 		)
