@@ -8,10 +8,27 @@ import InputMenu from "./components/InputMenu"
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
 import WorklistRendering from "./components/WorklistRendering";
 
+var tempSettings = {
+	schools: ["UBC"],
+	campuses: ["", "Vancouver", "Okanagan"],
+	sessions: ["2020W"],
+	school: "",
+	campus: "",
+	session: "",
+
+	preferredTime: "afternoon",
+	reduceGaps: false
+};
+
+tempSettings.school= tempSettings.schools[0];
+tempSettings.campus= tempSettings.campuses[0];
+tempSettings.session= tempSettings.sessions[0];
+
 export default function App() {
 
 	// Using hooks to give App() a global state
 	// https://reactjs.org/docs/hooks-state.html
+	const [globalSettings, setGlobalSettings] = useState(tempSettings)
 	const [globalLatestRequest, setGlobalLatestRequest] = useState({});
 	const [globalResults, setGlobalResults] = useState([[]])
 	const [globalNavigationSpot, setglobalNavigationSpot] = useState({resultNumber: 1, variationNumber: 2}); //change
@@ -22,7 +39,12 @@ export default function App() {
 	// 	courses: this.state.courses,
 	// 	customs: this.state.customBlocks
 	// }
-	function globalSubmit(userRequest) {
+	function globalSubmit(requestedCourses, requestedCustoms) {
+		let userRequest = {
+			settings: globalSettings,
+			courses: requestedCourses,
+			customs: requestedCustoms
+		}
 		console.log("globalSubmit called, here's the userRequest object:", userRequest);
 
 		try {
@@ -45,7 +67,7 @@ export default function App() {
 		<div className="row" id="contains-everything">
 			
 			<div className="container-fluid col-md m-0" id="wm-input-column">
-				<InputMenu setUserInput={setGlobalLatestRequest} goFunction={globalSubmit}/>
+				<InputMenu changeSettingsFunction={setGlobalSettings} settings={globalSettings} goFunction={globalSubmit}/>
 			</div>
 
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">

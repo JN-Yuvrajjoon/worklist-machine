@@ -14,27 +14,12 @@ export default class SettingsMenu extends Component{
 		this.handleChangeReduceGaps = this.handleChangeReduceGaps.bind(this);
 		this.passToParent = this.passToParent.bind(this);
 		
-		this.state = {
-			schools: ["UBC"],
-			campuses: ["Vancouver", "Okanagan"],
-			sessions: ["2020W"],
-			
-			preferredTime: "afternoon",
-			reduceGaps: false
-		};
-	}
-
-	componentDidMount() {
-		this.setState({
-			school: this.state.schools[0],
-			campus: this.state.campuses[0],
-			session: this.state.sessions[0],
-		},
-		this.passToParent())
+		this.state = this.props.settings;
 	}
 
 	passToParent() {
-		this.props.onChangeFunction(this.state)
+		console.log("SettingsMenu detected a change, passing state to parent. Here's the new state: ", this.state);
+		this.props.changeFunction(this.state);
 	}	
 
 	handleChangeSchool(event) {
@@ -43,7 +28,7 @@ export default class SettingsMenu extends Component{
 			campus: null,
 			session: null
 			}, 
-			this.passToParent() 
+			this.passToParent()
 		);
 	}
 
@@ -51,7 +36,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			campus: event.target.value
 			}, 
-			this.passToParent() 
+			this.passToParent()
 		);
 	}
 
@@ -59,7 +44,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			session: event.target.value 
 			}, 
-			this.passToParent() 
+			this.passToParent()
 		);
 	}
 
@@ -67,7 +52,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			preferredTime: event.target.value
 			}, 
-			this.passToParent() 
+			this.passToParent()
 		);
 	}
 
@@ -75,7 +60,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			reduceGaps: event.target.checked
 			}, 
-			this.passToParent() 
+			this.passToParent()
 		);
 	}
 

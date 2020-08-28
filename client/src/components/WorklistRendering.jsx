@@ -318,7 +318,7 @@ class DayColumn extends Component {
 		while (currentRow < this.state.rows) {
 
 			// No more courses in the day
-			if(unrendered === undefined || unrendered.length == 0) {
+			if(unrendered === undefined || unrendered.length === 0) {
 				col = col.concat(this.returnGap(this.state.rows - currentRow));
 				currentRow = this.state.rows; //break
 

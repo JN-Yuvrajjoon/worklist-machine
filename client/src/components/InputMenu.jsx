@@ -9,36 +9,40 @@ export default class InputMenu extends Component {
 	constructor(props) {
 		super(props);
 
-		this.handleChangeSettings = this.handleChangeSettings.bind(this);
-		this.handleChangeCourses = this.handleChangeCourses.bind(this);
+		this.getAvailableTerms = this.getAvailableTerms.bind(this);
+		this.changeCoursesFunction = this.changeCoursesFunction.bind(this);
 		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
 
-		//UserRequest
 		this.state = {
-			settings: {},
-			inputCourses: [],
+			inputCourses: [{key: 0, name: "test"}, {key: 1, name: "what"}, {key: 2, name:""}],
 			customBlocks: []
 		}
+	}
+
+	//TODO: Implement
+	getAvailableTerms() {
+		return ["1", "2", "1-2", "A", "D"];
 	}
 
 	// this is really weird
 	// https://reactjs.org/docs/lifting-state-up.html
 
-	handleChangeSettings(userSettings) {
-		this.setState({settings: userSettings});
+	changeCoursesFunction(userCourses) {
+		console.log("InputMenu has recieved a change to the input courses.")
+		this.setState({inputCourses: userCourses}
+			// ,console.log("Input menu now has these courses: ", this.state.inputCourses)
+			);
+		// Courses are not global until the go button is clicked
 	}
 
-	handleChangeCourses(userCourses, userCustoms) {
-		this.setState({inputCourses: userCourses, customBlocks: userCustoms});
+	changeCustomsFunction(userCustoms) {
+		this.setState({customBlocks: userCustoms});
 	}
 
 	handleClickBigGoButton() {
-		let userRequest = {
-			settings: this.state.settings,
-			courses: this.state.inputCourses,
-			customs: this.state.customBlocks
-		}
-		this.props.goFunction(userRequest);
+		let courses = this.state.inputCourses;
+		let customs = this.state.customBlocks;
+		this.props.goFunction(courses, customs);
 	}
 
 	render() {
@@ -52,10 +56,19 @@ export default class InputMenu extends Component {
 				<div className="container-fluids" id="wm-menu-row">
 					<div className="container-fluid tab-content" id="wm-tab-menu-content">
 						<div className="tab-pane fade " id="settings-menu" role="tabpanel" aria-labelledby="settings-menu"> 
-							<SettingsMenu onChangeFunction={this.handleChangeSettings}/>
+							<SettingsMenu 
+								changeFunction={this.props.changeSettingsFunction} 
+								settings={this.props.settings}
+							/>
 						</div>
 						<div className="tab-pane fade show active" id="courses-menu" role="tabpanel" aria-labelledby="courses-menu">
-							<CoursesMenu onChangeFunction={this.handleChangeCourses}/>
+							<CoursesMenu 
+								coursesToRender={this.state.inputCourses} 
+								customsToRender={this.state.customBlocks} 
+								changeCoursesFunction={this.changeCoursesFunction} 
+								availableTerms={this.getAvailableTerms()} 
+								changeCustomsFunction={this.changeCustomsFunction}
+							/>
 						</div>
 						<div className="tab-pane fade" id="about-menu" role="tabpanel" aria-labelledby="about-menu">
 							<AboutMenu />
