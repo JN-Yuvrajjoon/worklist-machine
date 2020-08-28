@@ -9,20 +9,36 @@ export default class InputMenu extends Component {
 	constructor(props) {
 		super(props);
 
-		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
 		this.handleChangeSettings = this.handleChangeSettings.bind(this);
 		this.handleChangeCourses = this.handleChangeCourses.bind(this);
+		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
+
+		//UserRequest
+		this.state = {
+			settings: {},
+			inputCourses: [],
+			customBlocks: []
+		}
 	}
 
 	// this is really weird
 	// https://reactjs.org/docs/lifting-state-up.html
 
-	handleChangeSettings() {}
+	handleChangeSettings(userSettings) {
+		this.setState({settings: userSettings});
+	}
 
-	handleChangeCourses() {}
+	handleChangeCourses(userCourses, userCustoms) {
+		this.setState({inputCourses: userCourses, customBlocks: userCustoms});
+	}
 
 	handleClickBigGoButton() {
-		this.props.goFunction();
+		let userRequest = {
+			settings: this.state.settings,
+			courses: this.state.inputCourses,
+			customs: this.state.customBlocks
+		}
+		this.props.goFunction(userRequest);
 	}
 
 	render() {

@@ -171,7 +171,6 @@ class SemesterTable extends Component {
 			timeRuler.push(<div className="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}>{iColon}</div>);
 			timeRuler.push(<div className="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}></div>);
 		}
-
 		return timeRuler;
 	}
 
@@ -187,10 +186,8 @@ class SemesterTable extends Component {
 		// e.g. 1030 - 900 = 30 = length of 1
 		return([]);
 	}
-
 	
 	render() {
-
 		const rows = 20; // calculate from start and end times
 
 		return(

@@ -5,29 +5,22 @@ export default class CoursesMenu extends Component {
 		super(props);
 
 		this.onAddCourse = this.onAddCourse.bind(this);
+		this.getKey = this.getKey.bind(this);
 		this.onAddCustomBlock = this.onAddCustomBlock.bind(this);
 
 		this.state = {
 			inputCourses: [],
 			inputCustomBlocks: [],
-
-			maxCourses: 16 //TODO: Implement
+			maxCourses: 16
 		}
 	}
 
 	onAddCourse() {
-
 		const newInputCourses = this.state.inputCourses;
-
 		if(newInputCourses.length >= this.state.maxCourses) {
-			this.render(
-				<div class="alert alert-warning" role="alert">
-				A simple warning alert—check it out!
-				</div>
-			)
+			console.log("slow down engineer, worklist machine can only deal with 16 courses for now");
 		} else {
 			const newCourse = React.createElement(InputCourse);
-
 			// newState.inputCourses.unshift(new InputCourse); 
 			// ^ Does not work, since it doesn't mount the object as a react element
 			newInputCourses.unshift(newCourse); 
@@ -36,6 +29,12 @@ export default class CoursesMenu extends Component {
 				inputCourses: newInputCourses
 			})
 		}
+	}
+
+	// I do not even care if this system is more/less efficient than using an item's index
+	// react keeps filling up my console with warnings
+	getKey(num) {
+		return("course", num)
 	}
 
 	onAddCustomBlock() {
@@ -49,7 +48,6 @@ export default class CoursesMenu extends Component {
 		return(
 			<div className="container-fluid m-0 p-0">
 				<h5>Courses</h5>
-				
 				<button className="btn btn-light btn-block my-3 " onClick={this.onAddCourse}>+ Add course</button>
 				<button className="btn btn-sm btn-outline-light btn-block my-3 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
 				<hr></hr>
@@ -82,7 +80,6 @@ class InputCourse extends Component {
 			mustBeTerm: 0,
 			mustHaveSections: []
 		};
-
 	}
 
 	handleNameChange(event){

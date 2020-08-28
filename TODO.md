@@ -1,5 +1,5 @@
 ## LOGIC
-- Program the worklist generator that takes in course names, retreives Course documents from mongoDB, and outputs several worklists (collections of sections) (+ links, possibly)
+- Program the scheduling engine
 
 ## SCRAPER
 - Program the scraper that takes course website data and stores it in the database. 
@@ -17,7 +17,6 @@
 - AboutMenu: add links
 
 - WorklistRendering: Calculate height of one row based on the screen size and number of rows?
-- Write functions that sort a Worklist's data into day-sorted arrays of blocks
 
 ## MISC
 - Make the logo

@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import './App.css';
 import React, {useState} from 'react';
 
-import generateResults from "./scheduling-engine.js"
+import engineFunction from "./scheduling-engine.js"
 
 import InputMenu from "./components/InputMenu"
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
@@ -12,15 +12,26 @@ export default function App() {
 
 	// Using hooks to give App() a global state
 	// https://reactjs.org/docs/hooks-state.html
-	const [globalUserInput, setGlobalUserInput] = useState({});
+	const [globalLatestRequest, setGlobalLatestRequest] = useState({});
 	const [globalResults, setGlobalResults] = useState([[]])
-	const [globalNavigationSpot, setglobalNavigationSpot] = useState({resultNumber: 1, variationNumber: 2});
+	const [globalNavigationSpot, setglobalNavigationSpot] = useState({resultNumber: 1, variationNumber: 2}); //change
 
 
-	function globalSubmit() {
-		console.log("yep");
-		setGlobalResults(generateResults())
-		return generateResults();
+	// let userRequest = {
+	// 	settings: this.state.settings,
+	// 	courses: this.state.courses,
+	// 	customs: this.state.customBlocks
+	// }
+	function globalSubmit(userRequest) {
+		console.log("globalSubmit called, here's the userRequest object:", userRequest);
+
+		try {
+			setGlobalResults(engineFunction(userRequest));
+			setGlobalLatestRequest(userRequest); // Saves the latest input
+		}
+		catch(error) {
+			
+		}
 	}
 
 	function pickResultToRender(){
@@ -34,7 +45,7 @@ export default function App() {
 		<div className="row" id="contains-everything">
 			
 			<div className="container-fluid col-md m-0" id="wm-input-column">
-				<InputMenu setUserInput={setGlobalUserInput} goFunction={globalSubmit}/>
+				<InputMenu setUserInput={setGlobalLatestRequest} goFunction={globalSubmit}/>
 			</div>
 
 			<div className="container-fluid col-md m-0 h-100" id="wm-output-column">
