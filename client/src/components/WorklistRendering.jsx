@@ -96,7 +96,11 @@ export default class WorklistRendering extends Component {
 	}
 
 	generateTitle(term) {
-		return (`Worklist ${this.state.resultNumber} variation ${this.state.variationNumber}: ${term.name}`);
+		return (
+			<p className="m-1"><b>{term.name + " "}</b>
+				(of result {this.state.resultNumber}, variation {this.state.variationNumber})
+			</p>
+			);
 	}
 
 	// Returns the on-screen height of a thirty minute block
@@ -116,12 +120,12 @@ export default class WorklistRendering extends Component {
 	render() {
 		return(
 			<div className="row p-0 m-0 container-fluid">
-				{this.state.singleTerms.map((term) => 
+				{this.state.singleTerms.map((t) => 
 					{return (
-						<div className="col-lg-6 p-2 m-0">
-							<p className="m-0">{this.generateTitle(term)}</p>
+						<div className="col-lg-6 p-2 m-0" key={t.name}>
 							<SemesterTable 
-								blocks={this.getBlocksIn(term)}
+								title={this.generateTitle(t)}
+								blocks={this.getBlocksIn(t)}
 								standardHeight={this.findHeight()}
 								hideWeekends={this.checkWorklistFor("weekendExtension")} 
 								startAt={this.checkWorklistFor("morningExtension")} 
@@ -192,6 +196,7 @@ class SemesterTable extends Component {
 
 		return(
 			<React.Fragment>
+			<div className="card p-1 mb-1 zero-space text-center wm-table-title">{this.props.title}</div>
 			<div className="row p-0 m-0 zero-space">
 				<div className="col-1 p-0 m-0">
 					{this.renderTimeRuler()}

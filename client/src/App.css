@@ -170,7 +170,12 @@ hr {
 
 #wm-output-panel > div {
 	font-size: small;
-	
+}
+
+.wm-table-title {
+	color: white;
+	background: var(--purple);
+	border: none;
 }
 
 .timetable { 
@@ -183,8 +188,10 @@ hr {
 }
 
 .wm-course-block {
-	background: var(--indigo);
+	background: var(--purple);
 	color: white;
+	border-bottom: 1px solid #ddd; /* TODO: Fix the curve */
+	padding: 0.25rem;
 }
 
 .wm-hour-marker {

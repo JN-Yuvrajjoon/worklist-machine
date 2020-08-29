@@ -54,13 +54,13 @@ export default class CoursesMenu extends Component {
 				<button className="btn btn-outline-light btn-block my-2 " onClick={this.onAddCourse}>+ Add course</button>
 				<button className="btn btn-sm btn-outline-light btn-block my-2 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
 				<hr></hr>
-				{this.props.coursesToRender.map((inputCourse) => 
-					<div key={inputCourse.id} className="p-0 m-0 container-fluid">
+				{this.props.coursesToRender.map((ic) => 
+					<div key={ic.id} className="p-0 m-0 container-fluid">
 					<InputCourse 
-						course={inputCourse}
+						course={ic}
 						changeFunction={this.onModifyCourse}
 						deleteFunction={this.onDeleteCourse}
-						availableTerms={this.props.availableTerms}
+						// availableTerms={this.props.availableTerms}
 					/>
 					<hr></hr>
 					</div>
@@ -93,7 +93,8 @@ class InputCourse extends Component{
 							type="button" 
 							data-toggle="collapse" 
 							data-target={"#detailsofcourse" + this.props.course.id.toString()} 
-							aria-expanded="false" aria-controls="multiCollapseExample2">▿
+							aria-expanded="false" aria-controls="multiCollapseExample2">
+								+
 							</button>
 						</div>
 					</div>
@@ -112,15 +113,14 @@ class InputCourse extends Component{
 				
 					<div className="col-2 p-0 m-0"></div>
 					<div className="col-10 p-0 m-0">
-						<select 
-							className="form-control form-control-sm p-1 mb-1"
+						<input 
+							className="form-control form-control-sm p-2 mb-1"
 							name="mustBeTerm"
-							type="dropdown"
-							value={this.props.course.mustBeTerm}
+							type="text"
+							placeholder="Any semester"
+							value={this.props.course.mustBeTerm? this.props.course.mustBeTerm : ""}
 							onChange={this.handleChange}>
-								<option value={false}>Any term</option>
-								{this.props.availableTerms.map((term) => <option key={term} value={term}>{term}</option>)}	
-						</select>
+						</input>
 					
 						<input 
 							className="form-control form-control-sm p-2 mb-1"

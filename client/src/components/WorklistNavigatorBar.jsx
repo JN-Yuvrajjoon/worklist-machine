@@ -3,10 +3,11 @@ import PageFlipper from "./PageFlipper";
 
 /*
 props = {
-	worklistPages: number
-	currentWorklistPage: number						// Must be <= worklistPages
-	
-	currentWorklistDetails: WorklistDetails			// Includes variation number, warnings, scores
+	results={globalResults.length}
+	variations={getCurrentResults().length}
+	navigateTo={globalNavigationSpot}
+	navigateFunction={setglobalNavigationSpot}
+	worklistInfo={getCurrentVariation().info} // Includes variation number, warnings, scores
 }
 */
 
@@ -16,60 +17,52 @@ export default class WorklistNavigatorBar extends Component{
 
 		this.handleWorklistNavigation = this.handleWorklistNavigation.bind(this);
 		this.handleVariationNavigation = this.handleVariationNavigation.bind(this);
-
-		this.state = {
-			worklists: 100, // A worklist is a data type, but is not a Component
-			inputWorklist: 1,
-			currentWorklist: 1,
-
-			variations: 30,
-			currentVariation: 1,
-
-			warnings: ["This app is incomplete"]
-		}
-
 	}
 
 	handleWorklistNavigation(newPage) {
-		this.setState({currentWorklist: newPage})
+		console.log("worklist navigator recieved", newPage, "from main nav");
+		this.props.navigateFunction({
+			resultPage: newPage, 
+			variationPage: 1
+		})
 	}
 
 	handleVariationNavigation(newPage) {
-		this.setState({currentVariation: newPage})
+		console.log("variation navigator recieved", newPage, "from variation nav");
+		this.props.navigateFunction({
+			resultPage: this.props.navigateTo.resultPage, 
+			variationPage: newPage
+		})
 	}
 	
 	render(){
+		console.log("RENDERED NAVBAR GOT, ", this.props.navigateTo);
 		return(
-			<div className="container-fluid p-0 m-0">
-				<div className="d-flex justify-content-center p-0 m-0">
+			<React.Fragment>
+			<div className="d-flex justify-content-center p-0 m-0">
 				<PageFlipper 
 					type="big boy"
 					changeFunction={this.handleWorklistNavigation}
-					pages={this.state.worklists}
-					currentPage={this.state.currentWorklist}
+					pages={this.props.results}
+					currentPage={this.props.navigateTo.resultPage}
 				/>
-				</div>
-
-				<hr></hr>
-
-				<div className="d-flex flex-wrap container-fluid p-0 m-0">
-						<div className="mx-2 align-self-center">Variation:</div>
-						<PageFlipper 
-							type="small boye" 
-							changeFunction={this.handleVariationNavigation}
-							pages={this.state.variations}
-							currentPage={this.state.currentVariation}
-						/>
-
-						<div className="ml-auto" id="worklistVariationButtons">
-							<button className="btn btn-sm btn-outline-danger">Warnings</button>
-							<button className="btn btn-sm btn-outline-dark mx-2">Export</button>
-						</div>
-				</div>
-
-				<hr></hr>
 			</div>
-			
+			<hr></hr>
+			<div className="d-flex flex-wrap container-fluid p-0 m-0">
+				<div className="mx-2 align-self-center">Variation:</div>
+					<PageFlipper 
+						type="small boye" 
+						changeFunction={this.handleVariationNavigation}
+						pages={this.props.variations}
+						currentPage={this.props.navigateTo.variationPage}
+					/>
+				<div className="ml-auto" id="worklistVariationButtons">
+					<button className="btn btn-sm btn-outline-danger">Warnings</button>
+					<button className="btn btn-sm btn-outline-dark mx-2">Export</button>
+				</div>
+			</div>
+			<hr></hr>
+			</React.Fragment>
 		)
 	}
 }

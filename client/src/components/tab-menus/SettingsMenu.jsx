@@ -77,7 +77,7 @@ export default class SettingsMenu extends Component{
 						className="form-control form-control-sm"
 						value={this.state.school}
 						onChange={this.handleChangeSchool}>
-							{this.state.schools.map(function(school) {
+							{this.props.settings.schools.map(function(school) {
 									return <option key={school} value={school}>
 										{school}
 									</option>;
@@ -91,7 +91,7 @@ export default class SettingsMenu extends Component{
 						className="form-control form-control-sm"
 						value={this.state.campus}
 						onChange={this.handleChangeCampus}>
-							{this.state.campuses.map(function(campus) {
+							{this.props.settings.campuses.map(function(campus) {
 									return <option key={campus} value={campus}>
 										{campus}
 									</option>;
@@ -105,7 +105,7 @@ export default class SettingsMenu extends Component{
 						className="form-control form-control-sm"
 						value={this.state.session}
 						onChange={this.handleChangeSession}>
-							{this.state.sessions.map(function(session) {
+							{this.props.settings.sessions.map(function(session) {
 									return <option key={session} value={session}>
 										{session}
 									</option>;
