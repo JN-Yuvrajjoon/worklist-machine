@@ -9,12 +9,13 @@ export default class InputMenu extends Component {
 	constructor(props) {
 		super(props);
 
+		this.reindex = this.reindex.bind(this);
 		this.getAvailableTerms = this.getAvailableTerms.bind(this);
 		this.changeCoursesFunction = this.changeCoursesFunction.bind(this);
 		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
 
 		this.state = {
-			inputCourses: [{key: 0, name: "test"}, {key: 1, name: "what"}, {key: 2, name:""}],
+			inputCourses: [],
 			customBlocks: []
 		}
 	}
@@ -23,26 +24,32 @@ export default class InputMenu extends Component {
 	getAvailableTerms() {
 		return ["1", "2", "1-2", "A", "D"];
 	}
-
-	// this is really weird
-	// https://reactjs.org/docs/lifting-state-up.html
-
+	
+	reindex(list) {
+		let result = list;
+		for(let i = 0; i < list.length; i++) {
+			result[i].id = i;
+		}
+		return result;
+	}
+	
 	changeCoursesFunction(userCourses) {
-		console.log("InputMenu has recieved a change to the input courses.")
-		this.setState({inputCourses: userCourses}
-			// ,console.log("Input menu now has these courses: ", this.state.inputCourses)
-			);
+		this.setState(
+			{inputCourses: this.reindex(userCourses)},
+			console.log("Input menu now has the following courses: ", this.state.inputCourses)
+		);
 		// Courses are not global until the go button is clicked
 	}
 
 	changeCustomsFunction(userCustoms) {
-		this.setState({customBlocks: userCustoms});
+		this.setState(
+			{customBlocks: this.reindex(userCustoms)},
+			console.log("Input menu now has the following custom blocks: ", this.state.customBlocks)
+		);
 	}
 
 	handleClickBigGoButton() {
-		let courses = this.state.inputCourses;
-		let customs = this.state.customBlocks;
-		this.props.goFunction(courses, customs);
+		this.props.goFunction(this.state.inputCourses, this.state.customBlocks);
 	}
 
 	render() {
@@ -66,8 +73,8 @@ export default class InputMenu extends Component {
 								coursesToRender={this.state.inputCourses} 
 								customsToRender={this.state.customBlocks} 
 								changeCoursesFunction={this.changeCoursesFunction} 
-								availableTerms={this.getAvailableTerms()} 
 								changeCustomsFunction={this.changeCustomsFunction}
+								availableTerms={this.getAvailableTerms()} 
 							/>
 						</div>
 						<div className="tab-pane fade" id="about-menu" role="tabpanel" aria-labelledby="about-menu">

@@ -4,46 +4,30 @@ export default class CoursesMenu extends Component {
 	constructor(props) {
 		super(props);
 
-		this.generateKey = this.generateKey.bind(this);
 		this.onAddCourse = this.onAddCourse.bind(this);
 		this.onModifyCourse = this.onModifyCourse.bind(this);
 		this.onDeleteCourse = this.onDeleteCourse.bind(this);
+
 		this.onAddCustomBlock = this.onAddCustomBlock.bind(this);
-		this.passCoursesToParent = this.passCoursesToParent.bind(this);
-		this.passCustomsToParent = this.passCustomsToParent.bind(this);
 
 		this.state = {
-			currentKey: 0,
-			inputCourses: this.props.coursesToRender, // a list of InputCourse Objects
-			inputCoursesDeprecated: [],
-			inputCustomBlocks: [], // a list of InputCustom Objects
 			maxCourses: 16
 		}
 	}
-	generateKey(course) {
-		return this.state.inputCourses.indexOf(course);
-	}
-
-	passCoursesToParent() {
-		this.props.changeCoursesFunction(this.state.inputCourses);
-	}
-	passCustomsToParent() {
-		this.props.changeCustomsFunction(this.state.inputCustomBlocks);
-	}
 
 	onAddCourse() {
-		const newInputCourses = this.state.inputCoursesDeprecated;
-		if(newInputCourses.length >= this.state.maxCourses) {
+		if(this.props.coursesToRender.length >= this.state.maxCourses) {
 			console.log("slow down engineer, worklist machine can only deal with 16 courses for now");
 		} else {
-			//const newCourse = React.createElement(InputCourseDeprecated);
-			// newState.inputCourses.unshift(new InputCourse); 
-			// ^ Does not work, since it doesn't mount the object as a react element
-			//newInputCourses.unshift(newCourse); 
-
-			this.setState({
-				inputCoursesDeprecated: newInputCourses
-			})
+			let blankCourse = {
+				id: "tbd",
+				name: "", 
+				mustBeTerm: false,
+				mustHaveSections: []
+			}
+			let updatedList = this.props.coursesToRender;
+			updatedList.unshift(blankCourse);
+			this.props.changeCoursesFunction(updatedList);
 		}
 	}
 
@@ -51,37 +35,28 @@ export default class CoursesMenu extends Component {
 		console.log("i am tired"); //TODO: Make this work
 	}
 
-	onModifyCourse(updatedCourse, key) {
-		console.log("modifying a course, ", this.state.inputCourses[key], " to this: ", updatedCourse, " key: ", key);
-		
-		let updated = this.state.inputCourses;
-		updated[key] = updatedCourse;
-
-		this.setState({
-			inputCourses: updated
-		},
-
-		this.passCoursesToParent());
+	onModifyCourse(updatedCourse, id) {
+		let updatedList = this.props.coursesToRender;
+		updatedList[id] = updatedCourse;
+		this.props.changeCoursesFunction(updatedList);
 	}
 
-	onDeleteCourse(key) {
-		this.setState({
-			inputCourses: this.state.inputCourses.filter(course => key !== course.key)
-		})
+	onDeleteCourse(id) {
+		let updatedList = this.props.coursesToRender;
+		console.log(updatedList.splice(id, 1));
+		this.props.changeCoursesFunction(updatedList);
 	}
 	
 	render() {
 		return(
 			<React.Fragment>
 				<h5>Courses</h5>
-				<button className="btn btn-light btn-block my-3 " onClick={this.onAddCourse}>+ Add course</button>
-				<button className="btn btn-sm btn-outline-light btn-block my-3 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
+				<button className="btn btn-outline-light btn-block my-2 " onClick={this.onAddCourse}>+ Add course</button>
+				<button className="btn btn-sm btn-outline-light btn-block my-2 " onClick={this.onAddCustomBlock}>+ Add custom block</button>
 				<hr></hr>
-
-				{this.state.inputCourses.map((inputCourse) => 
-					<div className="p-0 m-0 container-fluid">
+				{this.props.coursesToRender.map((inputCourse) => 
+					<div key={inputCourse.id} className="p-0 m-0 container-fluid">
 					<InputCourse 
-						key={inputCourse.key}
 						course={inputCourse}
 						changeFunction={this.onModifyCourse}
 						deleteFunction={this.onDeleteCourse}
@@ -90,68 +65,85 @@ export default class CoursesMenu extends Component {
 					<hr></hr>
 					</div>
 				)}
-				
 			</React.Fragment>
 		)
 	}
 }
 
-
 class InputCourse extends Component{
 	constructor(props) {
 		super(props);
-
 		this.handleChange = this.handleChange.bind(this)
 	}
 
 	handleChange(event){
-		console.log("we changing boys, old course here: ", this.props.course)
 		let newCourse = this.props.course;
 		newCourse[event.target.name] = event.target.value
-		
-		this.props.changeFunction(newCourse, this.props.course.key)
+		this.props.changeFunction(newCourse, this.props.course.id)
 	}
 
 	render() {
 		return(
-			<form className="px-2">
-				<input
-					className="form-control form-control-sm"
-					name="name"
-					type="text"
-					placeholder="Course"
-					value={this.props.course.name}
-					onChange={this.handleChange}
-				>
-				</input>
-			
-				<label className="">Must be in term:
-					<select 
-						className="form-control form-control-sm"
-						name="mustBeTerm"
-						type="dropdown"
-						value={this.props.course.mustBeTerm}
-						onChange={this.handleChange}>
-							<option value={false}>Any term</option>
-							{this.props.availableTerms.map((term) => <option key={term} value={term}>{term}</option>)}	
-					</select>
-				</label>
-
-				{/* <label hidden>Must have sections:
-					<select 
-						className="form-control form-control-sm"
-						name="courseSectionInput"
+			<form className="">
+				<label className="pb-1 m-0 input-group input-group-sm">
+					<div className="input-group-prepend">
+						<div className="input-group-text p-1">
+							<button 
+							className="btn btn-sm p-0 m-0 border-0"
+							type="button" 
+							data-toggle="collapse" 
+							data-target={"#detailsofcourse" + this.props.course.id.toString()} 
+							aria-expanded="false" aria-controls="multiCollapseExample2">▿
+							</button>
+						</div>
+					</div>
+					<input
+						className="form-control"
+						name="name"
 						type="text"
-						//value={this.state.mustBeTerm}
-						//onChange={this.handleTermChange}
-						>
-						<option value="0">Any term</option>
-					</select>
-				</label> */}
+						placeholder="Course code"
+						value={this.props.course.name}
+						onChange={this.handleChange}
+					>
+					</input>
+				</label>
+			
+				<div className="collapse row p-0 m-0 w-100" id={"detailsofcourse" + this.props.course.id.toString()}>
+				
+					<div className="col-2 p-0 m-0"></div>
+					<div className="col-10 p-0 m-0">
+						<select 
+							className="form-control form-control-sm p-1 mb-1"
+							name="mustBeTerm"
+							type="dropdown"
+							value={this.props.course.mustBeTerm}
+							onChange={this.handleChange}>
+								<option value={false}>Any term</option>
+								{this.props.availableTerms.map((term) => <option key={term} value={term}>{term}</option>)}	
+						</select>
+					
+						<input 
+							className="form-control form-control-sm p-2 mb-1"
+							name="mustHaveSections"
+							type="text"
+							placeholder="Any section"
+							value={this.props.mustHaveSections}
+							onChange={this.handleChange}
+							>
+						</input>
+						<button 
+							className="btn btn-sm btn-outline-light p-0 m-0 w-100"
+							type="button"
+							data-toggle="collapse" 
+							data-target={"#detailsofcourse" + this.props.course.id.toString()} 
+							onClick={() => this.props.deleteFunction(this.props.course.id)}
+						> - Remove course
+						</button>
+					</div>
+				</div>
 			</form>
 		)
 	}
-
 }
 
 class InputCustom extends Component {
