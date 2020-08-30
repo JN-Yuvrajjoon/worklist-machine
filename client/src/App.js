@@ -13,10 +13,11 @@ export default function App() {
 	// Using hooks to give App() a global state
 	// https://reactjs.org/docs/hooks-state.html
 	//    [state, functionToSetState] = useState(initial state)
-	const [globalSettings, setGlobalSettings] = useState(loadSettings())
+	const [globalSettings, setGlobalSettings] = useState(loadSettings());
 	const [globalLatestRequest, setGlobalLatestRequest] = useState({});
-	const [globalResults, setGlobalResults] = useState([])
-	const [globalNavigationSpot, setglobalNavigationSpot] = useState({resultPage: 0, variationPage: 0});
+	const [globalResults, setGlobalResults] = useState([]);
+	const [navigationResult, setNavigationResult] = useState(0);
+	const [navigationVariation, setNavigationVariation] = useState(0);
 
 	//TODO: from database
 	function loadSettings() {
@@ -35,10 +36,11 @@ export default function App() {
 		tempSettings.campus= tempSettings.campuses[0];
 		tempSettings.session= tempSettings.sessions[0];
 		return tempSettings;
-	} 
+	}
 
 	function globalSubmit(requestedCourses, requestedCustoms) {
-		setglobalNavigationSpot({resultPage: 1, variationPage: 1});
+		setNavigationResult(1);
+		setNavigationVariation(1);
 		let formattedCourses = formatCourses(requestedCourses);
 		let errors = askDatabase(formattedCourses)
 		let userRequest = {
@@ -111,7 +113,7 @@ export default function App() {
 
 	// OUTPUT: [Worklist], or empty array
 	function getCurrentResult(){
-		let resultIndex = globalNavigationSpot.resultPage - 1;
+		let resultIndex = navigationResult - 1;
 		if (globalResults.length > 0) {
 			if (0 <= resultIndex && resultIndex < globalResults.length) {
 				return (globalResults[resultIndex]);
@@ -123,7 +125,7 @@ export default function App() {
 	// OUTPUT: Worklist, or empty object
 	function getCurrentVariation(){
 		let results = getCurrentResult();
-		let variationIndex = globalNavigationSpot.variationPage - 1;
+		let variationIndex = navigationVariation - 1;
 		if (results !== undefined){
 			if (0 <= variationIndex && variationIndex < results.length) {
 				return (results[variationIndex]);
@@ -146,8 +148,10 @@ export default function App() {
 					<WorklistNavigatorBar 
 						results={globalResults.length}
 						variations={getCurrentResult().length}
-						navigateTo={globalNavigationSpot}
-						navigateFunction={setglobalNavigationSpot}
+						currentResult={navigationResult}
+						currentVariation={navigationVariation}
+						navigateResultFn={setNavigationResult}
+						navigateVariationFn={setNavigationVariation}
 						worklistInfo={getCurrentVariation().info}
 					/>
 					<WorklistRendering 

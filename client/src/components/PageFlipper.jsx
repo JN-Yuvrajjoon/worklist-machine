@@ -1,92 +1,89 @@
 import React, { Component } from "react";
 
-// Badly needs refactoring for clarity lol
-// Works for now
+// Could almost certainly be implemented in a simpler way
+// however, i refuse to spend more unecessary hours on the pageflipper
 
 /*
 props = {
-	type: "big boy" or "small boye"			// To be deprecated
+	name: "big boy" or "small boye"
 	pages: number,
 	currentPage: number,
-	changeFunction: function(number)
+	changeFn: function(number)
 }
-
-is it too late to switch to typescript
 */
 export default class PageFlipper extends Component {
 	constructor(props) {
 		super(props);
 		
-		this.invalidPages = this.invalidPages.bind(this);
 		this.handleArrowPress = this.handleArrowPress.bind(this);
-		this.navigateToEntered = this.navigateToEntered.bind(this);
-		this.passToParent = this.passToParent.bind(this);
+		this.navigateIfValid = this.navigateIfValid.bind(this);
+		this.handleFocus = this.handleFocus.bind(this);
+		this.resetState = this.resetState.bind(this);
 
+		// Unchecked input field
 		this.state = {
+			isInputMode: false,
 			inputPage: this.props.currentPage
-		} //unchecked input
-		
+		} 
 	}
 
-	passToParent() {
-		console.log("Passing to parent:", this.state.inputPage);
-		this.props.changeFunction(this.state.inputPage);
-	}
-
-	invalidPages() {
-		return (
-			this.props.pages === 0 
-			|| this.props.pages === undefined 
-			|| this.props.pages.isNaN
+	isNatural(num) {
+		return !(
+			num.isNaN
+			|| num === undefined 
+			|| num < 1
 		)
 	}
 
 	handleArrowPress(event) {
-		if(!this.invalidPages()){
+		if(this.isNatural(this.props.pages)){
 			let current = this.props.currentPage;
 			let last = this.props.pages;
 
 			if(event.target.name === "nextPageButton") {
 				let test = (current + 1);
-				this.setState(
-					{inputPage: (test <= last? test : 1)}, 
-					this.passToParent);
+				this.props.changeFn(test <= last? test : 1);
 			} else if(event.target.name === "previousPageButton") {
-				console.log("< PageButton called");
 				let test = (current - 1);
-				this.setState(
-					{inputPage: (test >= 1? test : last)}, 
-					this.passToParent);
+				this.props.changeFn(test >= 1? test : last);
 			} else if(event.target.name === "firstPageButton") {
-				console.log("<< PageButton called");
-				this.setState({
-					inputPage: 1
-				}, this.passToParent);
+				if(current !== 1){this.props.changeFn(1)}
 			} else if(event.target.name === "lastPageButton") {
-				console.log(">> PageButton called");
-				this.setState({
-					inputPage: last
-				}, this.passToParent);
+				if(current !== last){this.props.changeFn(last)}
 			}
 		}
 	}
 
-	navigateToEntered(event){
-		if(!(this.invalidPages())){
-			this.setState({inputPage: event.target.value},
-			() => {
-				let userChoice = parseInt(this.state.inputPage);
-				if (userChoice !== null 
-					&& userChoice !== undefined 
-					&& !userChoice.isNaN
-					&& userChoice >= 1 
-					&& userChoice <= this.props.pages) {
-						this.setState(
-							{inputPage: userChoice},
-							this.passToParent)
-				}
+	navigateIfValid(event){
+		let userChoice = parseInt(event.target.value);
+		if (this.isNatural(userChoice) && userChoice <= this.props.pages) {
+			console.log("Pageflipper component named", this.props.name, " got a valid number entry and is navigating to it: ", event.target.value);
+			this.props.changeFn(userChoice)
+			this.setState({
+				inputPage: userChoice,
+				isInputMode: false
 			})
+		} else {
+			console.error("Pageflipper component named", this.props.name, " recieved invalid input: ", event.target.value);
+			this.resetState();
 		}
+	}
+
+	resetState() {
+		if(this.state.inputPage !== this.props.currentPage){
+			console.log("Pageflipper component named", this.props.name, "is resetting state to props. Old state:", this.state.inputPage," New state/props:", this.props.currentPage)
+			this.setState({
+				inputPage: this.props.currentPage,
+				isInputMode: false
+			});
+		}
+	}
+
+	handleFocus() {
+		this.setState({
+			inputPage: this.props.currentPage, //reset just in case
+			isInputMode: true
+		})
 	}
 
 	returnSizedClasses(type) {
@@ -98,8 +95,7 @@ export default class PageFlipper extends Component {
 	}
 	
 	render() {
-		console.log("CONSTRUCTED PAGEFLIPPER GOT PAGE ", this.props.currentPage);
-		let displayPages = (this.invalidPages()? "-": this.props.pages);
+		let displayPages = (this.isNatural(this.props.pages)? this.props.pages : "-");
 		return(
 			<React.Fragment>
 				<button 
@@ -114,11 +110,14 @@ export default class PageFlipper extends Component {
 				</button>
 				
 				<input
-					className={this.returnSizedClasses(this.props.type)}
+					className={this.returnSizedClasses(this.props.name)}
 					name="nthPageField"
 					type="text"
-					value={this.state.inputPage}
-					onChange={this.navigateToEntered}>
+					value={this.state.isInputMode? this.state.inputPage : this.props.currentPage} //hacky
+					onChange={(e) => this.setState({inputPage: e.target.value})}
+					onKeyPress={(e) => {if(e.key === "Enter"){e.target.blur()}}}
+					onFocus={this.handleFocus}
+					onBlur={this.navigateIfValid}>
 				</input>
 				<div className="align-self-center">/{" " + displayPages}</div>
 				

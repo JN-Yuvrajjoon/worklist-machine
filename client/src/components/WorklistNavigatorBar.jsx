@@ -4,12 +4,16 @@ import PageFlipper from "./PageFlipper";
 /*
 props = {
 	results={globalResults.length}
-	variations={getCurrentResults().length}
-	navigateTo={globalNavigationSpot}
-	navigateFunction={setglobalNavigationSpot}
-	worklistInfo={getCurrentVariation().info} // Includes variation number, warnings, scores
+	variations={getCurrentResult().length}
+	currentResult={navigationResult}
+	currentVariation={navigationVariation}
+	navigateResultFn={setNavigationResult}
+	navigateVariationFn={setNavigationVariation}
+	worklistInfo={getCurrentVariation().info}
 }
 */
+
+
 
 export default class WorklistNavigatorBar extends Component{
 	constructor(props) {
@@ -20,41 +24,33 @@ export default class WorklistNavigatorBar extends Component{
 	}
 
 	handleWorklistNavigation(newPage) {
-		console.log("worklist navigator recieved", newPage, "from main nav");
-		this.props.navigateFunction({
-			resultPage: newPage, 
-			variationPage: 1
-		})
+		this.props.navigateResultFn(newPage);
+		this.props.navigateVariationFn(1); // Maybe allow user to navigate in 2D later, but need to know how many variations in the new result
 	}
 
 	handleVariationNavigation(newPage) {
-		console.log("variation navigator recieved", newPage, "from variation nav");
-		this.props.navigateFunction({
-			resultPage: this.props.navigateTo.resultPage, 
-			variationPage: newPage
-		})
+		this.props.navigateVariationFn(newPage);
 	}
 	
 	render(){
-		console.log("RENDERED NAVBAR GOT, ", this.props.navigateTo);
 		return(
 			<React.Fragment>
 			<div className="d-flex justify-content-center p-0 m-0">
 				<PageFlipper 
-					type="big boy"
-					changeFunction={this.handleWorklistNavigation}
+					name="big boy"
+					changeFn={this.handleWorklistNavigation}
 					pages={this.props.results}
-					currentPage={this.props.navigateTo.resultPage}
+					currentPage={this.props.currentResult}
 				/>
 			</div>
 			<hr></hr>
 			<div className="d-flex flex-wrap container-fluid p-0 m-0">
 				<div className="mx-2 align-self-center">Variation:</div>
 					<PageFlipper 
-						type="small boye" 
-						changeFunction={this.handleVariationNavigation}
+						name="small boye" 
+						changeFn={this.handleVariationNavigation}
 						pages={this.props.variations}
-						currentPage={this.props.navigateTo.variationPage}
+						currentPage={this.props.currentVariation}
 					/>
 				<div className="ml-auto" id="worklistVariationButtons">
 					<button className="btn btn-sm btn-outline-danger">Warnings</button>
