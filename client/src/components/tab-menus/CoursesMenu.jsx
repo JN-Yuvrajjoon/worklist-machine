@@ -1,5 +1,13 @@
 import React, {Component} from "react";
 
+/*
+props = {
+	coursesToRender={this.state.inputCourses} 
+	customsToRender={this.state.customBlocks} 
+	changeCoursesFunction={this.changeCoursesFunction} 
+	changeCustomsFunction={this.changeCustomsFunction}
+}
+*/
 export default class CoursesMenu extends Component {
 	constructor(props) {
 		super(props);
@@ -60,7 +68,6 @@ export default class CoursesMenu extends Component {
 						course={ic}
 						changeFunction={this.onModifyCourse}
 						deleteFunction={this.onDeleteCourse}
-						// availableTerms={this.props.availableTerms}
 					/>
 					<hr></hr>
 					</div>

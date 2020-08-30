@@ -28,9 +28,8 @@ export default function App() {
 			school: "",
 			campus: "",
 			session: "",
-		
 			preferredTime: "afternoon",
-			reduceGaps: false
+			reduceGaps: false,
 		};
 		tempSettings.school= tempSettings.schools[0];
 		tempSettings.campus= tempSettings.campuses[0];
@@ -38,28 +37,54 @@ export default function App() {
 		return tempSettings;
 	}
 
+	// INPUT:  
+	// requestedCourses: [inputCourse]
+	// requestedCustoms: [requestedCustom]
+	//
+	// Calls formatCourses([inputCourse] -> [requestedCourse])
+	// Checks database to see if requestedCourses exist
+	// If all are found, submit to engine
+	// If engine produces no errors, send the results to output
 	function globalSubmit(requestedCourses, requestedCustoms) {
+		let formattedCourses = formatCourses(requestedCourses);
+		let notFound = askDatabase(formattedCourses);
+		// All courses were found!
+		if(notFound.length === 0){ 
+			let userRequest = {
+				settings: globalSettings,
+				courses: formattedCourses,
+				customs: requestedCustoms
+			};
+			console.log("App.js is sending this request to the SE:", userRequest);
+			let engineOutput = engineFunction(userRequest); //TODO: try/catch
+				if(typeof(engineOutput) === "object") {
+					setOutput(engineOutput);
+					setGlobalLatestRequest(userRequest); // Saves the latest input
+				} else {
+					console.log(engineOutput)
+				}
+
+		} else { // Not all courses were found
+			console.log(notFound);
+		}
+	}
+	
+	// INPUT:
+	// validOutput: [Worklist]
+	// 
+	// Sets the state to the valid output
+	function setOutput(validOutput){
+		setGlobalResults(validOutput);
 		setNavigationResult(1);
 		setNavigationVariation(1);
-		let formattedCourses = formatCourses(requestedCourses);
-		let errors = askDatabase(formattedCourses)
-		let userRequest = {
-			settings: globalSettings,
-			courses: formatCourses(requestedCourses),
-			customs: requestedCustoms
-		}
-		console.log("This is the request that will be sent off to the scheduler:", userRequest);
-		try {
-			setGlobalResults(engineFunction(userRequest));
-			setGlobalLatestRequest(userRequest); // Saves the latest input
-		} catch(error) {
-			console.log(error);
-		}
-		
 	}
 
-	// INPUT:  unverifiedCourses: [inputCourse]
-	// OUTPUT: [inputCourse]
+	// INPUT:  
+	// unverifiedCourses: [inputCourse]
+	//
+	// OUTPUT: 
+	// [requestedCourse]
+	//
 	// Removes blank courses from the input
 	// Removes all characters other than alphanumerical, converts letters to uppercase
 	function formatCourses(inputCourses) {
@@ -75,16 +100,21 @@ export default function App() {
 	}
 	
 
-	// INPUT:  inputCourses: [inputCourse] // Names must be formatted as they are in the DB
-	//         school: string
-	//         campus: string
-	//         session: string
-	// OUTPUT: errors: [{index: number, message: string}]
+	// INPUT:  
+	// inputCourses: [inputCourse] // Names must be formatted as they are in the DB
+	// school: string
+	// campus: string
+	// session: string
+	//
+	// OUTPUT: 
+	// errors: [{index: number, message: string}]
+	//
 	// Searches database for each inputCourse to verify that they exist and have sections
 	// Returns errors (pairings of erroneous course index and what went wrong)
 	function askDatabase(inputCourses) {
 		// Navigate to correct database using school, campus, session (globalSettings)
-		let errors = []
+		let notFound = []
+
 		inputCourses.forEach(function(ic){
 			let TODO = true;
 			let foundCourse = TODO;
@@ -92,26 +122,27 @@ export default function App() {
 			let foundCourseSection = (ic.mustHaveSections === [] || TODO);
 			
 			if(!foundCourse){
-				errors.push({
+				notFound.push({
 					index: ic.id,
 					message: (`Could not find course ${ic.name}`)
 				})
 			} else if(!foundCourseSemester) {
-				errors.push({
+				notFound.push({
 					index: ic.id,
 					message: (`Found ${ic.name}, but could not find ${ic.name} in ${ic.mustBeSemester}`)
 				})
 			} else if(!foundCourseSection) {
-				errors.push({
+				notFound.push({
 					index: ic.id,
 					message: (`Found ${ic.name}, but could not find all of the specified sections.`)
 				})
 			}
 		})
-		return errors;
+		return notFound;
 	}
 
-	// OUTPUT: [Worklist], or empty array
+	// OUTPUT: 
+	// [Worklist], or empty array
 	function getCurrentResult(){
 		let resultIndex = navigationResult - 1;
 		if (globalResults.length > 0) {
@@ -122,7 +153,8 @@ export default function App() {
 		return ([]);
 	}
 
-	// OUTPUT: Worklist, or empty object
+	// OUTPUT: 
+	// Worklist, or empty object
 	function getCurrentVariation(){
 		let results = getCurrentResult();
 		let variationIndex = navigationVariation - 1;
@@ -138,7 +170,8 @@ export default function App() {
 		<div className="row" id="contains-everything">
 			<div className="container-fluid col-md m-0" id="wm-input-column">
 				<InputMenu 
-					settings={globalSettings} 
+					settings={globalSettings}
+					previousRequest={globalLatestRequest}
 					changeSettingsFunction={setGlobalSettings} 
 					goFunction={globalSubmit}
 				/>
@@ -155,11 +188,12 @@ export default function App() {
 						worklistInfo={getCurrentVariation().info}
 					/>
 					<WorklistRendering 
-						renderedResult={getCurrentVariation()}
+						currentResult={navigationResult}
+						currentVariation={navigationVariation}
+						worklist={getCurrentVariation()}
 					/>
 				</div>
 			</div>
-			
 		</div>
 	);
 }

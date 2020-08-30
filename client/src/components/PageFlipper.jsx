@@ -57,7 +57,7 @@ export default class PageFlipper extends Component {
 	navigateIfValid(event){
 		let userChoice = parseInt(event.target.value);
 		if (this.isNatural(userChoice) && userChoice <= this.props.pages) {
-			console.log("Pageflipper component named", this.props.name, " got a valid number entry and is navigating to it: ", event.target.value);
+			console.log("Pageflipper component named", this.props.name, " got a valid number entry and is navigating to it: ", userChoice);
 			this.props.changeFn(userChoice)
 			this.setState({
 				inputPage: userChoice,

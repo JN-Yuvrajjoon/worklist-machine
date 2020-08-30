@@ -1,28 +1,41 @@
 import React, {Component} from "react";
-
 import SettingsMenu from "./tab-menus/SettingsMenu";
 import CoursesMenu from "./tab-menus/CoursesMenu";
 import AboutMenu from "./tab-menus/AboutMenu";
 
-//props = {handleClickBigGoButton: function(UserRequest)}
+const CPSC213 = {
+	id: 0,
+	name: "CPSC 213", 
+	mustBeTerm: false,
+	mustHaveSections: []
+}
+const CPSC213A = {
+	id: 1,
+	name: "CPs C 213 a", 
+	mustBeTerm: false,
+	mustHaveSections: []
+}
+
+/*
+props = {
+	settings={globalSettings} 
+	previousRequest={globalLatestRequest}
+	changeSettingsFunction={setGlobalSettings} 
+	goFunction={globalSubmit}
+}
+*/
 export default class InputMenu extends Component {
 	constructor(props) {
 		super(props);
 
 		this.reindex = this.reindex.bind(this);
-		this.getAvailableTerms = this.getAvailableTerms.bind(this);
 		this.changeCoursesFunction = this.changeCoursesFunction.bind(this);
 		this.handleClickBigGoButton = this.handleClickBigGoButton.bind(this);
 
 		this.state = {
-			inputCourses: [],
+			inputCourses: [CPSC213, CPSC213A],
 			customBlocks: []
 		}
-	}
-
-	//TODO: Implement
-	getAvailableTerms() {
-		return ["1", "2", "1-2", "A", "D"];
 	}
 	
 	reindex(list) {
@@ -47,6 +60,11 @@ export default class InputMenu extends Component {
 			console.log("Input menu now has the following custom blocks: ", this.state.customBlocks)
 		);
 	}
+
+	// disableSubmit() {
+	// 	let nothingHasChanged = ()
+	// 	return (globalLatestRequest.settings === )
+	// }
 
 	handleClickBigGoButton() {
 		this.props.goFunction(this.state.inputCourses, this.state.customBlocks);
@@ -74,7 +92,6 @@ export default class InputMenu extends Component {
 								customsToRender={this.state.customBlocks} 
 								changeCoursesFunction={this.changeCoursesFunction} 
 								changeCustomsFunction={this.changeCustomsFunction}
-								availableTerms={this.getAvailableTerms()} 
 							/>
 						</div>
 						<div className="tab-pane fade" id="about-menu" role="tabpanel" aria-labelledby="about-menu">
@@ -117,9 +134,11 @@ export default class InputMenu extends Component {
 				</div>
 
 				<div className="container-fluid m-0" id="wm-submit-row">
-					<button className="btn btn-block custom-corners shadow" 
+					<button 
+						className="btn btn-block custom-corners shadow" 
 						type="button" 
 						id="wm-go-button"
+						// disabled={this.disableSubmit()}
 						onClick={this.handleClickBigGoButton}><h5>GO!</h5></button>
 				</div>
 			</div>

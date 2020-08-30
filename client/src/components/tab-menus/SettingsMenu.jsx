@@ -1,8 +1,13 @@
 import React, {Component} from "react";
-//import "bootstrap/dist/css/bootstrap.min.css"
-//import '../../App.css';
 
 // May need refactoring
+
+/* 
+props = {
+	changeFunction={this.props.changeSettingsFunction} 
+	settings={this.props.settings}
+}
+*/
 export default class SettingsMenu extends Component{
 	constructor(props) {
 		super(props);

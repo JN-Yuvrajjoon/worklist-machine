@@ -2,16 +2,25 @@ import {cpsc213, cpsc213a} from "./example-courses.js";
 //const cpsc213 = require("./example-course-cpsc213.js");
 //const cpsc213a = require("./example-course-cpsc213a.js");
 
-// Input: CheckedUserRequest
-// Output: Array of Result (a Result is an array of Worklists)
-const results = [["W1V1", "W1V2", "W1V3", "W1V4", "W1V5"],["W2V1"],["W3V1", "W3V2", "W3V3"]];
+
+const fakeResults = [
+	["W1V1", "W1V2", "W1V3", "W1V4", "W1V5"],
+	["W2V1"],
+	["W3V1", "W3V2", "W3V3"]
+];
+
+// INPUT: 
+// UserRequest = { settings: {}, courses: [], customs: []}
+//
+// OUTPUT: 
+// Array of Result (a Result is an array of Worklists)
 
 export default function generateResults(userRequest) {
 	if(isRequestBad()) {
 		return(console.error("request is bad lol"));
 	} else {
 		console.log("engine is useless right now, but here's the request you sent: ", userRequest)
-		return results;
+		return fakeResults;
 	}
 }
 

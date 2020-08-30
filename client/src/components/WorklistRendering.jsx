@@ -1,131 +1,86 @@
 import React, {Component} from "react";
 
-const fakeTerm1 = {
-	name: "Semester 1",
-	courses: [{},{},{}]
+const emptyDayBlockSet = {
+	sunday: false,
+	monday: false,
+	tuesday: false,
+	wednesday: false,
+	thursday: false,
+	friday: false,
+	saturday: false,
+
+	subsetStartDate: false,
+	subsetEndDate: false
 }
 
-const fakeTerm2 = {
-	name: "Semester 2",
-	courses: []
-}
-
-const fakeWorklist = {
-	resultNumber: 1,
-	variationNumber: 1,
-
-	gapScore: 100,
-	morningScore: 50,
-	consistencyScore: 0,
-
-	singleTerms: [ // Term objects
-		fakeTerm1,
-		fakeTerm2
-	],
-	otherSections: [ //Section object
-		{},
-		{},
-		{}
-	]
-};
-
-const fakeDayColumnProps = {
-	day: "whatever this isn't going in",
-	standardHeight: "not going in either",
-	rows: "not going in either",
-	
-	renderableBlocks: [
-		{courseCode: "CPSC 213",
-			sectionCode: "101",
-			activityType: "Lecture", // ?
-			startTime: 0, //800
-			length: 3, //930
-			alternating: 0
-		},
-		{courseCode: "CPSC 213",
-			sectionCode: "L01",
-			activityType: "Laboratory", // ?
-			startTime: 3, //930
-			length: 4, //1130
-			alternating: 0
-		},
-		{courseCode: "COMM 202",
-			sectionCode: "101",
-			activityType: "Lecture", // ?
-			startTime: 16, //1600 but my math could be off
-			length: 2, //1700
-			alternating: 1
-		}
+const defaultWorklist = {
+	semesters: [
+		{id: "1", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}, 
+		{id: "2", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}
 	]
 }
 
-//////// WORKLISTRENDERING COMPONENT
-//////// represents one Worklist rendered as multiple SemesterTables
-// 
-// After taking in a WorklistRendering object, WorklistRendering will:
-// 1. Decide how many SemesterTables to render
-// 2. Decide whether SemesterTables should be extended (by adding weekends, or extending mornings, or extending evenings)
-//    Note that ALL SemesterTables in a given rendering should have the same dimensions
-//    (e.g. having weekend courses in one term will cause all SemesterTables to display weekend columns)
-// 3. Calculate the height of a 30-minute block
-
-// props = {worklist: Worklist}
+/* 
+props = {
+	currentResult={navigationResult}
+	currentVariation={navigationVariation}
+	rendered={getCurrentVariation()}
+} 
+*/
 export default class WorklistRendering extends Component {
 	constructor(props) {
 		super(props);
 
-		this.generateTitle = this.generateTitle.bind(this);
+		this.returnRenderable = this.returnRenderable.bind(this);
 		this.findHeight = this.findHeight.bind(this);
 		this.checkWorklistFor = this.checkWorklistFor.bind(this);
 		this.getBlocksIn = this.getBlocksIn.bind(this);
-		
-		
-		this.state = {
-			resultNumber: fakeWorklist.resultNumber,
-			variationNumber: fakeWorklist.variationNumber,
-			
-			singleTerms: fakeWorklist.singleTerms,
-			otherSections: fakeWorklist.otherSections,
-
-			// Determine these right before rendering, not here
-			weekendExtension: this.checkWorklistFor("weekendExtension"),
-			morningExtension: this.checkWorklistFor("morningExtension"), //Default 800, extended 600
-			eveningExtension: this.checkWorklistFor("eveningExtension") //Default 1800, extended 2200
-		};
-
 	}
 
-	generateTitle(term) {
-		return (
-			<p className="m-1"><b>{term.name + " "}</b>
-				(of result {this.state.resultNumber}, variation {this.state.variationNumber})
-			</p>
-			);
+	// TODO: SEPARATE DAYBLOCKSETS
+	// If the props are not renderable, just render the default
+	returnRenderable(){
+		let toRender = this.props.worklist;
+		if(toRender.semesters === undefined || toRender.semesters.length === 0) {
+			console.log("WorklistRendering got undefined or zero semesters, so is rendering the default.");
+			return defaultWorklist;
+		} else {
+			console.log("Rendering worklist:", this.props.worklist);
+			return this.props.worklist;
+		}
 	}
-
+	
 	// Returns the on-screen height of a thirty minute block
 	// should later take into account the height of the screen and the start/end times
 	findHeight() {
 		return 1.5;
 	}
-
+	
 	checkWorklistFor(extension) {
 		return false;
 	}
-
+	
 	getBlocksIn(term) {
 		return [];
 	}
-
+	
+	
+	
 	render() {
+		// let weekendExtension= this.checkWorklistFor("weekendExtension");
+		// let morningExtension= this.checkWorklistFor("morningExtension"); //Default 800, extended 600
+		// let eveningExtension= this.checkWorklistFor("eveningExtension"); //Default 1800, extended 2200
+
 		return(
 			<div className="row p-0 m-0 container-fluid">
-				{this.state.singleTerms.map((t) => 
+				{this.returnRenderable().semesters.map((sem) => 
 					{return (
-						<div className="col-lg-6 p-2 m-0" key={t.name}>
-							<SemesterTable 
-								title={this.generateTitle(t)}
-								blocks={this.getBlocksIn(t)}
+						<div className="col-lg-6 p-2 m-0" key={sem.id}>
+							<Timetable 
+								semester={sem.id}
+								currentResult={this.props.currentResult}
+								currentVariation={this.props.currentVariation}
+								blocks={this.getBlocksIn(sem)}
 								standardHeight={this.findHeight()}
 								hideWeekends={this.checkWorklistFor("weekendExtension")} 
 								startAt={this.checkWorklistFor("morningExtension")} 
@@ -137,22 +92,17 @@ export default class WorklistRendering extends Component {
 				{/* Do something about untimetabled sections here */}
 				
 			</div>
-			
 		);
 	}
-
 }
 
-//////// SEMESTERTABLE COMPONENT
-//////// represents one semester of a worklist rendering
 
-// SemesterTable takes in a bunch of Blocks, separates them by day, and puts them on a grid
-// Must create the "renderableBlock" data type, which is different from the type used in worklist generation
 // TODO: Alternating week courses
-class SemesterTable extends Component {
+class Timetable extends Component {
 	constructor(props) {
 		super(props);
 
+		this.generateTableTitle = this.generateTableTitle.bind(this);
 		this.renderTimeRuler = this.renderTimeRuler.bind(this);
 		this.dayBlocksOf = this.dayBlocksOf.bind(this);
 
@@ -190,13 +140,43 @@ class SemesterTable extends Component {
 		// e.g. 1030 - 900 = 30 = length of 1
 		return([]);
 	}
+
+	// INPUT:
+	// sem: number
+	// start: Date or false
+	// end: Date or false
+	//
+	// OUTPUT:
+	// Title = {semester: string, interval: string, navigation: string}
+	generateTableTitle(sem, start, end) {
+		let intervalString = (
+			(!start || !end)? "" :
+			(`${start.toDateString().slice(4,10)}-${end.toDateString().slice(4,10)}`)
+		)
+		let navString = (
+			(this.props.currentResult === 0 || this.props.currentVariation === 0)? "" :
+			(`(Result ${this.props.currentResult}.${this.props.currentVariation})`)
+		)
+		return {
+			semester: (`Semester ${sem}`),
+			interval: intervalString,
+			navigation: navString
+		};
+	}
 	
 	render() {
 		const rows = 20; // calculate from start and end times
+		let title = this.generateTableTitle(this.props.semester, this.props.startDate, this.props.endDate);
 
 		return(
 			<React.Fragment>
-			<div className="card p-1 mb-1 zero-space text-center wm-table-title">{this.props.title}</div>
+			<div className="card p-2 mb-2 zero-space text-center wm-table-title">
+				<p className="m-0">
+					<b>{title.semester}</b>
+					{" "+ title.interval}
+					{" "+ title.navigation}
+				</p>
+			</div>
 			<div className="row p-0 m-0 zero-space">
 				<div className="col-1 p-0 m-0">
 					{this.renderTimeRuler()}
@@ -247,30 +227,59 @@ class SemesterTable extends Component {
 							renderableBlocks={this.dayBlocksOf("Saturday")} />
 					}
 					</div>
-
 				</div>
-				</div>
+			</div>
 			</React.Fragment>
-			
 		)
 	}
 }
 
 
-//////// DAYCOLUMN COMPONENT
+const fakeDayColumnProps = {
+	day: "whatever this isn't going in",
+	standardHeight: "not going in either",
+	rows: "not going in either",
+	
+	renderableBlocks: [
+		{courseCode: "CPSC 213",
+			sectionCode: "101",
+			activityType: "Lecture", // ?
+			startTime: 0, //800
+			length: 3, //930
+			alternating: 0
+		},
+		{courseCode: "CPSC 213",
+			sectionCode: "L01",
+			activityType: "Laboratory", // ?
+			startTime: 3, //930
+			length: 4, //1130
+			alternating: 0
+		},
+		{courseCode: "COMM 202",
+			sectionCode: "101",
+			activityType: "Lecture", // ?
+			startTime: 16, //1600 but my math could be off
+			length: 2, //1700
+			alternating: 1
+		}
+	]
+}
 // This item likely doesn't need to be a Component
 
-// PROPS
-// day:				just the title of the day (e.g. Monday)
-// standardHeight:	height of one 30-minute block in rem
-// rows:				Number of 30-minute blocks it's rendering for the day
-// renderableBlocks: an ordered(?) list of RenderableBlock objects that all occur on the same day and do not overlap
-// 			courseCode: "CPSC 213",
-// 			sectionCode: "101",
-// 			activityType: "Lecture", 
-// 			startTime: 0, //800
-// 			length: 3, //930
-// 			alternating: 0
+/*
+props = {
+	day:				just the title of the day (e.g. Monday)
+	standardHeight:	height of one 30-minute block in rem
+	rows:				Number of 30-minute blocks it's rendering for the day
+	renderableBlocks: an ordered(?) list of RenderableBlock objects that all occur on the same day and do not overlap
+				courseCode: "CPSC 213",
+				sectionCode: "101",
+				activityType: "Lecture", 
+				startTime: 0, //800
+				length: 3, //930
+				alternating: 0
+}
+*/
 
 class DayColumn extends Component {
 	constructor(props) {
@@ -310,12 +319,11 @@ class DayColumn extends Component {
 	}
 
 	hoverGlow(block){
-		//makes all blocks of a Section glow when one block is hovered on
+		// makes all blocks of a Section glow when one block is hovered on
 		// I think this could slow things down; I will not include it if it does
 	}
 
 	render() {
-		// fakeDayColumnProps should produce: 3-long block, 4-long block, 9 gaps, 2-long block, 2 gaps
 		let unrendered = this.state.renderableBlocks;
 		let currentRow = 0;
 		let col = [];
@@ -349,7 +357,11 @@ class DayColumn extends Component {
 		return(
 			<div className="col card flex-nowrap p-0 m-0">
 				<ul className="list-group list-group-flush p-0 m-0">
-					<li className="list-group-item p-0 m-0 text-center" style={{height:this.state.standardHeight + "rem"}}>{this.state.day.charAt(0)}</li>
+					<li className="list-group-item p-0 m-0 text-center" 
+						style={{height:this.state.standardHeight + "rem"}}
+						>
+							{this.state.day.charAt(0)}
+					</li>
 					{col}
 				</ul>
 			</div>

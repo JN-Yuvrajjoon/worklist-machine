@@ -12,9 +12,6 @@ props = {
 	worklistInfo={getCurrentVariation().info}
 }
 */
-
-
-
 export default class WorklistNavigatorBar extends Component{
 	constructor(props) {
 		super(props);
