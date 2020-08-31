@@ -33,7 +33,7 @@ export default class SettingsMenu extends Component{
 			campus: null,
 			session: null
 			}, 
-			this.passToParent()
+			this.passToParent
 		);
 	}
 
@@ -41,7 +41,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			campus: event.target.value
 			}, 
-			this.passToParent()
+			this.passToParent
 		);
 	}
 
@@ -49,7 +49,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			session: event.target.value 
 			}, 
-			this.passToParent()
+			this.passToParent
 		);
 	}
 
@@ -57,7 +57,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			preferredTime: event.target.value
 			}, 
-			this.passToParent()
+			this.passToParent
 		);
 	}
 
@@ -65,7 +65,7 @@ export default class SettingsMenu extends Component{
 		this.setState({
 			reduceGaps: event.target.checked
 			}, 
-			this.passToParent()
+			this.passToParent
 		);
 	}
 
@@ -119,7 +119,44 @@ export default class SettingsMenu extends Component{
 				</div>
 
 				<hr></hr>
-
+				<div className="form-group">
+					<label>Maximum courses at once:</label>
+					<select 
+						className="form-control form-control-sm"
+						defaultValue ={5}
+						//value={this.state.preferredTime}
+						//onChange={this.handleChangePreferredTime}>
+						>	<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+					</select>
+				</div>
+				<div className="form-group">
+					<label>Maximum consecutive hours:</label>
+					<select 
+						className="form-control form-control-sm"
+						defaultValue ={0}
+						//value={this.state.preferredTime}
+						//onChange={this.handleChangePreferredTime}>
+						>	
+							<option value="0">No maximum</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+					</select>
+				</div>
 				<div className="form-group">
 					<label>Prefer time: </label>
 					<select 
@@ -138,7 +175,25 @@ export default class SettingsMenu extends Component{
 						type="checkbox"
 						checked={this.state.reduceGaps}
 						onChange={this.handleChangeReduceGaps}/>
-					{" "}Reduce gaps?</label> 
+					{" "}Reduce breaks/day length?</label> 
+				</div>
+				<div className="form-group">
+					<label>
+					<input 
+						name="reduceGaps" 
+						type="checkbox"
+						checked={this.state.reduceGaps}
+						onChange={this.handleChangeReduceGaps}/>
+					{" "}Prefer having empty days?</label> 
+				</div>
+				<div className="form-group">
+					<label>
+					<input 
+						name="reduceGaps" 
+						type="checkbox"
+						checked={this.state.reduceGaps}
+						onChange={this.handleChangeReduceGaps}/>
+					{" "}Prefer consistency between days?</label> 
 				</div>
 			</form>
 

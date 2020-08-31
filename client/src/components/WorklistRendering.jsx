@@ -1,27 +1,17 @@
 import React, {Component} from "react";
-
-const emptyDayBlockSet = {
-	sunday: false,
-	monday: false,
-	tuesday: false,
-	wednesday: false,
-	thursday: false,
-	friday: false,
-	saturday: false,
-
-	subsetStartDate: false,
-	subsetEndDate: false
-}
+import {emptyDayBlockSet} from "../example-results.js";
 
 const defaultWorklist = {
+	info: {},
 	semesters: [
 		{id: "1", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}, 
 		{id: "2", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}
-	]
+	],
+	abnormalSections: []
 }
 
 /* 
-props = {
+App.js props = {
 	currentResult={navigationResult}
 	currentVariation={navigationVariation}
 	rendered={getCurrentVariation()}
@@ -60,16 +50,47 @@ export default class WorklistRendering extends Component {
 		return false;
 	}
 	
+	//remove
 	getBlocksIn(term) {
 		return [];
 	}
-	
-	
+
+	// OUTPUT:
+	// [DayBlockSet], each with its associated start and end dates
+	getBlockSets(worklist){
+		if(worklist !== undefined && worklist.semesters !== undefined) {
+			let blockSets = [];
+			worklist.semesters.forEach(
+				function(sem) {
+
+					// Looks bad, but will only happen very rarely (when courses don't start and end with the rest of the semester)
+					if(Array.isArray(sem.dayBlocks)){
+						sem.dayBlocks.forEach(
+							function(origSet) {
+								let set = origSet;
+								set.startDate = (set.subsetStartDate || sem.startDate)
+								set.startDate = (set.subsetEndDate || sem.endDate)
+								blockSets.push(set)
+							}
+						)
+
+					// Common case
+					} else {
+						let set = sem.dayBlocks;
+						set.startDate = (sem.startDate)
+						set.startDate = (sem.endDate)
+						blockSets.push(set)
+					}
+				}
+			)
+			return blockSets;
+		}
+	}
 	
 	render() {
-		// let weekendExtension= this.checkWorklistFor("weekendExtension");
-		// let morningExtension= this.checkWorklistFor("morningExtension"); //Default 800, extended 600
-		// let eveningExtension= this.checkWorklistFor("eveningExtension"); //Default 1800, extended 2200
+		let weekendExtension= this.checkWorklistFor("weekendExtension");
+		let morningExtension= this.checkWorklistFor("morningExtension"); //Default 800, extended 600
+		let eveningExtension= this.checkWorklistFor("eveningExtension"); //Default 1800, extended 2200
 
 		return(
 			<div className="row p-0 m-0 container-fluid">
@@ -96,7 +117,18 @@ export default class WorklistRendering extends Component {
 	}
 }
 
-
+/*
+WorklistRendering props = {
+	semester={sem.id}
+	currentResult={this.props.currentResult}
+	currentVariation={this.props.currentVariation}
+	blocks={this.getBlocksIn(sem)}
+	standardHeight={this.findHeight()}
+	hideWeekends={this.checkWorklistFor("weekendExtension")} 
+	startAt={this.checkWorklistFor("morningExtension")} 
+	endAt={this.checkWorklistFor("eveningExtension")}
+}
+*/
 // TODO: Alternating week courses
 class Timetable extends Component {
 	constructor(props) {
@@ -264,23 +296,22 @@ const fakeDayColumnProps = {
 		}
 	]
 }
-// This item likely doesn't need to be a Component
 
 /*
 props = {
 	day:				just the title of the day (e.g. Monday)
 	standardHeight:	height of one 30-minute block in rem
 	rows:				Number of 30-minute blocks it's rendering for the day
-	renderableBlocks: an ordered(?) list of RenderableBlock objects that all occur on the same day and do not overlap
-				courseCode: "CPSC 213",
-				sectionCode: "101",
-				activityType: "Lecture", 
-				startTime: 0, //800
-				length: 3, //930
-				alternating: 0
+	renderableBlocks: an ordered list of RenderableBlock objects that all occur on the same day and do not overlap
+		courseCode: "CPSC 213",
+		sectionCode: "101",
+		activityType: "Lecture", 
+		startTime: 0, //800
+		length: 3, //930
+		alternating: 0
 }
 */
-
+// This item likely doesn't need to be a Component
 class DayColumn extends Component {
 	constructor(props) {
 		super(props);
@@ -295,19 +326,15 @@ class DayColumn extends Component {
 
 			renderableBlocks: fakeDayColumnProps.renderableBlocks
 		}
-		
-
 	}
 
 	// maybe later pass in "startodd?" and "startlight?" param so tables are stripey based on hours
 	// Better yet, make a gap a single block that is striped using CSS rather than using a for loop
 	returnGap(length) {
 		let gap = [];
-
 		for(let i = 0; i < length; i++) {
 			gap.push(<li className="list-group-item p-0 m-0" style={{height:this.state.standardHeight + "rem"}}></li>);
 		}
-		
 		return gap;
 	}
 
@@ -318,10 +345,10 @@ class DayColumn extends Component {
 		return(<div className="wm-course-block rounded" style={{height:blockHeight + "rem"}}>{courseName + " section " +courseSection}</div>); //fix height
 	}
 
-	hoverGlow(block){
-		// makes all blocks of a Section glow when one block is hovered on
-		// I think this could slow things down; I will not include it if it does
-	}
+	// hoverGlow(block){
+	// 	// makes all blocks of a Section glow when one block is hovered on
+	// 	// I think this could slow things down; I will not include it if it does
+	// }
 
 	render() {
 		let unrendered = this.state.renderableBlocks;

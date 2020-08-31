@@ -1,32 +1,38 @@
+const s1start = new Date(2020, 8, 8)
+const s1end = new Date(2020, 11, 3)
+const s2start = new Date(2020, 0, 4)
+const s2end =  new Date(2020, 3, 8)
+
 const cpsc213 = {
-	"id": "CPSC213",
-	"subject": "CPSC",
-	"courseNumber": "213",
-	"description": "",
-	"prereqs": "",
-	"dateAdded": "",
+	id: "CPSC213",
+	subject: "CPSC",
+	courseNumber: "213",
+	description: "",
+	prereqs: "",
+	dateAdded: "",
 
-	"noSections?": false,
-	"singleSemesters": [
-		{"id": "1",
-		"requiredActivities": ["Web-Oriented Course", "Laboratory"],
-		"startDate": "September",
-		"endDate": "December",
-		"sections": [
+	hasNoSections: false,
+	singleSemesters: [
+		{
+			id: "1",
+			requiredActivities: ["Web-Oriented Course", "Laboratory"],
+			startDate: s1start,
+			endDate: s1end,
+			sections: [
 			{
-				"id": "101",
-				"sectionComments": "This is the section's comments",
+				id: "101",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Web-Oriented Course",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Web-Oriented Course",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -34,35 +40,35 @@ const cpsc213 = {
 					"endTime": 1530,
 					"alternating": 0
 				},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": true,
-					"wednesday": false,
-					"thursday": true,
-					"friday": false,
-					"saturday": false
+					sunday: false,
+					monday: false,
+					tuesday: true,
+					wednesday: false,
+					thursday: true,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "102",
-				"sectionComments": "This is the section's comments",
+				id: "102",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Web-Oriented Course",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Web-Oriented Course",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -70,43 +76,43 @@ const cpsc213 = {
 					"endTime": 1830,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": true,
-					"wednesday": false,
-					"thursday": true,
-					"friday": false,
-					"saturday": false
+					sunday: false,
+					monday: false,
+					tuesday: true,
+					wednesday: false,
+					thursday: true,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L1A",
-				"sectionComments": "This is the section's comments",
+				id: "L1A",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": {
+					sunday: false,
+					monday: false,
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -114,8 +120,8 @@ const cpsc213 = {
 						"endTime": 1630,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": {
+					wednesday: false,
+					thursday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -123,33 +129,33 @@ const cpsc213 = {
 						"endTime": 1730,
 						"alternating": 0
 						},
-					"friday": false,
-					"saturday": false
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L1B",
-				"sectionComments": "This is the section's comments",
+				id: "L1B",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": false,
-					"wednesday": {
+					sunday: false,
+					monday: false,
+					tuesday: false,
+					wednesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -157,8 +163,8 @@ const cpsc213 = {
 						"endTime": 1300,
 						"alternating": 0
 						},
-					"thursday": false,
-					"friday": {
+					thursday: false,
+					friday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -166,29 +172,30 @@ const cpsc213 = {
 						"endTime": 1300,
 						"alternating": 0
 						},
-					"saturday": false
+					saturday: false
 				}
 			}]
 		},
-		{"id": "2",
-		"requiredActivities": ["Lecture", "Laboratory"],
-		"startDate": "January",
-		"endDate": "April",
-		"sections": [
+		{
+			id: "2",
+			requiredActivities: ["Lecture", "Laboratory"],
+			startDate: s2start,
+			endDate: s2end,
+			sections: [
 			{
-				"id": "203",
-				"sectionComments": "This is the section's comments",
+				id: "203",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -196,35 +203,35 @@ const cpsc213 = {
 					"endTime": 1400,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "204",
-				"sectionComments": "This is the section's comments",
+				id: "204",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -232,35 +239,35 @@ const cpsc213 = {
 					"endTime": 1000,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "205",
-				"sectionComments": "This is the section's comments",
+				id: "205",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -268,42 +275,42 @@ const cpsc213 = {
 					"endTime": 1300,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "L2A",
-				"sectionComments": "This is the section's comments",
+				id: "L2A",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": {
+					sunday: false,
+					monday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -311,7 +318,7 @@ const cpsc213 = {
 						"endTime": 1200,
 						"alternating": 0
 						},
-					"tuesday": {
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -319,33 +326,33 @@ const cpsc213 = {
 						"endTime": 1500,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": false,
-					"friday": false,
-					"saturday": false
+					wednesday: false,
+					thursday: false,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L2B",
-				"sectionComments": "This is the section's comments",
+				id: "L2B",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": {
+					sunday: false,
+					monday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -353,7 +360,7 @@ const cpsc213 = {
 						"endTime": 1500,
 						"alternating": 0
 						},
-					"tuesday": {
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -361,46 +368,47 @@ const cpsc213 = {
 						"endTime": 1000,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": false,
-					"friday": false,
-					"saturday": false
+					wednesday: false,
+					thursday: false,
+					friday: false,
+					saturday: false
 				}
 			}]
 		}
 	],
-	"otherSemesters": []
+	otherSemesters: []
 }
 
 const cpsc213a = {
-	"id": "CPSC213A",
-	"subject": "CPSC",
-	"courseNumber": "213A",
-	"description": "",
-	"prereqs": "",
-	"dateAdded": "",
+	id: "CPSC213A",
+	subject: "CPSC",
+	courseNumber: "213A",
+	description: "",
+	prereqs: "",
+	dateAdded: "",
 
-	"noSections?": false,
-	"singleSemesters": [
-		{"id": "1",
-		"requiredActivities": ["Web-Oriented Course", "Laboratory"],
-		"startDate": "September",
-		"endDate": "December",
-		"sections": [
+	hasNoSections: false,
+	singleSemesters: [
+		{
+			id: "1",
+			requiredActivities: ["Web-Oriented Course", "Laboratory"],
+			startDate: s1start,
+			endDate: s1end,
+			sections: [
 			{
-				"id": "101",
-				"sectionComments": "This is the section's comments",
+				id: "101",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Web-Oriented Course",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Web-Oriented Course",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -408,35 +416,35 @@ const cpsc213a = {
 					"endTime": 1530,
 					"alternating": 0
 				},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": true,
-					"wednesday": false,
-					"thursday": true,
-					"friday": false,
-					"saturday": false
+					sunday: false,
+					monday: false,
+					tuesday: true,
+					wednesday: false,
+					thursday: true,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "102",
-				"sectionComments": "This is the section's comments",
+				id: "102",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Web-Oriented Course",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Web-Oriented Course",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -444,43 +452,43 @@ const cpsc213a = {
 					"endTime": 1830,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": true,
-					"wednesday": false,
-					"thursday": true,
-					"friday": false,
-					"saturday": false
+					sunday: false,
+					monday: false,
+					tuesday: true,
+					wednesday: false,
+					thursday: true,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L1A",
-				"sectionComments": "This is the section's comments",
+				id: "L1A",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": {
+					sunday: false,
+					monday: false,
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -488,8 +496,8 @@ const cpsc213a = {
 						"endTime": 1630,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": {
+					wednesday: false,
+					thursday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -497,33 +505,33 @@ const cpsc213a = {
 						"endTime": 1730,
 						"alternating": 0
 						},
-					"friday": false,
-					"saturday": false
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L1B",
-				"sectionComments": "This is the section's comments",
+				id: "L1B",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": false,
-					"tuesday": false,
-					"wednesday": {
+					sunday: false,
+					monday: false,
+					tuesday: false,
+					wednesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -531,8 +539,8 @@ const cpsc213a = {
 						"endTime": 1300,
 						"alternating": 0
 						},
-					"thursday": false,
-					"friday": {
+					thursday: false,
+					friday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -540,29 +548,30 @@ const cpsc213a = {
 						"endTime": 1300,
 						"alternating": 0
 						},
-					"saturday": false
+					saturday: false
 				}
 			}]
 		},
-		{"id": "2",
-		"requiredActivities": ["Lecture", "Laboratory"],
-		"startDate": "January",
-		"endDate": "April",
-		"sections": [
+		{
+			id: "2",
+			requiredActivities: ["Lecture", "Laboratory"],
+			startDate: s2start,
+			endDate: s2end,
+			sections: [
 			{
-				"id": "203",
-				"sectionComments": "This is the section's comments",
+				id: "203",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -570,35 +579,35 @@ const cpsc213a = {
 					"endTime": 1400,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "204",
-				"sectionComments": "This is the section's comments",
+				id: "204",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -606,35 +615,35 @@ const cpsc213a = {
 					"endTime": 1000,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "205",
-				"sectionComments": "This is the section's comments",
+				id: "205",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Lecture",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": true,
-				"standardBlock": {
+				isStandard: true,
+				standardBlock: {
 					"location": "ICICS X260",
 					"instructor": "prof. prof",
 					"subsetSectionActivities": false,
@@ -642,42 +651,42 @@ const cpsc213a = {
 					"endTime": 1300,
 					"alternating": 0
 					},
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": true,
-					"tuesday": false,
-					"wednesday": true,
-					"thursday": false,
-					"friday": true,
-					"saturday": false
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: true,
+					thursday: false,
+					friday: true,
+					saturday: false
 				}
 			},
 			{
-				"id": "L2A",
-				"sectionComments": "This is the section's comments",
+				id: "L2A",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": {
+					sunday: false,
+					monday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -685,7 +694,7 @@ const cpsc213a = {
 						"endTime": 1200,
 						"alternating": 0
 						},
-					"tuesday": {
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -693,33 +702,33 @@ const cpsc213a = {
 						"endTime": 1500,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": false,
-					"friday": false,
-					"saturday": false
+					wednesday: false,
+					thursday: false,
+					friday: false,
+					saturday: false
 				}
 			},
 			{
-				"id": "L2B",
-				"sectionComments": "This is the section's comments",
+				id: "L2B",
+				sectionComments: "This is the section's comments",
 
-				"sectionStatus": "",
-				"sectionRestrictions": "",
+				sectionStatus: "",
+				sectionRestrictions: "",
 
-				"hasNoBlocks?": false,
-				"subsetCourseSemesterActivities":"Laboratory",
-				"subsetCourseSemesterStartDate": false,
-				"subsetCourseSemesterEndDate": false,
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities:"Laboratory",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
 
-				"isStandard?": false,
-				"multiSemester?": false,
-				"dayBlocks": {
-					"subsetSectionSemesters": false,
-					"subsetSectionStartDate": false,
-					"subsetSectionEndDate": false,
+				isStandard: false,
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
 
-					"sunday": false,
-					"monday": {
+					sunday: false,
+					monday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -727,7 +736,7 @@ const cpsc213a = {
 						"endTime": 1500,
 						"alternating": 0
 						},
-					"tuesday": {
+					tuesday: {
 						"location": "ICICS X260",
 						"instructor": "prof. prof",
 						"subsetSectionActivities": false,
@@ -735,18 +744,76 @@ const cpsc213a = {
 						"endTime": 1000,
 						"alternating": 0
 						},
-					"wednesday": false,
-					"thursday": false,
-					"friday": false,
-					"saturday": false
+					wednesday: false,
+					thursday: false,
+					friday: false,
+					saturday: false
 				}
 			}]
 		}
 	],
-	"otherSemesters": []
+	otherSemesters: []
+}
+
+const just001 = {
+	id: "JUST001",
+	subject: "JUST",
+	courseNumber: "001",
+	description: "To check what the engine does when there's only one section available",
+	prereqs: "",
+	dateAdded: "",
+
+	hasNoSections: false,
+	singleSemesters: [
+		{
+			id: "1",
+			requiredActivities: "Lecture",
+			startDate: s1start,
+			endDate: s1end,
+			sections: [
+			{
+				id: "101",
+				sectionComments: "This is the section's comments",
+
+				sectionStatus: "",
+				sectionRestrictions: "",
+
+				hasNoBlocks: false,
+				subsetCourseSemesterActivities: "Lecture",
+				//subsetCourseSemesterStartDate: false,
+				//subsetCourseSemesterEndDate: false,
+
+				isStandard: true,
+				standardBlock: {
+					"location": "main mall",
+					"instructor": "prof. prof",
+					"subsetSectionActivities": false,
+					"startTime": 800,
+					"endTime": 900,
+					"alternating": 0
+				},
+				multiSemester: false,
+				dayBlocks: {
+					subsetSectionSemesters: false,
+					subsetSectionStartDate: false,
+					subsetSectionEndDate: false,
+
+					sunday: false,
+					monday: true,
+					tuesday: false,
+					wednesday: false,
+					thursday: false,
+					friday: false,
+					saturday: false
+				}
+			}]
+		}
+	],
+	otherSemesters: []
 }
 
 module.exports = {
 	cpsc213: cpsc213,
-	cpsc213a: cpsc213a
+	cpsc213a: cpsc213a,
+	just001: just001
 }
