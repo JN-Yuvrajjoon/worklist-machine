@@ -37,6 +37,11 @@ export default class InputMenu extends Component {
 			customBlocks: []
 		}
 	}
+
+	// for debugging of scheduling engine only
+	componentDidMount(){
+		this.handleClickBigGoButton()
+	}
 	
 	reindex(list) {
 		let result = list;

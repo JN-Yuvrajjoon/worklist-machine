@@ -812,8 +812,6 @@ const just001 = {
 	otherSemesters: []
 }
 
-module.exports = {
-	cpsc213: cpsc213,
-	cpsc213a: cpsc213a,
-	just001: just001
-}
+export const exportjust001 = just001;
+export const exportcpsc213 = cpsc213;
+export const exportcpsc213a = cpsc213a;

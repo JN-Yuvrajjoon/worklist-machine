@@ -32,10 +32,10 @@ export default class WorklistRendering extends Component {
 	returnRenderable(){
 		let toRender = this.props.worklist;
 		if(toRender.semesters === undefined || toRender.semesters.length === 0) {
-			console.log("WorklistRendering got undefined or zero semesters, so is rendering the default.");
+			// console.log("WorklistRendering got undefined or zero semesters, so is rendering the default.");
 			return defaultWorklist;
 		} else {
-			console.log("Rendering worklist:", this.props.worklist);
+			// console.log("Rendering worklist:", this.props.worklist);
 			return this.props.worklist;
 		}
 	}
