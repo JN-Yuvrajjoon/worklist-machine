@@ -1,9 +1,5 @@
 import {exportjust001, exportcpsc213, exportcpsc213a} from "./example-courses.js";
 import {wl1, wl2, wl3} from "./example-results.js";
-// import("./example-courses.js")
-// 	.then((module) => {
-// 	const database = module;
-// 	});
 
 const fakeResults = [
 	[wl1, wl2, wl3],
@@ -44,14 +40,15 @@ export default function generateResults(userRequest) {
 	}
 }
 
-
-
 function isRequestBad(courses, settings){
 	// if(settings.minAtOnce !== undefined && minAtOnce > courses.length) {
-		// console.error("Your minimum course boundary is set too high. Add more courses or decrease the minimum.")
-		return true;
+	// 	console.error("Your minimum course boundary is set too high. Add more courses or decrease the minimum.")
+	// 	return true;
 	// }
+	return false;
 }
+
+function handleSpecificSections() {}
 
 // Determines possible combinations of courses * semesters
 // OUTPUT: arrangedRequests = [[inputCourse], [inputCourse], ...]
@@ -68,14 +65,30 @@ function generateArrangements(requestedCourses, minAtOnce, maxAtOnce) {
 	return arrangements;
 }
 
-function arrangeCourse(courseName, arrangement){
+function arrangeCourse(courseName, arrangement){}
 
+
+
+function addSection(section, schedule){
+	// For each blockset in the section, combine it with the relevant schedule blockset
+}
+function combineBlockSets(blockset1, blockset2){
+	// Given two blocksets, make one blockset or return false
+	
+}
+
+function compareBlocks(block1, block2){
+	return (block1.startTime > block2.endTime && block2.startTime > block1.endTime);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// DATABASE FUNCTIONS //////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 const database = [exportjust001, exportcpsc213, exportcpsc213a]
+
+function retrieveRequirements(course, semester) {
+	return {activity: "lecture", solutions: 3, waitlist: false, tiedTo: false}
+}
 
 function retrieveCourse(name) {
 	for(let i = 0; i < database.length; i++) {
