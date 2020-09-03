@@ -15,7 +15,18 @@ const cpsc213 = {
 	singleSemesters: [
 		{
 			id: "1",
-			requiredActivities: ["Web-Oriented Course", "Laboratory"],
+			requiredActivities: [
+				{
+					activity: "Web-Oriented Course", 
+					solutions: 2, 
+					tiedTo: false
+				},
+				{
+					activity: "Laboratory", 
+					solutions: 2,
+					tiedTo: false
+				}
+			],
 			startDate: s1start,
 			endDate: s1end,
 			sections: [
@@ -178,7 +189,18 @@ const cpsc213 = {
 		},
 		{
 			id: "2",
-			requiredActivities: ["Lecture", "Laboratory"],
+			requiredActivities: [
+				{
+					activity: "Lecture", 
+					solutions: 3, 
+					tiedTo: false
+				},
+				{
+					activity: "Laboratory", 
+					solutions: 2,
+					tiedTo: false
+				}
+			],
 			startDate: s2start,
 			endDate: s2end,
 			sections: [
@@ -391,7 +413,18 @@ const cpsc213a = {
 	singleSemesters: [
 		{
 			id: "1",
-			requiredActivities: ["Web-Oriented Course", "Laboratory"],
+			requiredActivities: [
+				{
+					activity: "Web-Oriented Course", 
+					solutions: 2, 
+					tiedTo: false
+				},
+				{
+					activity: "Laboratory", 
+					solutions: 2,
+					tiedTo: false
+				}
+			],
 			startDate: s1start,
 			endDate: s1end,
 			sections: [
@@ -554,7 +587,18 @@ const cpsc213a = {
 		},
 		{
 			id: "2",
-			requiredActivities: ["Lecture", "Laboratory"],
+			requiredActivities: [
+				{
+					activity: "Lecture", 
+					solutions: 3, 
+					tiedTo: false
+				},
+				{
+					activity: "Laboratory", 
+					solutions: 2,
+					tiedTo: false
+				}
+			],
 			startDate: s2start,
 			endDate: s2end,
 			sections: [
@@ -767,7 +811,13 @@ const just001 = {
 	singleSemesters: [
 		{
 			id: "1",
-			requiredActivities: "Lecture",
+			requiredActivities: [
+				{
+					activity: "Lecture", 
+					solutions: 1, 
+					tiedTo: false
+				}
+			],
 			startDate: s1start,
 			endDate: s1end,
 			sections: [
