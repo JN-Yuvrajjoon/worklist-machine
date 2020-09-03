@@ -15,8 +15,8 @@ export default class SettingsMenu extends Component{
 		this.handleChangeSchool = this.handleChangeSchool.bind(this);
 		this.handleChangeCampus = this.handleChangeCampus.bind(this);
 		this.handleChangeSession = this.handleChangeSession.bind(this);
-		this.handleChangePreferredTime = this.handleChangePreferredTime.bind(this);
-		this.handleChangeReduceGaps = this.handleChangeReduceGaps.bind(this);
+		this.handleChangeScheduleSettings = this.handleChangeScheduleSettings.bind(this);
+		this.handleCheckboxes = this.handleCheckboxes.bind(this);
 		this.passToParent = this.passToParent.bind(this);
 		
 		this.state = this.props.settings;
@@ -53,17 +53,17 @@ export default class SettingsMenu extends Component{
 		);
 	}
 
-	handleChangePreferredTime(event) {
+	handleChangeScheduleSettings(event) {
 		this.setState({
-			preferredTime: event.target.value
+			[event.target.name]: event.target.value
 			}, 
 			this.passToParent
 		);
 	}
 
-	handleChangeReduceGaps(event) {
+	handleCheckboxes(event) {
 		this.setState({
-			reduceGaps: event.target.checked
+			[event.target.name]: event.target.checked
 			}, 
 			this.passToParent
 		);
@@ -72,14 +72,16 @@ export default class SettingsMenu extends Component{
 	render() {
 		return(
 
-			// Hidden 
-			<form onSubmit={this.handleSubmit}>
+			<form>
 				<h5>Settings</h5>
 				<hr></hr>
+
+				{/* Hidden */}
 				<div hidden className="form-group">
 					<label>School:</label>
 					<select 
 						className="form-control form-control-sm"
+						name="school"
 						value={this.state.school}
 						onChange={this.handleChangeSchool}>
 							{this.props.settings.schools.map(function(school) {
@@ -94,6 +96,7 @@ export default class SettingsMenu extends Component{
 					<label>Campus:</label>
 					<select 
 						className="form-control form-control-sm"
+						name="campus"
 						value={this.state.campus}
 						onChange={this.handleChangeCampus}>
 							{this.props.settings.campuses.map(function(campus) {
@@ -108,6 +111,7 @@ export default class SettingsMenu extends Component{
 					<label>Session:</label>
 					<select 
 						className="form-control form-control-sm"
+						name="session"
 						value={this.state.session}
 						onChange={this.handleChangeSession}>
 							{this.props.settings.sessions.map(function(session) {
@@ -123,10 +127,10 @@ export default class SettingsMenu extends Component{
 					<label>Maximum courses at once:</label>
 					<select 
 						className="form-control form-control-sm"
-						defaultValue ={5}
-						//value={this.state.preferredTime}
-						//onChange={this.handleChangePreferredTime}>
-						>	<option value="2">2</option>
+						name="maxParallelCourses"
+						value={this.state.maxParallelCourses}
+						onChange={this.handleChangeScheduleSettings}>
+							<option value="2">2</option>
 							<option value="3">3</option>
 							<option value="4">4</option>
 							<option value="5">5</option>
@@ -141,11 +145,10 @@ export default class SettingsMenu extends Component{
 					<label>Maximum consecutive hours:</label>
 					<select 
 						className="form-control form-control-sm"
-						defaultValue ={0}
-						//value={this.state.preferredTime}
-						//onChange={this.handleChangePreferredTime}>
-						>	
-							<option value="0">No maximum</option>
+						name="maxConsecutiveHours"
+						value={this.state.maxConsecutiveHours}
+						onChange={this.handleChangeScheduleSettings}>
+							<option value={false}>No maximum</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
 							<option value="4">4</option>
@@ -161,38 +164,40 @@ export default class SettingsMenu extends Component{
 					<label>Prefer time: </label>
 					<select 
 						className="form-control form-control-sm"
+						name="preferredTime"
 						value={this.state.preferredTime}
-						onChange={this.handleChangePreferredTime}>
+						onChange={this.handleChangeScheduleSettings}>
 							<option value="morning">Morning (8:00 - 11:59)</option>
 							<option value="afternoon">Afternoon (12:00 - 16:59)</option>
 							<option value="evening">Evening (17:00 - 20:00)</option>
 					</select>
 				</div>
+
 				<div className="form-group">
 					<label>
 					<input 
 						name="reduceGaps" 
 						type="checkbox"
 						checked={this.state.reduceGaps}
-						onChange={this.handleChangeReduceGaps}/>
+						onChange={this.handleCheckboxes}/>
 					{" "}Reduce breaks/day length?</label> 
 				</div>
 				<div className="form-group">
 					<label>
 					<input 
-						name="reduceGaps" 
+						name="reduceDays" 
 						type="checkbox"
-						checked={this.state.reduceGaps}
-						onChange={this.handleChangeReduceGaps}/>
+						checked={this.state.reduceDays}
+						onChange={this.handleCheckboxes}/>
 					{" "}Prefer having empty days?</label> 
 				</div>
 				<div className="form-group">
 					<label>
 					<input 
-						name="reduceGaps" 
+						name="increaseConsistency" 
 						type="checkbox"
-						checked={this.state.reduceGaps}
-						onChange={this.handleChangeReduceGaps}/>
+						checked={this.state.increaseConsistency}
+						onChange={this.handleCheckboxes}/>
 					{" "}Prefer consistency between days?</label> 
 				</div>
 			</form>

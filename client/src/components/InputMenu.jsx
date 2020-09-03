@@ -6,14 +6,14 @@ import AboutMenu from "./tab-menus/AboutMenu";
 const CPSC213 = {
 	id: 0,
 	name: "CPSC 213", 
-	mustBeTerm: false,
-	mustHaveSections: []
+	mustBeSemester: false,
+	mustBeSection: false
 }
 const CPSC213A = {
 	id: 1,
 	name: "CPs C 213 a", 
-	mustBeTerm: false,
-	mustHaveSections: []
+	mustBeSemester: "1,  2",
+	mustBeSection: false
 }
 
 /*

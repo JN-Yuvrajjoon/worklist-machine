@@ -9,76 +9,161 @@ const fakeResults = [
 ];
 
 // INPUT: 
-// UserRequest = { 
-// 		settings: {
-// 		}, 
-// 		courses: [
-// 			{},
-// 			{},
-// 			{}
-// 		], 
-// 		customs: [
-// 		]
-// 	}
+// UserRequest
+// 		All courses are formatted, with non-empty names, with no duplicate names
 //
 // OUTPUT: 
-// Array of Result (a Result is a "base" with a list of add-ons, one per variation)
-
+// [Result], or Failure = {databaseErrors: [], schedulingError: ""}
 export default function generateResults(userRequest) {
-	if(isRequestBad(userRequest.inputCourses, userRequest.settings)) {
+	
+	if(false) {
 		return(console.error("Engine couldn't find any results."));
 	} else {
-		
-		let results = fakeResults
+		let results = fakeResults;
+
+		let customBlockSet = customsToBlockSet(userRequest.customs)
+		if (customBlockSet === false) {
+			return {schedulingError: "There was a problem with your custom blocks."}
+		}
+		makeResult(customBlockSet, null)
+
 		console.log("*********************************************************************");
 		console.log("*********************************************************************");
 		console.log("here arer you results madam:")
 		console.log(results)
 		console.log("*********************************************************************");
 		console.log("*********************************************************************");
-		return results;
+		return fakeResults;
 	}
 }
 
-function isRequestBad(courses, settings){
-	// if(settings.minAtOnce !== undefined && minAtOnce > courses.length) {
-	// 	console.error("Your minimum course boundary is set too high. Add more courses or decrease the minimum.")
-	// 	return true;
-	// }
-	return false;
+// customBlock[] -> dayBlockSet[] or false
+function customsToBlockSet(customBlocks) {
+	//blockSet.reduce(combineBlockSets)
 }
 
-function handleSpecificSections() {}
+function makeResult(blockSet, solvableNeeds) {}
 
-// Determines possible combinations of courses * semesters
-// OUTPUT: arrangedRequests = [[inputCourse], [inputCourse], ...]
-function generateArrangements(requestedCourses, minAtOnce, maxAtOnce) {
-	let arrangements = [];
+//(string, string) => [SolvableNeed]
+function getSolvableNeeds(courseSemester) {
+	let solvableNeeds = [];
+	courseSemester.requiredActivities.forEach((ra)=>{
+		solvableNeeds.push({
+			activity: ra.name, 
+			solutions: ra.solutions, 
+			waitlist: ra.waitlist, 
+			tiedTo: false})
+		})
+	return solvableNeeds;
+}
 
-	// Base arrangement
-	requestedCourses.forEach((rc) => {
-		if (typeof rc.mustBeTerm === "string") {
-			arrangeCourse(rc, arrangements)
+
+// (DayBlockSet, DayBlockSet) => DayBlockSet or false
+function combineBlockSets(smallSet, largeSet){
+	let result = {};
+}
+
+// Block[]s are ORDERED
+// ([], Block, Block[]) => Block[]
+function insertBlock(earlier, block, blocks) {
+	if (earlier.length > 0 && block.startTime < earlier[earlier.length-1].endTime) {
+		return false;
+	} else {
+		if(block.endTime <= blocks[0].startTime) {
+			return [...earlier, block, ...blocks]
+		} else {
+			return insertBlock([...earlier, blocks[0]], block, blocks.slice(1))
 		}
-	})
-	
-	return arrangements;
+	}
 }
 
-function arrangeCourse(courseName, arrangement){}
-
-
-
-function addSection(section, schedule){
-	// For each blockset in the section, combine it with the relevant schedule blockset
-}
-function combineBlockSets(blockset1, blockset2){
-	// Given two blocksets, make one blockset or return false
-	
-}
-
+// (Block, Block) => boolean
 function compareBlocks(block1, block2){
 	return (block1.startTime > block2.endTime && block2.startTime > block1.endTime);
+}
+
+function groupCourses(parsedCourses){
+	let sorted = {
+		specSection: [],
+		specSemester: [],
+		unspec: []
+	};
+	parsedCourses.forEach(
+		(pc) => {
+			console.log(pc)
+			if (pc.mustBeSection !== false) {
+				if (pc.mustBeSemester !== false){
+					
+					sorted.specSection.push(pc)
+				}
+			} else if (pc.mustBeSemester !== false){
+				sorted.specSemester.push(pc)
+			} else {
+				sorted.unspec.push(pc)
+			}
+		}
+	);
+	return sorted;
+}
+
+// INPUT:  
+// courseRequest
+//
+// OUTPUT: 
+// errors: [{index: number, message: string}]
+//
+// Searches database for each inputCourse to verify that they exist and have sections
+function askDatabase(courseRequest) {
+	// Navigate to correct database using school, campus, session (globalSettings)
+	let notFound = [];
+	
+	courseRequest.specSection.forEach(yep=>yep);
+	courseRequest.semiSpecSection.forEach(yep=>yep);
+	courseRequest.specSemester.forEach(yep=>yep);
+	courseRequest.semiSpecSemester.forEach(yep=>yep);
+	courseRequest.unspec.forEach(yep=>yep);
+
+	// inputCourses.forEach(function(ic){
+	// 	let found_TODO = true;
+
+	// 	let foundCourse = found_TODO;
+	// 	let foundCourseSemester = (ic.mustBeSemester === false || found_TODO);
+	// 	let foundCourseSection = (ic.mustBeSection === [] || found_TODO);
+		
+	// 	if(!foundCourse){
+	// 		notFound.push({
+	// 			index: ic.id,
+	// 			message: (`Could not find course ${ic.name}`)
+	// 		})
+	// 	} else if(!foundCourseSemester) {
+	// 		notFound.push({
+	// 			index: ic.id,
+	// 			message: (`Found ${ic.name}, but could not find ${ic.name} in ${ic.mustBeSemester}`)
+	// 		})
+	// 	} else if(!foundCourseSection) {
+	// 		notFound.push({
+	// 			index: ic.id,
+	// 			message: (`Found ${ic.name}, but could not find all of the specified sections.`)
+	// 		})
+	// 	}
+	// })
+	return notFound;
+}
+
+function groupBy(objectArray, property) {
+	return objectArray.reduce(function (acc, obj) {
+		let key = obj[property]
+		if (!acc[key]) {
+			acc[key] = []
+		}
+		acc[key].push(obj)
+		return acc
+	},{})
+  }
+
+function arrangeCourse(courseName, arrangement){}
+function addSection(section, schedule){
+	// For each blockset in the section, combine it with the relevant schedule blockset
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,72 +171,26 @@ function compareBlocks(block1, block2){
 ////////////////////////////////////////////////////////////////////////////////
 const database = [exportjust001, exportcpsc213, exportcpsc213a]
 
-function retrieveRequirements(course, semester) {
-	return {activity: "lecture", solutions: 3, waitlist: false, tiedTo: false}
-}
-
-function retrieveCourse(name) {
+// string =DATABASE=> Course or false
+function retrieveCourse(courseId) {
 	for(let i = 0; i < database.length; i++) {
-		if (database[i].id === name) {return database[i];}
+		if (database[i].id === courseId) {return database[i];}
 	}
-	console.error("retrieveCourses couldn't find ", name, " in the database");
+	console.error("retrieveCourses couldn't find ", courseId, " in the database");
 	return false;
 }
 
-//OUTPUT: CourseSemester or [CourseSemester]
-function retrieveCourseSemesters(course, mustBeTerm) {
+// string =DATABASE=> [string] or (rarely) false
+function retrieveSemestersOf(courseId) {}
 
+// (string, string) =DATABASE=> CourseSemester or false
+function retrieveCourseSemester(courseId, semesterId) {}
+
+// (string, string? string) =DATABASE=> CourseSection or false
+function retrieveCourseSection(courseId, semesterId, sectionId) {
+	if(semesterId) {} else {}
 }
 
-//OUTPUT: CourseSection or [CourseSection]
-function retrieveSpecificSections(name, mustBeTerm, sections) {
-}
-
-
-
-// class dayBlockSet{
-// 	constructor() {
-// 		this.sunday = false;
-// 		this.monday = false;
-// 		this.tuesday = false;
-// 		this.wednesday = false;
-// 		this.thursday = false;
-// 		this.friday = false;
-// 		this.saturday = false;
-// 	}
-// 	}
-	
-// 	class dayBools{
-// 	constructor() {
-// 		this.sunday = false;
-// 		this.monday = false;
-// 		this.tuesday = false;
-// 		this.wednesday = false;
-// 		this.thursday = false;
-// 		this.friday = false;
-// 		this.saturday = false;
-// 	}
-// 	}
-	
-// 	let monWedFri = new dayBlockSet();
-// 	monWedFri.sunday= false;
-// 	monWedFri.monday= [{}];
-// 	monWedFri.tuesday= false;
-// 	monWedFri.wednesday= [{}];
-// 	monWedFri.thursday= false;
-// 	monWedFri.friday= [{"g": "whatg"}];
-// 	monWedFri.saturday= false;
-	
-	
-// 	let tueThuFri = new dayBlockSet();
-// 	tueThuFri.sunday= false;
-// 	tueThuFri.monday= false;
-// 	tueThuFri.tuesday= [{}];
-// 	tueThuFri.wednesday= false;
-// 	tueThuFri.thursday= [{}];
-// 	tueThuFri.friday= [{"e": "what"}];
-// 	tueThuFri.saturday= false;
-	
 	
 // 	function daywiseAnd(set1, set2) {
 // 	result = new dayBools();

@@ -30,8 +30,8 @@ export default class CoursesMenu extends Component {
 			let blankCourse = {
 				id: "tbd",
 				name: "", 
-				mustBeTerm: false,
-				mustHaveSections: []
+				mustBeSemester: false,
+				mustBeSection: false
 			}
 			let updatedList = this.props.coursesToRender;
 			updatedList.unshift(blankCourse);
@@ -122,19 +122,19 @@ class InputCourse extends Component{
 					<div className="col-10 p-0 m-0">
 						<input 
 							className="form-control form-control-sm p-2 mb-1"
-							name="mustBeTerm"
+							name="mustBeSemester"
 							type="text"
 							placeholder="Any semester"
-							value={this.props.course.mustBeTerm? this.props.course.mustBeTerm : ""}
+							value={this.props.course.mustBeSemester? this.props.course.mustBeSemester : ""}
 							onChange={this.handleChange}>
 						</input>
 					
 						<input 
 							className="form-control form-control-sm p-2 mb-1"
-							name="mustHaveSections"
+							name="mustBeSection"
 							type="text"
 							placeholder="Any section"
-							value={this.props.mustHaveSections}
+							value={this.props.mustBeSection? this.props.mustBeSection : ""}
 							onChange={this.handleChange}
 							>
 						</input>

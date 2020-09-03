@@ -9,7 +9,6 @@ import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
 import WorklistRendering from "./components/WorklistRendering";
 
 export default function App() {
-
 	// Using hooks to give App() a global state
 	// https://reactjs.org/docs/hooks-state.html
 	//    [state, functionToSetState] = useState(initial state)
@@ -19,17 +18,24 @@ export default function App() {
 	const [navigationResult, setNavigationResult] = useState(0);
 	const [navigationVariation, setNavigationVariation] = useState(0);
 
-	//TODO: from database
+	
 	function loadSettings() {
 		let tempSettings = {
+			//TODO: from database
 			schools: ["UBC"],
 			campuses: ["", "Vancouver", "Okanagan"],
 			sessions: ["", "2020W", "1999Z"],
 			school: "",
 			campus: "",
 			session: "",
+
+			//TODO: These don't actually have to be part of the global state
+			maxParallelCourses: "5",
+			maxConsecutiveHours: false,
 			preferredTime: "afternoon",
 			reduceGaps: false,
+			reduceDays: false,
+			increaseConsistency: false,
 		};
 		tempSettings.school= tempSettings.schools[0];
 		tempSettings.campus= tempSettings.campuses[0];
@@ -38,109 +44,66 @@ export default function App() {
 	}
 
 	// INPUT:  
-	// requestedCourses: [inputCourse]
+	// inputCourses: [inputCourse]
 	// requestedCustoms: [requestedCustom]
 	//
-	// Calls formatCourses([inputCourse] -> [requestedCourse])
-	// Checks database to see if requestedCourses exist
-	// If all are found, submit to engine
-	// If engine produces no errors, send the results to output
-	function globalSubmit(requestedCourses, requestedCustoms) {
-		let formattedCourses = formatCourses(requestedCourses);
-		let notFound = askDatabase(formattedCourses);
-		// All courses were found!
-		if(notFound.length === 0){ 
-			let userRequest = {
-				settings: globalSettings,
-				courses: formattedCourses,
-				customs: requestedCustoms
-			};
-			console.log("App.js is sending this request to the SE:", userRequest);
-			let engineOutput = engineFunction(userRequest); //TODO: try/catch
-				if(typeof(engineOutput) === "object") {
-					setOutput(engineOutput);
-					setGlobalLatestRequest(userRequest); // Saves the latest input
-				} else {
-					console.log(engineOutput)
-				}
-
-		} else { // Not all courses were found
-			console.log(notFound);
+	// Formats inputCourses, then sends userRequest to the scheduler
+	function globalSubmit(inputCourses, requestedCustoms) {
+		let parsed = parseCourses(inputCourses);
+		// TODO: Find duplicates here
+		let userRequest = {
+			settings: globalSettings,
+			courses: parsed,
+			customs: requestedCustoms
+		};
+		console.log("App.js is sending this request to the SE:", userRequest);
+		let engineOutput = engineFunction(userRequest)
+		if (engineOutput.databaseError) {
+			console.log("Engine produced database errors:", engineOutput.databaseErrors)
+		} else if (engineOutput.schedulingError) {
+			console.log("Engine produced a scheduling error:", engineOutput.schedulingError)
+		} else {
+			setGlobalResults(engineOutput);
+			setNavigationResult(1);
+			setNavigationVariation(1);
+			setGlobalLatestRequest(userRequest);
+			console.log("Engine successfuly produced results:", engineOutput);
 		}
-	}
-	
-	// INPUT:
-	// validOutput: [Worklist]
-	// 
-	// Sets the state to the valid output
-	function setOutput(validOutput){
-		setGlobalResults(validOutput);
-		setNavigationResult(1);
-		setNavigationVariation(1);
 	}
 
 	// INPUT:  
-	// unverifiedCourses: [inputCourse]
+	// [inputCourse]
 	//
 	// OUTPUT: 
-	// [requestedCourse]
+	// [parsedCourse]
 	//
-	// Removes blank courses from the input
-	// Removes all characters other than alphanumerical, converts letters to uppercase
-	function formatCourses(inputCourses) {
+	// Removes blank-named courses
+	// formats course name, semester, and section for scheduler
+	function parseCourses(inputCourses) {
 		let result = []
 		inputCourses.forEach(function(ic) {
 			if (ic.name !== "" && ic.name !== null) {
-				let formatted = ic;
-				formatted.name = ic.name.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-				result.push(formatted);
+				let parsed = {};
+				parsed.name = ic.name
+					.replace(/[^A-Za-z0-9]/g, '')
+					.toUpperCase();
+				parsed.mustBeSemester = (ic.mustBeSemester && ic.mustBeSemester
+					.replace(/\s/g,'')
+					.toUpperCase()
+					.split(",")
+					.filter(sem => sem));
+				parsed.mustBeSection = (ic.mustBeSection && ic.mustBeSection
+					.replace(/\s/g,'')
+					.toUpperCase()
+					.split(",")
+					.filter(sec => sec));
+				parsed.id = ic.id;
+				result.push(parsed);
 			}
 		})
 		return result;
 	}
 	
-
-	// INPUT:  
-	// inputCourses: [inputCourse] // Names must be formatted as they are in the DB
-	// school: string
-	// campus: string
-	// session: string
-	//
-	// OUTPUT: 
-	// errors: [{index: number, message: string}]
-	//
-	// Searches database for each inputCourse to verify that they exist and have sections
-	// Returns errors (pairings of erroneous course index and what went wrong)
-	function askDatabase(inputCourses) {
-		// Navigate to correct database using school, campus, session (globalSettings)
-		let notFound = []
-
-		inputCourses.forEach(function(ic){
-			let TODO = true;
-			let foundCourse = TODO;
-			let foundCourseSemester = (ic.mustBeSemester === false || TODO);
-			let foundCourseSection = (ic.mustHaveSections === [] || TODO);
-			
-			if(!foundCourse){
-				notFound.push({
-					index: ic.id,
-					message: (`Could not find course ${ic.name}`)
-				})
-			} else if(!foundCourseSemester) {
-				notFound.push({
-					index: ic.id,
-					message: (`Found ${ic.name}, but could not find ${ic.name} in ${ic.mustBeSemester}`)
-				})
-			} else if(!foundCourseSection) {
-				notFound.push({
-					index: ic.id,
-					message: (`Found ${ic.name}, but could not find all of the specified sections.`)
-				})
-			}
-		})
-		return notFound;
-	}
-
 	// OUTPUT: 
 	// [Worklist], or empty array
 	function getCurrentResult(){
