@@ -11,6 +11,7 @@ const emptyBlockSet = {
 	friday: false,
 	saturday: false,
 
+	semester: false,
 	subsetStartDate: false,
 	subsetEndDate: false,
 }
@@ -22,87 +23,116 @@ const emptyBlockSet = {
 // OUTPUT: 
 // [Result], or Failure = {databaseErrors: [], schedulingError: ""}
 export default function generateResults(userRequest) {
-	
-	if(false) {
-		return(console.error("Engine couldn't find any results."));
-	} else {
-		let results = combineBlockSets(exportcpsc213.singleSemesters[0].sections[2].dayBlocks,emptyBlockSet);
-
-		let customBlockSet = customsToBlockSet(userRequest.customs)
-		if (customBlockSet === false) {
-			return {schedulingError: "There was a problem with your custom blocks."}
-		}
-		makeResult(customBlockSet, null)
-
-		console.log("*********************************************************************");
-		console.log("*********************************************************************");
-		console.log("here arer you results madam:")
-		console.log(results)
-		console.log(retrieveSection("101", false, "JUST001"))
-		console.log("*********************************************************************");
-		console.log("*********************************************************************");
-		return [];
+	let customBlockSet = customsToBlockSet(userRequest.customs);
+	if (customBlockSet === false) {
+		return {schedulingError: "There was a problem with your custom blocks."}
 	}
+	
+	let courseRequest = verifyCourses(userRequest.courses);
+	if (Array.isArray(courseRequest)) {
+		console.log("SE is returning database errors")
+		return {databaseErrors: courseRequest};
+	}
+
+	let bases = generateBaseResults(customBlockSet, courseRequest.specSection)
+	let solvables = bases.forEach((b)=>generateArrangements(b, courseRequest.specSemester, courseRequest.unspec))
+	let results = partialSolve(solvables)
+	
+	let __________test__________ = 
+	combineBlockSets(exportcpsc213.singleSemesters[0].sections[2].dayBlocks,emptyBlockSet);
+
+	console.log("*********************************************************************");
+	console.log("*********************************************************************");
+	console.log("here arer you results madam:")
+	console.log(__________test__________)
+	console.log(retrieveSection("101", false, "JUST001"))
+	console.log("*********************************************************************");
+	console.log("*********************************************************************");
+	return [];
 }
 
-// CustomBlock[] -> DayBlockSet[] or false
+// TODO: Implement
+// CustomBlock[] => DayBlockSet[] or false
 function customsToBlockSet(customBlocks) {
+	console.log("-----------------customsToBlockSet(customBlocks)  was called!")
 	//blockSet.reduce(combineBlockSets)
-	return [emptyBlockSet];
+	let result1 = emptyBlockSet;
+	let result2 = emptyBlockSet;
+	result1.semester = "1";
+	result2.semester = "2";
+	return [result1, result2];
 }
 
-// ParsedCourse[] -> CourseRequest, or DatabaseError[]
+// ParsedCourse[] => CourseRequest, or DatabaseError[]
 // because if i'm iterating thru them, why not sort them too
 function verifyCourses(parsedCourses){
+	console.log("-----------------verifyCourses(parsedCourses) was called!")
+	let badCourses = [];
 	let sorted = {
-		specSection: [],
-		// semiSpecSection: [],
-		specSemester: [],
-		// semiSpecSemester: [],
-		unspec: []
+		specSection: [], 
+		specSemester: [], 
+		unspec: [] 
 	};
-	
-	let notFound = [];
 	parsedCourses.forEach((pc) => {
-		console.log(pc)
-		if (pc.mustBeSection !== false) {
-			if (pc.mustBeSemester !== false){
-			} else {
-				pc.mustBeSection.forEach((sec) =>{
-					if(courseSectionExists(sec, false, pc.name)){
-						// sorted.specSection.push()
-					}
-				})
-			}
-			sorted.specSection.push(pc)
-		} else if (pc.mustBeSemester !== false){
-			sorted.specSemester.push(pc)
+		let course = retrieveCourse(pc.name);
+		if (!course) {
+			badCourses.push({index: pc.id, message: (`Could not find course ${pc.name}`)})
 		} else {
-			sorted.unspec.push(pc)
+
+			if (pc.mustBeSection) {
+				let badSections = [];
+				// if (pc.mustBeSemester){ //TODO: search with semesters
+				// 	pc.mustBeSection.forEach((sec) => { 
+				// 		if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
+				// 	})
+				// } else {
+					pc.mustBeSection.forEach((sec) => {
+						if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
+					})
+				// }
+				if (badSections.length === 0) {sorted.specSection.push(pc)} else {badCourses.push(`Found ${pc.name}, but could not find all of the specified sections: ${badSections}`)}
+
+			} else if (pc.mustBeSemester) {
+				let badSemesters = [];
+				pc.mustBeSemester.forEach((sem) => {
+					if (!courseSemesterExists(sem, pc.name)) { badSemesters.push(sem); }
+				})
+				if (badSemesters.length === 0) {sorted.specSemester.push(pc)} else {badCourses.push(`Found ${pc.name}, but could not find ${pc.name} in ${badSemesters}`)}
+
+			} else {
+				sorted.unspec.push(pc)
+			}
 		}
 	});
+	return badCourses.length > 0? badCourses : sorted;
+}
 
-	// if(!foundCourse){
-	// 	notFound.push({
-	// 		index: pc.id,
-	// 		message: (`Could not find course ${pc.name}`)
-	// 	})
-	// } else if(!foundCourseSemester) {
-	// 	notFound.push({
-	// 		index: pc.id,
-	// 		message: (`Found ${pc.name}, but could not find ${pc.name} in ${pc.mustBeSemester}`)
-	// 	})
-	// } else if(!foundCourseSection) {
-	// 	notFound.push({
-	// 		index: pc.id,
-	// 		message: (`Found ${pc.name}, but could not find all of the specified sections.`)
-	// 	})
-	// }
-	return notFound.length > 0? notFound : sorted;
+// DayBlockSet[], parsedCourse[] => Result[]
+function generateBaseResults(customBlockSet, sectionCourses){
+	console.log("-----------------generateBaseResults(customBlockSet, sectionCourses) was called!")
+	return []
+}
+
+// Result, parsedCourse[], parsedCourse[] => Result[]
+function generateArrangements(baseResult, semesterCourses, unspecCourses){
+	console.log("-----------------generateArrangements(baseResult, semesterCourses, unspecCourses) was called!")
+	return []
+}
+
+// Result[] => Result[]
+function partialSolve(solvables){
+	console.log("-----------------partialSolve(solvables) was called!")
+	return []
+}
+
+function dispose(thing, reason) {
+	console.log("-----------------dispose(thing, reason)  was called!")
+	console.log(thing, "was thrown out because", reason)
 }
 
 //(string, string) => [SolvableNeed]
 function getSolvableNeeds(courseSemester) {
+	console.log("-----------------getSolvableNeeds(courseSemester)  was called!")
 	let solvableNeeds = [];
 	courseSemester.requiredActivities.forEach((ra)=>{
 		solvableNeeds.push({
@@ -110,23 +140,47 @@ function getSolvableNeeds(courseSemester) {
 			solutions: ra.solutions, 
 			waitlist: ra.waitlist, 
 			tiedTo: false
-		})
-	})
+		});
+	});
 	return solvableNeeds;
 }
 	
-function arrangeCourse(courseName, arrangement){}
+function arrangeCourse(courseName, arrangement){
+	console.log("-----------------arrangeCourse(courseName, arrangement){ was called!")
+}
 
-// (DayBlockSet[], SolvableNeed[]) -> Result
-function makeResult(base, solvableNeeds) {}
+function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) {
+	console.log("-----------------makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) { was called!")
+}
+
+// Result with a few complex solvableNeeds => Result with many variations
+function fillVariations(result){
+	console.log("-----------------fillVariations(result){ was called!")
+}	
 
 function addSection(section, result){
+	console.log("-----------------addSection(section, result) was called!")
 	// For each blockset in the section, combine it with the relevant schedule blockset
+}
+
+// DayBlockSet[], DayBlockSet[] => DayBlockSet[] or false
+function combineSchedules(schedule1, schedule2){
+	console.log("-----------------combineSchedules(schedule1, schedule2) was called!")
+	let result = schedule2;
+	schedule1.forEach((dbs1)=>{
+		let target = result.findIndex((dbs2)=>{return dbs1.semester === dbs2.semester})
+		if (target > -1) {
+			result[target] = combineBlockSets(dbs1, result[target])
+		} else {
+			result.push(dbs1)
+		}
+	})
 }
 
 // (DayBlockSet, DayBlockSet) => DayBlockSet or false
 // smallSet will usually have single blocks, and may have a standard block
 function combineBlockSets(smallSet, largeSet){
+	console.log("-----------------combineBlockSets(smallSet, largeSet) was called!")
 	let result = largeSet;
 	let smallStandard = smallSet.standardBlock;
 	["sunday","monday","tuesday","thursday","friday","saturday"]
@@ -136,7 +190,7 @@ function combineBlockSets(smallSet, largeSet){
 				(smallStandard || smallSet[day]), 
 				(largeSet[day] || [])
 			)
-			if(combined) {
+			if (combined) {
 				result[day] = combined
 			} else {
 				return false;
@@ -148,6 +202,7 @@ function combineBlockSets(smallSet, largeSet){
 // (Block, Block[]) => Block[] or false
 // (Block[], Block[]) => Block[] or false
 function combineDays(smallDay, largeDay){
+	console.log("-----------------combineDays(smallDay, largeDay) was called!")
 	if (typeof smallDay === "object") {
 		return (insertBlock([], smallDay, largeDay))
 	} else {
@@ -160,37 +215,17 @@ function combineDays(smallDay, largeDay){
 // Block[]s are ORDERED
 // ([], Block, Block[]) => Block[] or false
 function insertBlock(earlier, block, blocks) {
+	console.log("-----------------insertBlock(earlier, block, blocks)  was called!")
 	if (earlier.length > 0 && block.startTime < earlier[earlier.length-1].endTime) {
 		return false;
 	} else {
-		if(blocks.length === 0 || block.endTime <= blocks[0].startTime) {
+		if (blocks.length === 0 || block.endTime <= blocks[0].startTime) {
 			return [...earlier, block, ...blocks]
 		} else {
 			return insertBlock([...earlier, blocks[0]], block, blocks.slice(1))
 		}
 	}
 }
-
-function askDatabase(courseRequest) {
-	// Navigate to correct database using school, campus, session (globalSettings)
-	let notFound = [];
-	
-	courseRequest.specSection.forEach(yep=>yep);
-	courseRequest.semiSpecSection.forEach(yep=>yep);
-	courseRequest.specSemester.forEach(yep=>yep);
-	courseRequest.semiSpecSemester.forEach(yep=>yep);
-	courseRequest.unspec.forEach(yep=>yep);
-
-	// inputCourses.forEach(function(ic){
-	// 	let found_TODO = true;
-
-	// 	let foundCourse = found_TODO;
-	// 	let foundCourseSemester = (ic.mustBeSemester === false || found_TODO);
-	// 	let foundCourseSection = (ic.mustBeSection === [] || found_TODO);
-		
-	
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// DATABASE FUNCTIONS //////////////////////////////
@@ -204,6 +239,7 @@ function courseSectionExists(courseId, semesterId, sectionId){return true && ret
 
 // string =DATABASE=> Course or false
 function retrieveCourse(courseId) {
+	console.log(courseId)
 	return database.find((course) => course.id === courseId) || false;
 	// for(let i = 0; i < database.length; i++) {
 	// 	if (database[i].id === courseId) {return database[i];}
@@ -229,7 +265,7 @@ function retrieveCourseSemester(semesterId, courseId) {
 // (string, string? string) =DATABASE=> CourseSection or false
 function retrieveSection(sectionId, semesterId, courseId) {
 	try{
-		if(semesterId) {
+		if (semesterId) {
 			return (
 				retrieveCourseSemester(semesterId, courseId).sections.find(sec => sec.id === sectionId) 
 				|| false

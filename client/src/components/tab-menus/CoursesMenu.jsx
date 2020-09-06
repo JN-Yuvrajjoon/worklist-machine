@@ -24,7 +24,7 @@ export default class CoursesMenu extends Component {
 	}
 
 	onAddCourse() {
-		if(this.props.coursesToRender.length >= this.state.maxCourses) {
+		if (this.props.coursesToRender.length >= this.state.maxCourses) {
 			console.log("slow down engineer, worklist machine can only deal with 16 courses for now");
 		} else {
 			let blankCourse = {

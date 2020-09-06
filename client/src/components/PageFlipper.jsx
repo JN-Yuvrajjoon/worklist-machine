@@ -29,27 +29,27 @@ export default class PageFlipper extends Component {
 
 	isNatural(num) {
 		return !(
-			num.isNaN
-			|| num === undefined 
+			num === undefined 
+			|| num.isNaN
 			|| num < 1
 		)
 	}
 
 	handleArrowPress(event) {
-		if(this.isNatural(this.props.pages)){
+		if (this.isNatural(this.props.pages)){
 			let current = this.props.currentPage;
 			let last = this.props.pages;
 
-			if(event.target.name === "nextPageButton") {
+			if (event.target.name === "nextPageButton") {
 				let test = (current + 1);
 				this.props.changeFn(test <= last? test : 1);
-			} else if(event.target.name === "previousPageButton") {
+			} else if (event.target.name === "previousPageButton") {
 				let test = (current - 1);
 				this.props.changeFn(test >= 1? test : last);
-			} else if(event.target.name === "firstPageButton") {
-				if(current !== 1){this.props.changeFn(1)}
-			} else if(event.target.name === "lastPageButton") {
-				if(current !== last){this.props.changeFn(last)}
+			} else if (event.target.name === "firstPageButton") {
+				if (current !== 1){this.props.changeFn(1)}
+			} else if (event.target.name === "lastPageButton") {
+				if (current !== last){this.props.changeFn(last)}
 			}
 		}
 	}
@@ -70,7 +70,7 @@ export default class PageFlipper extends Component {
 	}
 
 	resetState() {
-		if(this.state.inputPage !== this.props.currentPage){
+		if (this.state.inputPage !== this.props.currentPage){
 			console.log("Pageflipper component named", this.props.name, "is resetting state to props. Old state:", this.state.inputPage," New state/props:", this.props.currentPage)
 			this.setState({
 				inputPage: this.props.currentPage,
@@ -115,7 +115,7 @@ export default class PageFlipper extends Component {
 					type="text"
 					value={this.state.isInputMode? this.state.inputPage : this.props.currentPage} //hacky
 					onChange={(e) => this.setState({inputPage: e.target.value})}
-					onKeyPress={(e) => {if(e.key === "Enter"){e.target.blur()}}}
+					onKeyPress={(e) => {if (e.key === "Enter"){e.target.blur()}}}
 					onFocus={this.handleFocus}
 					onBlur={this.navigateIfValid}>
 				</input>

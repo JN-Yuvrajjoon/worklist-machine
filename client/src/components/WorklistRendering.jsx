@@ -31,7 +31,7 @@ export default class WorklistRendering extends Component {
 	// If the props are not renderable, just render the default
 	returnRenderable(){
 		let toRender = this.props.worklist;
-		if(toRender.semesters === undefined || toRender.semesters.length === 0) {
+		if (toRender.semesters === undefined || toRender.semesters.length === 0) {
 			// console.log("WorklistRendering got undefined or zero semesters, so is rendering the default.");
 			return defaultWorklist;
 		} else {
@@ -58,13 +58,13 @@ export default class WorklistRendering extends Component {
 	// OUTPUT:
 	// [DayBlockSet], each with its associated start and end dates
 	getBlockSets(worklist){
-		if(worklist !== undefined && worklist.semesters !== undefined) {
+		if (worklist !== undefined && worklist.semesters !== undefined) {
 			let blockSets = [];
 			worklist.semesters.forEach(
 				function(sem) {
 
 					// Looks bad, but will only happen very rarely (when courses don't start and end with the rest of the semester)
-					if(Array.isArray(sem.dayBlocks)){
+					if (Array.isArray(sem.dayBlocks)){
 						sem.dayBlocks.forEach(
 							function(origSet) {
 								let set = origSet;
@@ -358,18 +358,18 @@ class DayColumn extends Component {
 		while (currentRow < this.state.rows) {
 
 			// No more courses in the day
-			if(unrendered === undefined || unrendered.length === 0) {
+			if (unrendered === undefined || unrendered.length === 0) {
 				col = col.concat(this.returnGap(this.state.rows - currentRow));
 				currentRow = this.state.rows; //break
 
 			// Need to render a course in this row
-			} else if(unrendered[0].startTime === currentRow) {
+			} else if (unrendered[0].startTime === currentRow) {
 				col.push(this.renderCourse(unrendered[0]));
 				currentRow += unrendered[0].length;
 				unrendered.shift();
 
 			// Need to render a break before the next class
-			} else if(unrendered[0].startTime > currentRow) {
+			} else if (unrendered[0].startTime > currentRow) {
 				let difference = unrendered[0].startTime - currentRow;
 				col = col.concat(this.returnGap(difference));
 				currentRow += difference;
