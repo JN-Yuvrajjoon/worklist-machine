@@ -20,7 +20,7 @@ export default class CoursesMenu extends Component {
 
 		this.state = {
 			maxCourses: 16
-		}
+		};
 	}
 
 	onAddCourse() {
@@ -80,13 +80,13 @@ export default class CoursesMenu extends Component {
 class InputCourse extends Component{
 	constructor(props) {
 		super(props);
-		this.handleChange = this.handleChange.bind(this)
+		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange(event){
 		let newCourse = this.props.course;
-		newCourse[event.target.name] = event.target.value
-		this.props.changeFunction(newCourse, this.props.course.id)
+		newCourse[event.target.name] = event.target.value;
+		this.props.changeFunction(newCourse, this.props.course.id);
 	}
 
 	render() {
@@ -126,7 +126,8 @@ class InputCourse extends Component{
 							type="text"
 							placeholder="Any semester"
 							value={this.props.course.mustBeSemester? this.props.course.mustBeSemester : ""}
-							onChange={this.handleChange}>
+							onChange={this.handleChange}
+							>
 						</input>
 					
 						<input 
@@ -134,7 +135,7 @@ class InputCourse extends Component{
 							name="mustBeSection"
 							type="text"
 							placeholder="Any section"
-							value={this.props.mustBeSection? this.props.mustBeSection : ""}
+							value={this.props.course.mustBeSection? this.props.course.mustBeSection : ""}
 							onChange={this.handleChange}
 							>
 						</input>

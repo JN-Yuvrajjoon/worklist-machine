@@ -1,4 +1,5 @@
 import {exportjust001, exportcpsc213, exportcpsc213a} from "./example-courses.js";
+import { Error } from "mongoose";
 
 const emptyBlockSet = {
 	standardBlock: false,
@@ -21,31 +22,60 @@ const emptyBlockSet = {
 // 		All courses are formatted, with non-empty names, with no duplicate names
 //
 // OUTPUT: 
-// [Result], or Failure = {databaseErrors: [], schedulingError: ""}
+// [Result],
+// or { databaseErrors: [] },
+// or { schedulingError: "" }
 export default function generateResults(userRequest) {
-	let customBlockSet = customsToBlockSet(userRequest.customs);
-	if (customBlockSet === false) {
+
+	// STEP 1: CustomBlock[] => DayBlockSet[]
+	let customBlockSets = customsToBlockSets(userRequest.customs);
+	if (customBlockSets === false) {
 		return {schedulingError: "There was a problem with your custom blocks."}
 	}
 	
+	// STEP 2: Verify courses, semesters, sections exist
 	let courseRequest = verifyCourses(userRequest.courses);
 	if (Array.isArray(courseRequest)) {
-		console.log("SE is returning database errors")
+		console.log("SE is returning database errors");
 		return {databaseErrors: courseRequest};
 	}
+	console.log("here's courserequest:", courseRequest)
 
-	let bases = generateBaseResults(customBlockSet, courseRequest.specSection)
-	let solvables = bases.forEach((b)=>generateArrangements(b, courseRequest.specSemester, courseRequest.unspec))
-	let results = partialSolve(solvables)
+	// STEP 3: Create results using specific sections, if any
+	let initialResults = [
+		{
+		base: customBlockSets,
+		variations: [],
+		//courseRequest: courseRequest,
+		satisfiedNeeds: [],
+		solvableNeeds: []
+		}
+	]
+	let bases = generateBaseResults(initialResults, courseRequest.specSection);
+	console.log("bases here:", bases);
+
+	// STEP 4: Multiplies each base by its possible arrangements
+	let solvables = bases.flatMap((b)=>generateArrangements(b, courseRequest.specSemester, courseRequest.unspec));
+	// let solvables = bases.reduce((result, base) => {
+	// 	let arrangedBase = generateArrangements(base, courseRequest.specSemester, courseRequest.unspec);
+	// 	return arrangedBase ? result.concat(arrangedBase) : result, []
+	// });
+	console.log("solvables here:", solvables);
+
+	// STEP 5: Make many results from each base
+	// solvables = solvables.map((s) => partialSolve(s));
+
+	// STEP 6: Fill out the variations of each result
+	// solvables = fillVariations(solvables);
 	
+	// Output
 	let __________test__________ = 
-	combineBlockSets(exportcpsc213.singleSemesters[0].sections[2].dayBlocks,emptyBlockSet);
+	combineBlockSets(exportcpsc213.singleSemesters[0].sections[2].dayBlocks, emptyBlockSet);
 
 	console.log("*********************************************************************");
 	console.log("*********************************************************************");
-	console.log("here arer you results madam:")
-	console.log(__________test__________)
-	console.log(retrieveSection("101", false, "JUST001"))
+	console.log("here arer you results madam:");
+	console.log(__________test__________);
 	console.log("*********************************************************************");
 	console.log("*********************************************************************");
 	return [];
@@ -53,8 +83,8 @@ export default function generateResults(userRequest) {
 
 // TODO: Implement
 // CustomBlock[] => DayBlockSet[] or false
-function customsToBlockSet(customBlocks) {
-	console.log("-----------------customsToBlockSet(customBlocks)  was called!")
+function customsToBlockSets(customBlocks) {
+	console.info("Function customsToBlockSet(customBlocks)  was called!")
 	//blockSet.reduce(combineBlockSets)
 	let result1 = emptyBlockSet;
 	let result2 = emptyBlockSet;
@@ -66,7 +96,7 @@ function customsToBlockSet(customBlocks) {
 // ParsedCourse[] => CourseRequest, or DatabaseError[]
 // because if i'm iterating thru them, why not sort them too
 function verifyCourses(parsedCourses){
-	console.log("-----------------verifyCourses(parsedCourses) was called!")
+	console.info("Function verifyCourses(parsedCourses) was called!")
 	let badCourses = [];
 	let sorted = {
 		specSection: [], 
@@ -107,65 +137,93 @@ function verifyCourses(parsedCourses){
 	return badCourses.length > 0? badCourses : sorted;
 }
 
-// DayBlockSet[], parsedCourse[] => Result[]
-function generateBaseResults(customBlockSet, sectionCourses){
-	console.log("-----------------generateBaseResults(customBlockSet, sectionCourses) was called!")
-	return []
+// Result[], parsedCourse[] => Result[] or false
+
+// parsedCourse s will have sections specified
+// Adding a parsedCourse will create a result branch for every section specified
+function generateBaseResults(currentResults, toAdd){
+	console.info("Function generateBaseResults(customBlockSet, sectionCourses) was called!")
+	if (toAdd.length === 0) {
+		return currentResults;
+	} else {
+		return generateBaseResults(sectionsOnResults(currentResults, toAdd[0]), toAdd.slice(1));
+	}
+
+	// Result[], inputCourse => Result[]
+	function sectionsOnResults(results, course) {
+		if (!results) {
+			return false;
+		} else {
+			let newResults = [];
+			results.forEach((r)=>{
+				course.mustBeSection.forEach((sec)=>{
+					let test = addSection(retrieveSection(sec, false, course.name), r)
+					if (test) {newResults.push(test);}
+				})
+			})
+			return newResults;
+		}
+	}
+}
+
+function insertSection(result, courseId, sectionId) {
+	return result
 }
 
 // Result, parsedCourse[], parsedCourse[] => Result[]
 function generateArrangements(baseResult, semesterCourses, unspecCourses){
-	console.log("-----------------generateArrangements(baseResult, semesterCourses, unspecCourses) was called!")
-	return []
+	console.info("Function generateArrangements(baseResult, semesterCourses, unspecCourses) was called!")
+	let results = [baseResult]
+
+	semesterCourses.forEach((sc)=>{
+		sc.mustBeSemester.forEach((sem)=>{
+			retrieveSolvableNeedsOf(sem, sc.name)
+		});
+	});
+	unspecCourses.forEach(()=>{});
+	//retrieveSolvableNeedsOf
+	return results;
 }
+
 
 // Result[] => Result[]
 function partialSolve(solvables){
-	console.log("-----------------partialSolve(solvables) was called!")
-	return []
+	console.info("Function partialSolve(solvables) was called!")
+	return solvables;
 }
 
 function dispose(thing, reason) {
-	console.log("-----------------dispose(thing, reason)  was called!")
+	console.info("Function dispose(thing, reason)  was called!")
 	console.log(thing, "was thrown out because", reason)
-}
-
-//(string, string) => [SolvableNeed]
-function getSolvableNeeds(courseSemester) {
-	console.log("-----------------getSolvableNeeds(courseSemester)  was called!")
-	let solvableNeeds = [];
-	courseSemester.requiredActivities.forEach((ra)=>{
-		solvableNeeds.push({
-			activity: ra.name, 
-			solutions: ra.solutions, 
-			waitlist: ra.waitlist, 
-			tiedTo: false
-		});
-	});
-	return solvableNeeds;
 }
 	
 function arrangeCourse(courseName, arrangement){
-	console.log("-----------------arrangeCourse(courseName, arrangement){ was called!")
+	console.info("Function arrangeCourse(courseName, arrangement){ was called!")
 }
 
 function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) {
-	console.log("-----------------makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) { was called!")
+	console.info("Function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) { was called!")
 }
 
 // Result with a few complex solvableNeeds => Result with many variations
 function fillVariations(result){
-	console.log("-----------------fillVariations(result){ was called!")
+	console.info("Function fillVariations(result){ was called!")
 }	
 
 function addSection(section, result){
-	console.log("-----------------addSection(section, result) was called!")
+	console.info("Function addSection(section, result) was called!")
+	// let test = combineSchedules([section.dayBlocks], result.base)
+	// return ({
+	// 	base: test,
+	// 	variations: result.variations,
+	// 	//solvableNeeds: result.solvableNeeds.slice(1)
+	// })
 	// For each blockset in the section, combine it with the relevant schedule blockset
 }
 
 // DayBlockSet[], DayBlockSet[] => DayBlockSet[] or false
 function combineSchedules(schedule1, schedule2){
-	console.log("-----------------combineSchedules(schedule1, schedule2) was called!")
+	console.info("Function combineSchedules(schedule1, schedule2) was called!")
 	let result = schedule2;
 	schedule1.forEach((dbs1)=>{
 		let target = result.findIndex((dbs2)=>{return dbs1.semester === dbs2.semester})
@@ -180,7 +238,7 @@ function combineSchedules(schedule1, schedule2){
 // (DayBlockSet, DayBlockSet) => DayBlockSet or false
 // smallSet will usually have single blocks, and may have a standard block
 function combineBlockSets(smallSet, largeSet){
-	console.log("-----------------combineBlockSets(smallSet, largeSet) was called!")
+	console.info("Function combineBlockSets(smallSet, largeSet) was called!")
 	let result = largeSet;
 	let smallStandard = smallSet.standardBlock;
 	["sunday","monday","tuesday","thursday","friday","saturday"]
@@ -202,7 +260,7 @@ function combineBlockSets(smallSet, largeSet){
 // (Block, Block[]) => Block[] or false
 // (Block[], Block[]) => Block[] or false
 function combineDays(smallDay, largeDay){
-	console.log("-----------------combineDays(smallDay, largeDay) was called!")
+	console.info("Function combineDays(smallDay, largeDay) was called!")
 	if (typeof smallDay === "object") {
 		return (insertBlock([], smallDay, largeDay))
 	} else {
@@ -215,7 +273,7 @@ function combineDays(smallDay, largeDay){
 // Block[]s are ORDERED
 // ([], Block, Block[]) => Block[] or false
 function insertBlock(earlier, block, blocks) {
-	console.log("-----------------insertBlock(earlier, block, blocks)  was called!")
+	console.info("Function insertBlock(earlier, block, blocks)  was called!")
 	if (earlier.length > 0 && block.startTime < earlier[earlier.length-1].endTime) {
 		return false;
 	} else {
@@ -239,7 +297,6 @@ function courseSectionExists(courseId, semesterId, sectionId){return true && ret
 
 // string =DATABASE=> Course or false
 function retrieveCourse(courseId) {
-	console.log(courseId)
 	return database.find((course) => course.id === courseId) || false;
 	// for(let i = 0; i < database.length; i++) {
 	// 	if (database[i].id === courseId) {return database[i];}

@@ -23,6 +23,7 @@
 	height: 100vh;
 	min-width: var(--minimum-display-width);
 	min-height: var(--minimum-display-height);
+	background-color: #eee;
 }
 
 hr {
@@ -92,9 +93,11 @@ hr {
 		- var(--gap)
 		- var(--gap)
 		- var(--gap)); 
-	box-shadow: 
-		inset 0 0 1rem 1rem var(--dark-background), /* does not work */
-		0 .5rem 1rem rgba(0,0,0,.15);
+	/* box-shadow: 
+		inset 0 0 1rem 1rem var(--dark-background), 
+		0 .5rem 1rem rgba(0,0,0,.15); 
+		does not work
+		*/
 	font-size: small;
 }
 

@@ -7,13 +7,13 @@ const CPSC213 = {
 	id: 0,
 	name: "CPSC 213", 
 	mustBeSemester: false,
-	mustBeSection: false
+	mustBeSection: "101"
 }
 const CPSC213A = {
 	id: 1,
 	name: "CPs C 213 a", 
 	mustBeSemester: "1,  2",
-	mustBeSection: false
+	mustBeSection: "L1B"
 }
 
 /*
