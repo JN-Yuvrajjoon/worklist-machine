@@ -1,5 +1,4 @@
 import {exportjust001, exportcpsc213, exportcpsc213a} from "./example-courses.js";
-import { Error } from "mongoose";
 
 const emptyBlockSet = {
 	standardBlock: false,
@@ -12,7 +11,7 @@ const emptyBlockSet = {
 	friday: false,
 	saturday: false,
 
-	semester: false,
+	semester: "1",
 	subsetStartDate: false,
 	subsetEndDate: false,
 }
@@ -25,47 +24,58 @@ const emptyBlockSet = {
 // [Result],
 // or { databaseErrors: [] },
 // or { schedulingError: "" }
-export default function generateResults(userRequest) {
 
+/** Generates schedules according to UserRequest, or fails
+ * 
+ * @param {UserRequest} userRequest user input object
+ * @param {InputCustoms[]} userRequest.customs user's custom blocks
+ * @param {InputCourse[]} userRequest.courses user's requested courses
+ * 
+ * @returns {Result[] | Object} results, or error
+ */
+export default function generateResults(userRequest) {
 	// STEP 1: CustomBlock[] => DayBlockSet[]
+	// FIXME: Currently only returns empty blockset
 	let customBlockSets = customsToBlockSets(userRequest.customs);
 	if (customBlockSets === false) {
 		return {schedulingError: "There was a problem with your custom blocks."}
 	}
-	
-	// STEP 2: Verify courses, semesters, sections exist
+	// STEP 2: Verify input courses, semesters, sections exist
+	// FIXME: No DB connection
 	let courseRequest = verifyCourses(userRequest.courses);
 	if (Array.isArray(courseRequest)) {
 		console.log("SE is returning database errors");
 		return {databaseErrors: courseRequest};
 	}
 	console.log("here's courserequest:", courseRequest)
-
 	// STEP 3: Create results using specific sections, if any
+	// FIXME: No DB connection
+	// TODO: current
 	let initialResults = [
 		{
 		base: customBlockSets,
 		variations: [],
-		//courseRequest: courseRequest,
+		//courseRequest: courseRequest, // do we need this?
 		satisfiedNeeds: [],
 		solvableNeeds: []
 		}
 	]
 	let bases = generateBaseResults(initialResults, courseRequest.specSection);
 	console.log("bases here:", bases);
-
 	// STEP 4: Multiplies each base by its possible arrangements
+	// TODO:
 	let solvables = bases.flatMap((b)=>generateArrangements(b, courseRequest.specSemester, courseRequest.unspec));
-	// let solvables = bases.reduce((result, base) => {
-	// 	let arrangedBase = generateArrangements(base, courseRequest.specSemester, courseRequest.unspec);
-	// 	return arrangedBase ? result.concat(arrangedBase) : result, []
-	// });
+		// let solvables = bases.reduce((result, base) => {
+		// 	let arrangedBase = generateArrangements(base, courseRequest.specSemester, courseRequest.unspec);
+		// 	return arrangedBase ? result.concat(arrangedBase) : result, []
+		// });
 	console.log("solvables here:", solvables);
-
 	// STEP 5: Make many results from each base
+	// TODO:
 	// solvables = solvables.map((s) => partialSolve(s));
 
 	// STEP 6: Fill out the variations of each result
+	// TODO:
 	// solvables = fillVariations(solvables);
 	
 	// Output
@@ -81,7 +91,12 @@ export default function generateResults(userRequest) {
 	return [];
 }
 
-// TODO: Implement
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////// HIGH-LEVEL FUNCTIONS ////////////////////////////////////////////////////////// HIGH-LEVEL FUNCTIONS /////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // CustomBlock[] => DayBlockSet[] or false
 function customsToBlockSets(customBlocks) {
 	console.info("Function customsToBlockSet(customBlocks)  was called!")
@@ -94,7 +109,6 @@ function customsToBlockSets(customBlocks) {
 }
 
 // ParsedCourse[] => CourseRequest, or DatabaseError[]
-// because if i'm iterating thru them, why not sort them too
 function verifyCourses(parsedCourses){
 	console.info("Function verifyCourses(parsedCourses) was called!")
 	let badCourses = [];
@@ -108,7 +122,6 @@ function verifyCourses(parsedCourses){
 		if (!course) {
 			badCourses.push({index: pc.id, message: (`Could not find course ${pc.name}`)})
 		} else {
-
 			if (pc.mustBeSection) {
 				let badSections = [];
 				// if (pc.mustBeSemester){ //TODO: search with semesters
@@ -121,14 +134,12 @@ function verifyCourses(parsedCourses){
 					})
 				// }
 				if (badSections.length === 0) {sorted.specSection.push(pc)} else {badCourses.push(`Found ${pc.name}, but could not find all of the specified sections: ${badSections}`)}
-
 			} else if (pc.mustBeSemester) {
 				let badSemesters = [];
 				pc.mustBeSemester.forEach((sem) => {
 					if (!courseSemesterExists(sem, pc.name)) { badSemesters.push(sem); }
 				})
 				if (badSemesters.length === 0) {sorted.specSemester.push(pc)} else {badCourses.push(`Found ${pc.name}, but could not find ${pc.name} in ${badSemesters}`)}
-
 			} else {
 				sorted.unspec.push(pc)
 			}
@@ -138,9 +149,6 @@ function verifyCourses(parsedCourses){
 }
 
 // Result[], parsedCourse[] => Result[] or false
-
-// parsedCourse s will have sections specified
-// Adding a parsedCourse will create a result branch for every section specified
 function generateBaseResults(currentResults, toAdd){
 	console.info("Function generateBaseResults(customBlockSet, sectionCourses) was called!")
 	if (toAdd.length === 0) {
@@ -164,18 +172,17 @@ function generateBaseResults(currentResults, toAdd){
 			return newResults;
 		}
 	}
-}
-
-function insertSection(result, courseId, sectionId) {
-	return result
+	function insertSection(result, courseId, sectionId) {
+		return result;
+	}
 }
 
 // Result, parsedCourse[], parsedCourse[] => Result[]
-function generateArrangements(baseResult, semesterCourses, unspecCourses){
+function generateArrangements(baseResult, specSemCourses, unspecCourses){
 	console.info("Function generateArrangements(baseResult, semesterCourses, unspecCourses) was called!")
 	let results = [baseResult]
 
-	semesterCourses.forEach((sc)=>{
+	specSemCourses.forEach((sc)=>{
 		sc.mustBeSemester.forEach((sem)=>{
 			retrieveSolvableNeedsOf(sem, sc.name)
 		});
@@ -185,13 +192,42 @@ function generateArrangements(baseResult, semesterCourses, unspecCourses){
 	return results;
 }
 
-
 // Result[] => Result[]
 function partialSolve(solvables){
 	console.info("Function partialSolve(solvables) was called!")
+	// solvables.forEach((s)=>{
+	// 	s.solvableNeeds.forEach(()=>{
+	// 		// fulfil the sn here
+	//		// must check for the switch to variations
+	// 	})
+	// })
 	return solvables;
 }
 
+// Result with a few complex solvableNeeds => Result (Solution)
+function fillVariations(result){
+	console.info("Function fillVariations(result){ was called!")
+}	
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// SCHEDULING TOOLBOX //////////////////////////////////////////////////////////// SCHEDULING TOOLBOX //////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Section
+function addSection(section, result){
+	console.info("Function addSection(section, result) was called!")
+	// let test = combineSchedules([section.dayBlocks], result.base)
+	// return ({
+	// 	base: test,
+	// 	variations: result.variations,
+	// 	//solvableNeeds: result.solvableNeeds.slice(1)
+	// })
+	// For each blockset in the section, combine it with the relevant schedule blockset
+}
+
+// for debugging purposes
 function dispose(thing, reason) {
 	console.info("Function dispose(thing, reason)  was called!")
 	console.log(thing, "was thrown out because", reason)
@@ -203,22 +239,6 @@ function arrangeCourse(courseName, arrangement){
 
 function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) {
 	console.info("Function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) { was called!")
-}
-
-// Result with a few complex solvableNeeds => Result with many variations
-function fillVariations(result){
-	console.info("Function fillVariations(result){ was called!")
-}	
-
-function addSection(section, result){
-	console.info("Function addSection(section, result) was called!")
-	// let test = combineSchedules([section.dayBlocks], result.base)
-	// return ({
-	// 	base: test,
-	// 	variations: result.variations,
-	// 	//solvableNeeds: result.solvableNeeds.slice(1)
-	// })
-	// For each blockset in the section, combine it with the relevant schedule blockset
 }
 
 // DayBlockSet[], DayBlockSet[] => DayBlockSet[] or false
@@ -285,9 +305,11 @@ function insertBlock(earlier, block, blocks) {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// DATABASE FUNCTIONS //////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// DATABASE FUNCTIONS //////////////////////////////////////////////////////////// DATABASE FUNCTIONS //////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const database = [exportjust001, exportcpsc213, exportcpsc213a]
 
 //TODO: Refactor to be efficient; don't involve the actual course data if you can
@@ -379,3 +401,81 @@ function retrieveSolvableNeedsOf(semesterId, courseId) {
 		}
 	})
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// TYPE DEFINITIONS ////////////////////////////////////////////////////////////// TYPE DEFINITIONS ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @typedef {Object} UserRequest
+ * @property {InputCustom[]} customs
+ * @property {InputCourse[]} courses
+ * @property {Object} settings
+	* @property {string[]} settings.schools from database
+	* @property {string[]} settings.campuses from school's info
+	* @property {string[]} settings.sessions from school's info or school campus's info
+	* @property {string} settings.school
+	* @property {string} settings.campus
+	* @property {string} settings.session
+	* @property {string | false} settings.maxParallelCourses
+	* @property {string | false} settings.maxConsecutiveHours
+	* @property {string} settings.preferredTime
+	* @property {boolean} settings.reduceGaps
+	* @property {boolean} settings.reduceDays
+	* @property {boolean} settings.increaseConsistency
+	* @todo add more!
+	* @todo (maybe) school, campus, and session may be stored as a number
+ */
+
+ /**
+ * @typedef {Object} InputCustom
+ * @property {string} name
+ * @todo
+ * 
+ * @todo (maybe) creation of custom DayBlockSets can happen within the state of the CoursesMenu
+ */
+
+/**
+ * @typedef {Object} InputCourse
+ * @property {string} name
+ * @property {string[] | false} mustBeSemester
+ * @property {string[] | false} mustBeSection
+ */
+
+/**
+ * @typedef {Object} Block
+ * @property {number} startTime
+ * @property {number} endTime
+ * @property {number} alternating
+ * @property {false | string} subsetSectionActivities
+ * @property {string} location
+ * @property {string} prof
+ * @property {string | undefined} renderName
+ */
+
+ /**
+ * @typedef {Object} DayBlockSet
+ * @property {Block | false} standardBlock
+ * @property {Block | Block[] | false} sunday
+ * @property {Block | Block[] | false} monday
+ * @property {Block | Block[] | false} tuesday
+ * @property {Block | Block[] | false} wednesday
+ * @property {Block | Block[] | false} thursday
+ * @property {Block | Block[] | false} friday
+ * @property {Block | Block[] | false} saturday
+ * @property {string} semester
+ * @property {Date | false} subsetStartDate
+ * @property {Date | false} subsetEndDate
+ */
+
+ /**
+ * @typedef {Object} CourseSection
+ */
+
+ /**
+ * @typedef {Object} CourseSemester
+ */
+
+ /**
+ * @typedef {Object} Course
+ */
