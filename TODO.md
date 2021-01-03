@@ -11,8 +11,9 @@
 - Make sure courses can fit into mongoDB, both size-wise and number of documents. (might exceed 5000 limit) -> Don't store 500+ level courses?
 
 ## MISC FRONTEND
-- CoursesMenu: enable deletion of courses
+- Remove Component states where they're not necessarry
 - CoursesMenu: enable addition/deletion of custom blocks
+- CoursesMenu: Make course detail expand/collapse relative to itself, and not its position in the list
 - CoursesMenu: Make new courses appear at the top of the list
 - AboutMenu: add links
 

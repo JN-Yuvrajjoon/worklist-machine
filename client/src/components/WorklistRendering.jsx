@@ -3,78 +3,58 @@ import {emptyDayBlockSet} from "../example-results.js";
 
 const defaultWorklist = {
   info: {},
-  semesters: [
-    {id: "1", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}, 
-    {id: "2", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}
+  dateSpans: [
+    {semesterId: "1", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}, 
+    {semesterId: "2", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet}
   ],
-  abnormalSections: []
+  unscheduled: []
 }
 
-/* 
-App.js props = {
-  currentResult={navigationResult}
-  currentVariation={navigationVariation}
-  rendered={outputVariation()}
-} 
-*/
 export default class WorklistRendering extends Component {
   constructor(props) {
     super(props);
-
+    
     this.returnRenderable = this.returnRenderable.bind(this);
     this.findHeight = this.findHeight.bind(this);
-    this.checkWorklistFor = this.checkWorklistFor.bind(this);
+    this.checkEarliest = this.checkEarliest.bind(this);
+    this.checkLatest = this.checkLatest.bind(this);
+    this.checkNoWeekends = this.checkNoWeekends.bind(this);
     this.getBlockSets = this.getBlockSets.bind(this);
+    
   }
 
-  // TODO: Intersect sets
-  // If the props are not renderable, just render the default
+  // Output: A renderable worklist regardless of the props
   returnRenderable(){
     let toRender = this.props.worklist;
-    if (toRender.semesters === undefined || toRender.semesters.length === 0) {
-      // console.info("renderable now:", this.getBlockSets(defaultWorklist), "\nlength: ", this.getBlockSets(defaultWorklist).length);
-      return this.getBlockSets(defaultWorklist);
-    } else {
-      return this.getBlockSets(toRender);
+    if (!toRender || !toRender.dateSpans || toRender.dateSpans.length === 0) {
+      console.info("WorklistRendering is rendering the default worklist");
+      return defaultWorklist;
     }
+    console.info("WorklistRendering is rendering: ", toRender);
+    return toRender;
   }
   
   // Returns the on-screen height of a thirty minute block
   // TODO: should later take into account the height of the screen and the start/end times
-  findHeight() {
-    return 1.5;
-  }
+  findHeight(){return 1.5;}
+
+  //other dimensions, so all timetables are consistent
+  checkNoWeekends(){return true;}
   
-  //TODO: expand into multiple functions
-  checkWorklistFor(extension) {
-    return false;
-  }
+  checkEarliest(){return 800;}
   
-  // OUTPUT:
-  // DayBlockSet[], each with its associated start and end dates, TODO: none overlapping
+  checkLatest(){return 1800;}
+  
+  // DEPRECATED
   getBlockSets(worklist){
     if (worklist !== undefined && worklist.semesters !== undefined) {
       let blockSets = [];
       worklist.semesters.forEach((sem) => {
-
-        // Looks bad, but will only happen very rarely (when courses don't start and end with the rest of the semester)
-        if (Array.isArray(sem.dayBlocks)){
-          // sem.dayBlocks.forEach(origSet => {
-          //     let set = origSet;
-          //     set.startDate = (set.subsetStartDate || sem.startDate);
-          //     set.startDate = (set.subsetEndDate || sem.endDate);
-          //     blockSets.push(set);
-          // })
-        } else { // Common case
-          let set = sem.dayBlocks;
-          console.info("hmmmmmmmmmm", sem.id);
-          set.semesterId = sem.id;
-          console.info("hmmmmmmmmmm2", set.semesterId);
-          set.startDate = sem.startDate;
-          set.startDate = sem.endDate;
-          blockSets.push(set);
-          console.info(set)
-        }
+        let set = JSON.parse(JSON.stringify(sem.dayBlocks)); // copy
+        set.semesterId = sem.id;
+        set.startDate = sem.startDate;
+        set.endDate = sem.endDate;
+        blockSets.push(set);
       })
       // order blocksets by date
       return blockSets;
@@ -82,29 +62,29 @@ export default class WorklistRendering extends Component {
   }
   
   render() {
-    let weekendExtension= this.checkWorklistFor("weekendExtension");
-    let morningExtension= this.checkWorklistFor("morningExtension"); //Default 800, extended 600
-    let eveningExtension= this.checkWorklistFor("eveningExtension"); //Default 1800, extended 2200
-    let dbsets = this.returnRenderable();
+    let worklist = this.returnRenderable();
+    let topTime= this.checkEarliest();
+    let bottomTime= this.checkLatest(); 
+    let hideWeekends= this.checkNoWeekends(); 
 
     return(
       <div className="row p-0 m-0 container-fluid">
-        {dbsets.map(dbset => {
+        {worklist.dateSpans.map(dateSpan => {
             return (
-            <div className="col-lg-6 p-2 m-0" key={dbset.semesterId}>
+            <div className="col-lg-6 p-2 m-0" key={dateSpan.semesterId}>
               <Timetable 
-                blockset={dbset}
+                dateSpan={dateSpan}
                 currentResult={this.props.currentResult}
                 currentVariation={this.props.currentVariation}
                 standardHeight={this.findHeight()}
-                hideWeekends={this.checkWorklistFor("weekendExtension")} 
-                startAt={this.checkWorklistFor("morningExtension")} 
-                endAt={this.checkWorklistFor("eveningExtension")}/>
+                hideWeekends={hideWeekends} 
+                topTime={topTime} 
+                bottomTime={bottomTime} />
             </div>
           )}
         )}
 
-        {/* Do something about untimetabled sections here */}
+        {/* Do something about unscheduled sections here */}
         
       </div>
     );
@@ -121,11 +101,11 @@ class Timetable extends Component {
     this.calculateRows = this.calculateRows.bind(this);
 
     this.state = {
-      blockset: this.props.blockset,
+      toRender: this.props.dateSpan,
 
       hideWeekends: this.props.hideWeekends,
-      startAt: 800, //TODO
-      endAt: 1800, //TODO
+      topTime: this.props.topTime,
+      bottomTime: this.props.bottomTime,
       standardHeight: this.props.standardHeight
     }
   }
@@ -133,8 +113,8 @@ class Timetable extends Component {
   // 1. what is this sidebar called
   // 2. looks like a ruler to me
   renderTimeRuler() {
-    const timeRuler = [<div className="p-0 m-0" style={{height:this.state.standardHeight + "rem"}}></div>]
-    for(let i = this.state.startAt; i < this.state.endAt; i+=100) {
+    const timeRuler = [<div className="p-0 m-0" key="timeRuler" style={{height:this.state.standardHeight + "rem"}}></div>]
+    for(let i = this.state.topTime; i < this.state.bottomTime; i+=100) {
       let iColon = `${i.toString().slice(0,-2)}:00`
       timeRuler.push(<div className="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}>{iColon}</div>);
       timeRuler.push(<div className="wm-hour-marker" style={{height:(this.state.standardHeight) + "rem"}}></div>);
@@ -142,52 +122,37 @@ class Timetable extends Component {
     return timeRuler;
   }
 
-  // INPUT:
-  // a list of blocks on one day of one time interval
-  //
-  // OUTPUT:
-  // a list of renderable blocks
+  // Input: RenderableSpan
+  // Output: The same thing, but with the block heights simplified (# of half-hours)
+  // TODO: Could probably just do this in DayColumn
   calculateRows(day){
-    // If on the specified day, creates a RenderableBlock out of the block and adds it to the list
-    // Simplifies the time to become more easily renderable
-    // e.g. 1200 - 930 = 270 = length of 5
-    // e.g. 1230 - 900 = 230 = length of 5
-  
-    // e.g. 1000 - 900 = 100 = length of 2
-  
-    // e.g. 1000 - 930 = 70 = length of 1
-    // e.g. 1030 - 900 = 30 = length of 1
-    console.info(day)
-    let result = this.state.blockset[day.toLowerCase()];
-    if (!result) return []; //no classes today
+    let blockList = this.state.toRender.dayBlocks[day.toLowerCase()];
+    if (!blockList || blockList.length === 0) return []; //no classes today
 
     function rows(timeDiff) {
-      return (((timeDiff / 100) * 2) | 0)       // | 0 for integer division
-        + (timeDiff % 100 !== 0 ? 1 : 0)
+      return (((timeDiff / 100) * 2) | 0) // | 0 for integer division
+        + (timeDiff % 100 !== 0 ? 1 : 0) // one more row for half hour
     }
 
-    result.forEach(block => {
-      block.startRow = rows(block.startTime - this.state.startAt);
+    blockList.forEach(block => {
+      block.startRow = rows(block.startTime - this.state.topTime);
       block.rowSpan = rows(block.endTime - block.startTime);
     })
-    return(result);
+    return(blockList);
   }
 
-  // INPUT:
+  // Input:
   // sem: number
   // start: Date or false
   // end: Date or false
   //
-  // OUTPUT:
+  // Output:
   // Title = {semester: string, interval: string, navigation: string}
   generateTableTitle(sem, start, end) {
-    let intervalString = (
-      (!start || !end)? "" :
-      (`${start.toDateString().slice(4,10)}-${end.toDateString().slice(4,10)}`)
-    )
+    let intervalString = (!start || !end)? "" : (`${start.toDateString().slice(4,10)}-${end.toDateString().slice(4,10)}`);
     let navString = (
       (this.props.currentResult === 0 || this.props.currentVariation === 0)? "" :
-      (`(Result ${this.props.currentResult}.${this.props.currentVariation})`)
+      (`(Worklist ${this.props.currentResult}.${this.props.currentVariation})`)
     )
     return {
       semester: (`Semester ${sem}`),
@@ -197,9 +162,9 @@ class Timetable extends Component {
   }
   
   render() {
-    const rows = 20; // TODO: calculate from start and end times
-    let title = this.generateTableTitle(this.props.blockset.semesterId, this.props.startDate, this.props.endDate);
-
+    let title = this.generateTableTitle(this.props.dateSpan.semesterId, this.props.startDate, this.props.endDate);
+    let dbs = this.state.toRender.dayBlocks;
+    let days = this.state.hideWeekends? ["monday", "tuesday", "wednesday", "thursday", "friday"] : ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     return(
       <React.Fragment>
       <div className="card p-2 mb-2 zero-space text-center wm-table-title">
@@ -215,18 +180,15 @@ class Timetable extends Component {
 
         <div className="card-group p-0 m-0 col-11">
           <div className="row p-0 m-0 w-100">
-
-          {this.state.hideWeekends ? null :
-            <DayColumn day="Sunday" key={(this.props.blockset.semesterId + "Sunday")} rows={rows} standardHeight = {this.state.standardHeight} renderableBlocks={this.calculateRows("Sunday")} />
-          }
-
-          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map(day => {return (
-            <DayColumn day={day} key={(this.props.blockset.semesterId + day)} rows={rows} standardHeight = {this.state.standardHeight} renderableBlocks={this.calculateRows(day)} />
-          )})}
-
-          {this.state.hideWeekends ? null :
-            <DayColumn day="Saturday" key={(this.props.blockset.semesterId + "Saturday")} rows={rows} standardHeight = {this.state.standardHeight} renderableBlocks={this.calculateRows("Saturday")} />
-          }
+            {days.map(day => {return (
+              <DayColumn 
+              day={day} 
+              key={(this.props.dateSpan.semesterId + day)} 
+              topTime={this.props.topTime} 
+              bottomTime={this.props.bottomTime} 
+              standardHeight = {this.state.standardHeight} 
+              toRender={dbs[day]} />
+            )})}
           </div>
         </div>
       </div>
@@ -235,128 +197,113 @@ class Timetable extends Component {
   }
 }
 
-
 const fakeDayColumnProps = {
-  day: "whatever this isn't going in",
+  day: "Zonday",
+  topTime: 800,
+  bottomTime: 1700,
   standardHeight: "not going in either",
   rows: "not going in either",
   
-  renderableBlocks: [
+  toRender: [
     {courseCode: "CPSC 213",
       sectionCode: "101",
-      activityType: "Lecture", // ?
-      startTime: 0, //800
-      length: 3, //930
+      activityType: "Lecture",
+      startTime: 800,
+      endTime: 930,
       alternating: 0
     },
     {courseCode: "CPSC 213",
       sectionCode: "L01",
-      activityType: "Laboratory", // ?
-      startTime: 3, //930
-      length: 4, //1130
+      activityType: "Laboratory",
+      startTime: 930,
+      endTime: 1130,
       alternating: 0
     },
     {courseCode: "COMM 202",
       sectionCode: "101",
-      activityType: "Lecture", // ?
-      startTime: 16, //1600 but my math could be off
-      length: 2, //1700
+      activityType: "Lecture",
+      startTime: 1600,
+      endTime: 1700,
       alternating: 1
     }
   ]
 }
 
-/*
-props = {
-  day:				just the title of the day (e.g. Monday)
-  standardHeight:	height of one 30-minute block in rem
-  rows:				Number of 30-minute blocks it's rendering for the day
-  renderableBlocks: an ordered list of RenderableBlock objects that all occur on the same day and do not overlap
-    courseCode: "CPSC 213",
-    sectionCode: "101",
-    activityType: "Lecture", 
-    startTime: 0, //800
-    length: 3, //930
-    alternating: 0
-}
-*/
 // This item likely doesn't need to be a Component
 class DayColumn extends Component {
   constructor(props) {
     super(props);
 
-    this.returnGap = this.returnGap.bind(this);
+    this.renderGap = this.renderGap.bind(this);
     this.renderCourse = this.renderCourse.bind(this);
 
     this.state = {
       day: this.props.day,
+      topTime: this.props.topTime,
+      bottomTime:this.props.bottomTime,
       standardHeight: this.props.standardHeight,
-      rows: this.props.rows,
-
-      renderableBlocks: fakeDayColumnProps.renderableBlocks
+      toRender: fakeDayColumnProps.toRender
     }
   }
 
-  // maybe later pass in "startodd?" and "startlight?" param so tables are stripey based on hours
-  // Better yet, make a gap a single block that is striped using CSS rather than using a for loop
-  returnGap(length) {
+  rows(timeDiff){
+    return (((timeDiff / 100) * 2) | 0) // | 0 for integer division
+      + (timeDiff % 100 !== 0 ? 1 : 0) // one more row for half hour
+  }
+
+  // Maybe make a gap a single block that is striped using CSS rather than using a for loop
+  renderGap(time) {
     let gap = [];
-    for(let i = 0; i < length; i++) {
+    for(let i = 0; i < this.rows(time); i++) {
       gap.push(<li className="list-group-item p-0 m-0" style={{height:this.state.standardHeight + "rem"}}></li>);
     }
     return gap;
   }
 
   renderCourse(block) {
-    let blockHeight = block.length * this.state.standardHeight;
+    let blockHeight = this.rows(block.endTime - block.startTime) * this.state.standardHeight;
     let courseName = block.courseCode;
     let courseSection = block.sectionCode;
     return(<div className="wm-course-block rounded" style={{height:blockHeight + "rem"}}>{courseName + " section " +courseSection}</div>); //fix height
   }
 
-  // hoverGlow(block){
-  // 	// makes all blocks of a Section glow when one block is hovered on
-  // 	// I think this could slow things down; I will not include it if it does
-  // }
-
   render() {
-    let unrendered = this.state.renderableBlocks;
-    let currentRow = 0;
+    let unrendered = this.state.toRender;
+    let curr = this.state.topTime;
+    let end = this.state.bottomTime;
+    let nextBlock = 0; //idx of next block to render
     let col = [];
 
-    while (currentRow < this.state.rows) {
-
+    while (curr < end) {
+    
       // No more blocks in the day
-      if (unrendered === undefined || unrendered.length === 0) {
-        col = col.concat(this.returnGap(this.state.rows - currentRow));
-        currentRow = this.state.rows; //break
+      if (!unrendered || unrendered.length === 0 || nextBlock >= unrendered.length) {
+        col = col.concat(this.renderGap(end - curr));
+        curr = end; //break
 
-      // Need to render a block in this row
-      } else if (unrendered[0].startTime === currentRow) {
-        col.push(this.renderCourse(unrendered[0]));
-        currentRow += unrendered[0].length;
-        unrendered.shift();
+      // Need to render a block at this time
+      } else if (unrendered[nextBlock].startTime === curr) {
+        col.push(this.renderCourse(unrendered[nextBlock]));
+        curr += (unrendered[nextBlock].endTime - unrendered[nextBlock].startTime);
+        nextBlock++;
 
       // Need to render a break before the next block
-      } else if (unrendered[0].startTime > currentRow) {
-        let difference = unrendered[0].startTime - currentRow;
-        col = col.concat(this.returnGap(difference));
-        currentRow += difference;
+      } else if (unrendered[nextBlock].startTime > curr) {
+        col = col.concat(this.renderGap(unrendered[nextBlock].startTime - curr));
+        curr += (unrendered[nextBlock].startTime - curr);
 
       // Should not happen, indicates infinite loop
       } else {
         console.warn("bad");
-        currentRow++;
+        curr++;
       }
     }
 
     return(
       <div className="col card flex-nowrap p-0 m-0">
         <ul className="list-group list-group-flush p-0 m-0">
-          <li className="list-group-item p-0 m-0 text-center" 
-            style={{height:this.state.standardHeight + "rem"}}
-            >
-              {this.state.day.charAt(0)}
+          <li className="list-group-item p-0 m-0 text-center" style={{height:this.state.standardHeight + "rem"}}>
+            {this.state.day.charAt(0).toUpperCase()} 
           </li>
           {col}
         </ul>

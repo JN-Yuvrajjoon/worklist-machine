@@ -34,6 +34,7 @@ export default class WorklistNavigatorBar extends Component{
       <React.Fragment>
       <div className="d-flex justify-content-center p-0 m-0">
         <PageFlipper 
+          key="big boy"
           name="big boy"
           changeFn={this.handleWorklistNavigation}
           pages={this.props.results}
@@ -44,6 +45,7 @@ export default class WorklistNavigatorBar extends Component{
       <div className="d-flex flex-wrap container-fluid p-0 m-0">
         <div className="mx-2 align-self-center">Variation:</div>
           <PageFlipper 
+            key="small boye" 
             name="small boye" 
             changeFn={this.handleVariationNavigation}
             pages={this.props.variations}

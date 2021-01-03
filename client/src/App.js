@@ -113,20 +113,21 @@ export default function App() {
         return (globalResults[resultIndex]);
       }
     }
-    return ([]);
+    return ({variations:[]}); //an empty result
   }
-
+  
   // OUTPUT: 
   // Worklist, or empty object
   function outputVariation(){
     let result = getCurrentResult(); // one "result" with many variations inside
     let variationIndex = navigationVariation - 1;
     if (result !== undefined){
-      if (0 <= variationIndex && variationIndex < result.length) {
+      if (0 <= variationIndex && variationIndex < result.variations.length) {
+        console.log("\n\n\n");
         return combineSchedules(result.base, result.variations[variationIndex].modifier);
       } 
     }
-    return ({});
+    return ({semesters:[]}); //an empty variation
   }
   
   return (
@@ -143,7 +144,7 @@ export default function App() {
         <div className="shadow custom-corners h-100" id="wm-output-panel">
           <WorklistNavigatorBar 
             results={globalResults.length}
-            variations={getCurrentResult().length}
+            variations={getCurrentResult().variations.length}
             currentResult={navigationResult}
             currentVariation={navigationVariation}
             navigateResultFn={setNavigationResult}

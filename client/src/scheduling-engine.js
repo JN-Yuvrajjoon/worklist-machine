@@ -93,7 +93,32 @@ export default function generateResults(userRequest) {
   console.log("*********************************************************************");
   console.log("*********************************************************************");
 
-  return step4Solvables;
+
+  // return step4Solvables;
+  return [{
+    info: {},
+    base: [
+      {id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet}, 
+      {id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+      {id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+      {id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet}
+    ],
+    variations: [
+      [
+        {id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet}, 
+        {id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+        {id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+        {id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet}
+      ],
+      [
+        {id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet}, 
+        {id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+        {id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet},
+        {id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet}
+      ]
+    ],
+    abnormalSections: []
+  }];
 }
 
 
@@ -255,6 +280,7 @@ function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, ex
 // DayBlockSet[], DayBlockSet[] => DayBlockSet[] or false
 export function combineSchedules(schedule1, schedule2){
   console.log("Function combineSchedules(schedule1, schedule2) was called!");
+  if (!schedule1 || !schedule2) return schedule1 || schedule2;
   let result = schedule2;
   schedule1.forEach((dbs1)=>{
     let target = result.findIndex((dbs2)=>{return dbs1.semester === dbs2.semester});
