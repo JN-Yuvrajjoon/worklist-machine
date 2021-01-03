@@ -8,7 +8,7 @@
 ## MISC BACKEND/MIDDLEWARE
 - Remove axios
 - Remove Mongoose?
-- Make sure courses can fit into mongoDB, both size-wise and number of documents. (might exceed 5000 limit)
+- Make sure courses can fit into mongoDB, both size-wise and number of documents. (might exceed 5000 limit) -> Don't store 500+ level courses?
 
 ## MISC FRONTEND
 - CoursesMenu: enable deletion of courses
@@ -19,7 +19,7 @@
 - WorklistRendering: Calculate height of one row based on the screen size and number of rows?
 
 ## MISC
-- Make the logo
+- Make the logo |.| |'|
 
 ## FOR LATER
 - Warn users if the distance between two consecutive classes is long enough (maps API) (should only search a small radius, not the whole world)

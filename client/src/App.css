@@ -1,259 +1,265 @@
 :root {
-	--dark-background: #002046;
-	--active-color: #2d5c7d;
+  --dark-background: #002046;
+  --active-color: #2d5c7d;
 
-	--corner-radius: 0.75rem;
+  --corner-radius: 0.75rem;
 
-	--standard-height: 3rem;
-	--logo-height: 4.5rem;
-	--gap: 1rem;
+  --standard-height: 3rem;
+  --logo-height: 4.5rem;
+  --gap: 1rem;
 
-	--minimum-display-height: 500px;
-	--minimum-display-width: 400px;
+  --minimum-display-height: 500px;
+  --minimum-display-width: 400px;
 }
 
 .custom-corners {
-	border-radius: var(--corner-radius);
+  border-radius: var(--corner-radius);
 }
 
 #contains-everything {
-	padding: var(--gap);
-	margin: 0;
-	width: 100%;
-	height: 100vh;
-	min-width: var(--minimum-display-width);
-	min-height: var(--minimum-display-height);
-	background-color: #eee;
+  padding: var(--gap);
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  min-width: var(--minimum-display-width);
+  min-height: var(--minimum-display-height);
+  background-color: #eee;
 }
 
 hr {
-	margin-top: calc(var(--gap) / 2);
-	margin-bottom: calc(var(--gap) / 2);
+  margin-top: calc(var(--gap) / 2);
+  margin-bottom: calc(var(--gap) / 2);
 }
 
 /**************** Left side (Logo, input menu, go button) ****************/
 
 /* Row 1: Logo */
 #wm-logo-row {
-	height: var(--logo-height);
+  height: var(--logo-height);
 
-	padding: 0;
-	margin-bottom: var(--gap);
+  padding: 0;
+  margin-bottom: var(--gap);
 }
 
 
 /* Row 2: Tabbed input menu */
 #wm-menu-row {
-	padding: 0;
-	margin: 0;
-	height: calc(
-		100vh 
-		- var(--standard-height)
-		- var(--logo-height)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)); /* it's like flexbox but bad */
-	min-height: calc(
-		var(--minimum-display-height)
-		- var(--standard-height)
-		- var(--logo-height)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)); /* it's like flexbox but bad */
+  padding: 0;
+  margin: 0;
+  height: calc(
+    100vh 
+    - var(--standard-height)
+    - var(--logo-height)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)); /* it's like flexbox but bad */
+  min-height: calc(
+    var(--minimum-display-height)
+    - var(--standard-height)
+    - var(--logo-height)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)); /* it's like flexbox but bad */
 } 
 
 #wm-tab-menu-content {
-	background-color: var(--dark-background);
-	color: #FFFFFF;
-	border-radius: 
-		var(--corner-radius) 
-		var(--corner-radius) 
-		0 
-		0;
-	padding: var(--gap);
-	border: 1rem var(--dark-background);
-	overflow: scroll;
-	height: calc(100vh 
-		- var(--standard-height)
-		- var(--standard-height)
-		- var(--logo-height)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)); 
+  background-color: var(--dark-background);
+  color: #FFFFFF;
+  border-radius: 
+    var(--corner-radius) 
+    var(--corner-radius) 
+    0 
+    0;
+  padding: var(--gap);
+  border: 1rem var(--dark-background);
+  overflow: scroll;
+  height: calc(100vh 
+    - var(--standard-height)
+    - var(--standard-height)
+    - var(--logo-height)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)); 
 
-	min-height: calc(
-		var(--minimum-display-height)
-		- var(--standard-height)
-		- var(--standard-height)
-		- var(--logo-height)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)
-		- var(--gap)); 
-	/* box-shadow: 
-		inset 0 0 1rem 1rem var(--dark-background), 
-		0 .5rem 1rem rgba(0,0,0,.15); 
-		does not work
-		*/
-	font-size: small;
+  min-height: calc(
+    var(--minimum-display-height)
+    - var(--standard-height)
+    - var(--standard-height)
+    - var(--logo-height)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)
+    - var(--gap)); 
+  /* box-shadow: 
+    inset 0 0 1rem 1rem var(--dark-background), 
+    0 .5rem 1rem rgba(0,0,0,.15); 
+    does not work
+    */
+  font-size: small;
 }
 
 #wm-tab-menu-content hr{
-	border-color: #001036;
+  border-color: #001036;
 }
 
 #wm-tab-list {
-	height: var(--standard-height);
+  height: var(--standard-height);
 }
 
 #settings-tab, #courses-tab, #about-tab {
-	height: var(--standard-height);
-	border-radius: 
-		0 
-		0 
-		var(--corner-radius) 
-		var(--corner-radius);
-	border: none;
-	background-color: #FFFFFF;
-	color: var(--dark-background);
+  height: var(--standard-height);
+  border-radius: 
+    0 
+    0 
+    var(--corner-radius) 
+    var(--corner-radius);
+  border: none;
+  background-color: #FFFFFF;
+  color: var(--dark-background);
 }
 
 #settings-tab:hover, #courses-tab:hover, #about-tab:hover {
-	background-color: var(--active-color);
-	color: #FFFFFF;
-	transition: 0.2s;
+  background-color: var(--active-color);
+  color: #FFFFFF;
+  transition: 0.2s;
 }
 
 #settings-tab.active, #courses-tab.active, #about-tab.active {
-	background-color: var(--dark-background);
-	color: #FFFFFF;
+  background-color: var(--dark-background);
+  color: #FFFFFF;
 }
 
 
 /* Row 3: Go button */
 
 #wm-submit-row {
-	height: calc(var(--gap) + var(--standard-height));
-	padding-top: var(--gap);
-	padding-right: 0;
-	padding-bottom: 0;
-	padding-left: 0;
-	margin: 0;
+  height: calc(var(--gap) + var(--standard-height));
+  padding-top: var(--gap);
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  margin: 0;
 }
 
 #wm-go-button {
-	background-color: var(--active-color);
-	color: #FFFFFF;
-	height: var(--standard-height);
-	margin: 0;
-	padding: 0.75rem;
-	border: none;
-	
+  background-color: var(--active-color);
+  color: #FFFFFF;
+  height: var(--standard-height);
+  margin: 0;
+  padding: 0.75rem;
+  border: none;
+  
 }
 
 #wm-go-button:hover:not(:disabled):not(.disabled){
-	background-color: var(--dark-background);
+  background-color: var(--dark-background);
 }
 
 /**************** Right side (Navbars and timetables) ****************/
 
 #wm-output-panel {
-	margin: 0;
-	padding: var(--gap);
-	overflow: scroll;
+  background-color: #FFFFFF;
+  margin: 0;
+  padding: var(--gap);
+  overflow: scroll;
+  /* box-shadow:
+    0.35rem 0.35rem 0.5rem #00000022,
+    -0.15rem -0.15rem 0.25rem #00000022,
+    -0.35rem -0.35rem 0.5rem #ffffff;  */
+    /* attempting to make it pop out as part of the surface */
 }
 
 #wm-output-panel > div {
-	font-size: small;
+  font-size: small;
 }
 
 .wm-table-title {
-	color: white;
-	background: var(--purple);
-	border: none;
+  color: white;
+  background: var(--purple);
+  border: none;
 }
 
 .timetable { 
-	border-top: none;
-	border:none;
+  border-top: none;
+  border:none;
 }
 
 .zero-space {
-	line-height: 1;
+  line-height: 1;
 }
 
 .wm-course-block {
-	background: var(--purple);
-	color: white;
-	border-bottom: 1px solid #ddd; /* TODO: Fix the curve */
-	padding: 0.25rem;
+  background: var(--purple);
+  color: white;
+  border-bottom: 1px solid #ddd; /* TODO: Fix the curve */
+  padding: 0.25rem;
 }
 
 .wm-hour-marker {
-	border-top: 1px solid #ddd;
-	color: #777;
-	background: #ffffff;
-	text-align: right;
-	padding: 0.1rem;
+  border-top: 1px solid #ddd;
+  color: #777;
+  background: #ffffff;
+  text-align: right;
+  padding: 0.1rem;
 
 }
 
 /**************** Responsive sizing ****************/
 
 @media only screen and (max-width:768px) {
-	/* Stacked column mobile layout */
+  /* Stacked column mobile layout */
 
-	#wm-input-column {
-		margin:0;
-		padding-top: 0;
-		padding-right: 0;
-		padding-bottom: var(--gap);
-		padding-left: 0;
-	}
-	
-	#wm-output-column {
-		padding-top: 0;
-		padding-right: 0;
-		padding-bottom: var(--gap);
-		padding-left: 0;
-	}
+  #wm-input-column {
+    margin:0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: var(--gap);
+    padding-left: 0;
+  }
+  
+  #wm-output-column {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: var(--gap);
+    padding-left: 0;
+  }
 /* 
-	#worklistVariationButtons {
-		margin-right: auto;
-		margin-top: var(--gap);
-	} */
+  #worklistVariationButtons {
+    margin-right: auto;
+    margin-top: var(--gap);
+  } */
 
 }
 
 @media only screen and (min-width:768px) {
-	/* Side-by-side desktop layout */
+  /* Side-by-side desktop layout */
 
-	#wm-input-column {
-		height: 100%;
-		max-width: calc(
-			var(--gap)
-			
-			+ var(--standard-height)
-			+ var(--standard-height)
-			+ var(--standard-height)
-			+ var(--standard-height)
-			+ var(--standard-height)
-			);
-		padding-top: 0;
-		padding-right: var(--gap);
-		padding-bottom: 0;
-		padding-left: 0;
-	}
-	
-	#wm-output-column {
-		height: 100%;
-		padding-top: 0;
-		padding-right: 0;
-		padding-bottom: 0;
-		padding-left: 0;
-	}
+  #wm-input-column {
+    height: 100%;
+    max-width: calc(
+      var(--gap)
+      
+      + var(--standard-height)
+      + var(--standard-height)
+      + var(--standard-height)
+      + var(--standard-height)
+      + var(--standard-height)
+      );
+    padding-top: 0;
+    padding-right: var(--gap);
+    padding-bottom: 0;
+    padding-left: 0;
+  }
+  
+  #wm-output-column {
+    height: 100%;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+  }
 
 }

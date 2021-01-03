@@ -7,9 +7,9 @@ import React, {Component} from "react";
 
 // Variations might be a bit of both, we'll see
 export default class WorklistInformationBar extends Component{
-	render() {
-		return (
-			<p>WorklistInformationBar component</p>
-		)
-	}
+  render() {
+    return (
+      <p>WorklistInformationBar component</p>
+    )
+  }
 }
