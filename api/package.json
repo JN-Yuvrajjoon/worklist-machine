@@ -2,10 +2,8 @@
   "name": "worklist-machine",
   "version": "0.0.0",
   "description": "worklist machine go brrr",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "client": "cd client && npm start && cd ..",
-    "server": "cd server && npm start && cd .."
   },
   "repository": {
     "type": "git",

@@ -514,3 +514,49 @@ function retrieveSolvableNeedsOf(semesterId, courseId) {
 /**
  * @typedef {Object} Course
  */
+
+/**
+ * Course {
+ *  name: string;
+ *  subject: string;
+ *  course: string;
+ *  title: string;
+ *  description: string;
+ *  credits: number;
+ *  comments: Array<string>;
+ *  endpoint: string;
+ *  link: string;
+ *  lastUpdated: Date;
+ *  sections: SectionInfo;
+ */
+
+/**
+ * SectionInfo {
+ *  status: string,
+ *  activity : string,
+ *  name: string,
+ *  subject: string,
+ *  course: string,
+ *  section: string,
+ *  textbooks: Array<string>;
+ *  prof: string; 
+ *  term: string;
+ *  year: string;
+ *  schedule: Array<{
+ *    day: string; 
+ *    start_time: string; 
+ *    end_time: string;
+ *    term: string;
+ *    building?: string;
+ *    room?: string;
+ *  }>;
+ *  total_seats_remaining: number;
+ *  currently_registered: number;
+ *  general_seats_remaining: number;
+ *  restricted_seats_remaining: number;
+ *  seats_reserved_for: Array<string>;
+ *  credits: string;
+ *  link: string;
+ *  lastUpdated: Date;
+ *}
+ */

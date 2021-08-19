@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { url } from '../../api';
 
 export default class SettingsMenu extends Component {
   /**
@@ -17,7 +18,7 @@ export default class SettingsMenu extends Component {
   }
   
     componentDidMount() {
-      fetch('http://localhost:5000/schools').then(resp => resp.json()).then(data => {
+      fetch(url + '/schools').then(resp => resp.json()).then(data => {
         // this.passChanges({ schools: data.schools, school: undefined });
         this.setState({ schools: data.schools })
       });
@@ -36,7 +37,7 @@ export default class SettingsMenu extends Component {
   handleChangeSchool(school) {
     if (!school || school === '[select]') return;
     this.passChanges({ school: school });
-    fetch('http://localhost:5000/' + school + '/sessions').then(resp => resp.json()).then(data => {
+    fetch(url + '/' + school + '/sessions').then(resp => resp.json()).then(data => {
       this.setState({ sessions: data.sessions });
     });
   }

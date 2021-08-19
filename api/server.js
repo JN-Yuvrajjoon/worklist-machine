@@ -10,6 +10,10 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.all('/', function(req, res, next) {
+  res.send({message: 'worklist machine API!!!'});
+})
+
 app.get('/schools', function (req, res, next) {
   db.wakeDb().then(mongo => {
     return mongo.db().admin().listDatabases({

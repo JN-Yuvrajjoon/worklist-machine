@@ -7,6 +7,7 @@ import engineFunction from "./scheduling-engine.js";
 import InputMenu from "./components/InputMenu";
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
 import WorklistRendering from "./components/WorklistRendering";
+import { postApi } from './api'
 
 export default function App() {
   // https://reactjs.org/docs/hooks-state.html
@@ -23,6 +24,7 @@ export default function App() {
    */
   // Formats inputCourses, then sends userRequest to the scheduler
   function globalSubmit(inputCourses, requestedCustoms, settings) {
+    
     let userRequest = {
       settings: settings,
       customs: requestedCustoms
@@ -57,17 +59,10 @@ export default function App() {
       id: ic.id
     })
 
-    return postApi('http://localhost:5000/ubc-vancouver/2021/courses', { courses: reqCourses });
+    return postApi('/ubc-vancouver/2021/courses', { courses: reqCourses });
   }
 
-  async function postApi(url, body) {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    return response.json();
-  }
+  
 
 
   // Output: Result
