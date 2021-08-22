@@ -165,23 +165,23 @@ function arrange(coursePaths, maxCoursesPerTerm = 3) {
  */
 function solve(worklists, i, arrangement) {
   console.log(arrangement)
+  console.log(worklists)
   if (i === arrangement.requirements.length) { console.log('base case, returning wls so far'); return worklists; }
   // if (arrangement.requirements.length - i <= arrangement.requirements.length / 4) { return variations(worklists, i + 1, arrangement); }
-
+  
+  const newWorklists = (i === 0) ?
   // one section on each worklist, returns dbs[][]
-  const newWorklists = arrangement.requirements[i].sections.flatMap((section, sec_idx) => {
-    console.log(section.subject, section.course, '-', section.section)
-    if (sec_idx === 0) {
-      console.log('first section, returning ', [addSection([], section)])
-      return [addSection([], section)];
-    }
-    return worklists.flatMap(wl => {
-      console.log(wl[0], section.schedule)
-      const newWl = addSection(wl, section);
-      console.log(newWl[0])
-      return newWl ? [newWl] : [];
+    arrangement.requirements[0].sections.map(sec => addSection([], sec))
+    : arrangement.requirements[i].sections.flatMap((section, sec_idx) => {
+      console.log(section.subject, section.course, '-', section.section)
+
+      return worklists.flatMap(wl => {
+        console.log(wl[0], section.schedule)
+        const newWl = addSection(wl, section);
+        console.log(newWl[0])
+        return newWl ? [newWl] : [];
+      })
     })
-  })
   return solve(newWorklists, i + 1, arrangement);
 }
 
