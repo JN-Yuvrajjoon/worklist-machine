@@ -1,99 +1,50 @@
-import { exportjust001, exportcpsc213, exportcpsc213a } from "./example-courses.js";
+// import { exportjust001, exportcpsc213, exportcpsc213a } from './example-courses.js';
+import { postApi } from './api'
 
-const emptyBlockSet = {
-  standardBlock: false,
+const emptyBlockSet = { standardBlock: false, sunday: false, monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, saturday: false, semester: undefined, subsetStartDate: false, subsetEndDate: false, };
 
-  sunday: false,
-  monday: false,
-  tuesday: false,
-  wednesday: false,
-  thursday: false,
-  friday: false,
-  saturday: false,
-
-  semester: undefined,
-  subsetStartDate: false,
-  subsetEndDate: false,
-};
-
-// INPUT: 
-// UserRequest
-// 		All courses are formatted, with non-empty names, with no duplicate names
-//
-// OUTPUT: 
-// [Result],
-// or { databaseErrors: [] },
-// or { schedulingError: "" }
-
-/** Generates schedules according to UserRequest, or fails
+/** 
  * 
- * @param {UserRequest} userRequest user input object
- * @param {InputCustoms[]} userRequest.customs user's custom blocks
- * @param {InputCourse[]} userRequest.courses user's requested courses
- * 
- * @returns {Result[] | Object} results, or error
+ * @param {UserRequest} userRequest
+ * @param {InputCustom[]} userRequest.customBlocks 
+ * @param {InputCourse[]} userRequest.inputCourses
+ * @param {Course[]} courses api courses
+ * @returns {Result[] | Object} results
+ * @throws errors lol
  */
+export default function generateResults(courses, userRequest) {
+  /**
+   * step 1: get list of ways to complete each course (not all activities are necessary)
+   */
+  let paths = courses.map(c => getCompletionPaths(c));
+  console.log('1: paths', paths);
 
-export default function generateResults(userRequest) {
+  /**
+   * step 2: get ways to complete all courses
+   */
+  let arrangements = arrange(paths);
+  arrangements.forEach(arr => { arr.requirements.sort((r1, r2) => r1.sections.length - r2.sections.length) });
+  // todo: if there are a LOT of arrangements, maybe ask user to pick a few
+  console.log('2. arrangements', arrangements);
 
-  // STEP 1: CustomBlock[] => DayBlockSet[]
-  // TODO: Returns basic empty two blocksets
-  let step1BlockSets = customsToBlockSets(userRequest.customs);
-  if (step1BlockSets === false) {
-    return { schedulingError: "There was a problem with your custom blocks (step 1)." }
+  /**
+   * step 3: create schedules from each arrangement (first one for now)
+   */
+  arrangements = [arrangements[0]];
+
+  let scheds = arrangements.flatMap(a => solve([], 0, a)) // map if you want to keep them separate
+  console.log(scheds);
+
+  return {
+    info: {},
+    dateSpans: scheds.map((s, idx) => ({
+      startDate: false,
+      endDate: false,
+      id: idx,
+      dayBlocks: s[0],
+    })),
+    variations: []
   }
-
-  // STEP 2: Verify input courses, semesters, sections exist in database
-  let step2CourseRequest = verifyCourses(userRequest.courses);
-  console.info("step2Courserequest here:", step2CourseRequest);
-  if (Array.isArray(step2CourseRequest)) {
-    console.info("SE is returning database errors (step 2).");
-    return { databaseErrors: step2CourseRequest };
-  }
-
-  // STEP 3: Create results using specific sections, if any
-  // TODO: current
-  let initializer = [
-    {
-      base: step1BlockSets,
-      variations: [],
-      //courseRequest: step2CourseRequest, // do we need this?
-      satisfiedNeeds: [],
-      solvableNeeds: []
-    }
-  ];
-  let step3Bases = generateBaseResults(initializer, step2CourseRequest.specSection);
-  console.info("step3Bases here:", step3Bases);
-
-  // STEP 4: Multiplies each base by its possible arrangements
-  // TODO
-  let step4Solvables = step3Bases.flatMap((b) => generateArrangements(b, step2CourseRequest.specSemester, step2CourseRequest.unspec));
-  // let step4Solvables = step3Bases.reduce((result, base) => {
-  // 	let arrangedBase = generateArrangements(base, step2CourseRequest.specSemester, step2CourseRequest.unspec);
-  // 	return arrangedBase ? result.concat(arrangedBase) : result, []
-  // });
-  console.info("step4Solvables here:", step4Solvables);
-
-  // STEP 5: Make many results from each base
-  // TODO: returns result
-  step4Solvables = step4Solvables.map((s) => partialSolve(s));
-
-  // STEP 6: Fill out the variations of each result
-  // TODO: returns result
-  step4Solvables = fillVariations(step4Solvables);
-
-  // Output
-  let __________test__________ =
-    combineBlockSets(exportcpsc213.singleSemesters[0].sections[2].dayBlocks, emptyBlockSet);
-
-  console.log("*********************************************************************");
-  console.log("*********************************************************************");
-  console.info("here arer you TEST results madam:");
-  console.info(__________test__________);
-  console.log("*********************************************************************");
-  console.log("*********************************************************************");
-
-
   // return step4Solvables;
   return [{
     info: {},
@@ -122,320 +73,252 @@ export default function generateResults(userRequest) {
 }
 
 
+// //TODO: returns basic sched
+// // CustomBlock[] => DayBlockSet[] or false
+// function customsToBlockSets(customBlocks) {
+//   console.log("Function customsToBlockSet(customBlocks)  was called!");
+//   //blockSet.reduce(combineBlockSets)
+//   let result1 = emptyBlockSet;
+//   let result2 = emptyBlockSet;
+//   result1.semester = "1";
+//   result2.semester = "2";
+//   return [result1, result2];
+// }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////// HIGH-LEVEL FUNCTIONS ////////////////////////////////////////////////////////// HIGH-LEVEL FUNCTIONS /////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @description For each course, get a list of ways to complete the course
+ * @param {Course} courses
+ * @returns {Requirement[][]} where ret[x] is maybe 1-2 activities needed to complete a course
+ */
+function getCompletionPaths(course, activities = ubcActivities) {
+  /**
+   *  sectionTree[term][activity] = Section[]
+   */
+  let sectionTree = course.sections.reduce((acc, s) => {
+    acc[s.term] = acc[s.term] || {};
+    (acc[s.term][s.activity] = acc[s.term][s.activity] || []).push(s);
+    return acc;
+  }, {});
+  // console.log(sectionTree);
 
-//TODO: returns basic sched
-// CustomBlock[] => DayBlockSet[] or false
-function customsToBlockSets(customBlocks) {
-  console.log("Function customsToBlockSet(customBlocks)  was called!");
-  //blockSet.reduce(combineBlockSets)
-  let result1 = emptyBlockSet;
-  let result2 = emptyBlockSet;
-  result1.semester = "1";
-  result2.semester = "2";
-  return [result1, result2];
-}
+  // terrible lol
+  // todo: use activitySpec tree
+  // todo: maybe combine with the above block
+  let paths = []; // Requirement[][]
+  for (let term in sectionTree) { // term probably only has one path, unless dist. ed.
+    const de = sectionTree[term]['Distance Education'];
+    if (de) { paths.push([de]); }
+    const lec = sectionTree[term]['Lecture'];
+    const woc = sectionTree[term]['Web-Oriented Course'];
+    const otherActivities = Object.keys(sectionTree[term])
+      .filter(activity => (activity !== 'Distance Education') && (activity !== 'Waiting List') && (activity !== 'Lecture') && (activity !== 'Web-Oriented Course'))
+      .map(activity => ({ course, activity, term, sections: sectionTree[term][activity] }));
 
-// ParsedCourse[] => CourseRequest, or DatabaseError[]
-function verifyCourses(parsedCourses) {
-  console.log("Function verifyCourses(parsedCourses) was called!");
-  let badCourses = [];
-  let sorted = {
-    specSection: [],
-    specSemester: [],
-    unspec: []
-  };
-  parsedCourses.forEach((pc) => {
-    let course = retrieveCourse(pc.name);
-    if (!course) {
-      badCourses.push({ index: pc.id, message: (`Could not find course ${pc.name}`) })
-    } else {
-      if (pc.mustBeSection) {
-        let badSections = [];
-        // if (pc.mustBeSemester){ //TODO: search with semesters
-        // 	pc.mustBeSection.forEach((sec) => { 
-        // 		if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
-        // 	})
-        // } else {
-        pc.mustBeSection.forEach((sec) => {
-          if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
-        })
-        // }
-        if (badSections.length === 0) { sorted.specSection.push(pc) } else { badCourses.push(`Found ${pc.name}, but could not find all of the specified sections: ${badSections}`) }
-      } else if (pc.mustBeSemester) {
-        let badSemesters = [];
-        pc.mustBeSemester.forEach((sem) => {
-          if (!courseSemesterExists(sem, pc.name)) { badSemesters.push(sem); }
-        })
-        if (badSemesters.length === 0) { sorted.specSemester.push(pc) } else { badCourses.push(`Found ${pc.name}, but could not find ${pc.name} in ${badSemesters}`) }
-      } else {
-        sorted.unspec.push(pc)
-      }
-    }
-  });
-  return badCourses.length > 0 ? badCourses : sorted;
-}
-
-// Result[], parsedCourse[] => Result[] or false
-function generateBaseResults(currentResults, toAdd) {
-  console.log("Function generateBaseResults(customBlockSet, sectionCourses) was called!");
-  if (toAdd.length === 0) {
-    return currentResults;
-  } else {
-    return generateBaseResults(sectionsOnResults(currentResults, toAdd[0]), toAdd.slice(1));
+    if (lec) { paths.push([{ activity: 'Lecture', course, term, sections: lec }].concat(otherActivities)) }
+    if (woc) { paths.push([{ activity: 'Web-Oriented Course', course, term, sections: woc }].concat(otherActivities)) }
+    if (!lec && !woc) { paths.push(otherActivities) }
   }
+  // console.log(paths)
+  return paths;
+}
 
-  // Result[], inputCourse => Result[]
-  function sectionsOnResults(results, course) {
-    if (!results) {
-      return false;
-    } else {
-      let newResults = [];
-      results.forEach((r) => {
-        course.mustBeSection.forEach((sec) => {
-          let test = addSection(retrieveSection(sec, false, course.name), r)
-          if (test) { newResults.push(test); }
-        })
-      })
-      return newResults;
+/**
+ * @param {Requirement[][][]} coursePaths
+ * @returns {Arrangement[]}
+ */
+function arrange(coursePaths, maxCoursesPerTerm = 3) {
+  // apply each course to each arrangement
+  return coursePaths.reduce((arrangements, course, idx, arr) => {
+    if (idx === 0) {
+      return course.map(path => ({
+        requirements: path,
+        terms: {
+          [path[0]?.term]: 1,
+          // should be safe unless there's a course with no completion path, which is dumb
+        },
+      }));
     }
-  }
-  function insertSection(result, courseId, sectionId) {
-    return result;
-  }
+
+    return arrangements.flatMap(a =>
+      // apply each course path to an arrangement
+      // this could be a regular .map, but flattening empty arrays makes filtering easier
+      course.flatMap(path => (a.terms[path[0]?.term] || 0) >= maxCoursesPerTerm ? [] :
+        [{
+          requirements: a.requirements.concat(path),
+          terms: {
+            ...a.terms,
+            [path[0].term]: (a.terms[path[0].term] || 0) + 1
+          },
+          // complexity: reduce path.sections.length * a.complexity
+        }]
+      )
+    )
+  }, []);
 }
 
-// Result, parsedCourse[], parsedCourse[] => Result[]
-function generateArrangements(baseResult, specSemCourses, unspecCourses) {
-  console.log("Function generateArrangements(baseResult, semesterCourses, unspecCourses) was called!");
-  let results = [baseResult];
+/**
+ * @description apply one requirement to many worklists
+ * @param {DayBlockSet[][]} worklists - accumulated from arrangement
+ * @param {number} i - index of next req to look at in arrangement.requirements
+ * @param {Arrangement} arrangement 
+ * @returns {DayBlockSet[][]} 
+ */
+function solve(worklists, i, arrangement) {
+  console.log(arrangement)
+  if (i === arrangement.requirements.length) { console.log('base case, returning wls so far'); return worklists; }
+  // if (arrangement.requirements.length - i <= arrangement.requirements.length / 4) { return variations(worklists, i + 1, arrangement); }
 
-  specSemCourses.forEach((sc) => {
-    sc.mustBeSemester.forEach((sem) => {
-      retrieveSolvableNeedsOf(sem, sc.name);
-    });
-  });
-  unspecCourses.forEach(() => { });
-  //retrieveSolvableNeedsOf
-  return results;
-}
-
-//TODO:
-// Result[] => Result[]
-function partialSolve(solvables) {
-  console.log("Function partialSolve(solvables) was called!");
-  // solvables.forEach((s)=>{
-  // 	s.solvableNeeds.forEach(()=>{
-  // 		// fulfil the sn here
-  //		// must check for the switch to variations
-  // 	})
-  // })
-  return solvables;
-}
-
-//TODO:
-// Result with a few complex solvableNeeds => Result (Solution)
-function fillVariations(result) {
-  console.log("Function fillVariations(result){ was called!");
-  return result;
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// SCHEDULING TOOLBOX //////////////////////////////////////////////////////////// SCHEDULING TOOLBOX //////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//TODO:
-// Section
-function addSection(section, result) {
-  console.log("Function addSection(section, result) was called!");
-  return result;
-  // let test = combineSchedules([section.dayBlocks], result.base)
-  // return ({
-  // 	base: test,
-  // 	variations: result.variations,
-  // 	//solvableNeeds: result.solvableNeeds.slice(1)
-  // })
-  // For each blockset in the section, combine it with the relevant schedule blockset
-}
-
-// for debugging purposes
-function dispose(thing, reason) {
-  console.log("Function dispose(thing, reason)  was called!");
-  console.log(thing, "was thrown out because", reason);
-}
-
-function arrangeCourse(courseName, arrangement) {
-  console.log("Function arrangeCourse(courseName, arrangement){ was called!");
-}
-
-function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) {
-  console.log("Function makeResult(base, variations, initialNeeds, satisfied, solvableNeeds, expectedBranches) { was called!");
-}
-
-// DayBlockSet[], DayBlockSet[] => DayBlockSet[] or false
-export function combineSchedules(schedule1, schedule2) {
-  console.log("Function combineSchedules(schedule1, schedule2) was called!");
-  if (!schedule1 || !schedule2) return schedule1 || schedule2;
-  let result = schedule2;
-  schedule1.forEach((dbs1) => {
-    let target = result.findIndex((dbs2) => { return dbs1.semester === dbs2.semester });
-    if (target > -1) {
-      result[target] = combineBlockSets(dbs1, result[target]);
-    } else {
-      result.push(dbs1);
+  // one section on each worklist, returns dbs[][]
+  const newWorklists = arrangement.requirements[i].sections.flatMap((section, sec_idx) => {
+    console.log(section.subject, section.course, '-', section.section)
+    if (sec_idx === 0) {
+      console.log('first section, returning ', [addSection([], section)])
+      return [addSection([], section)];
     }
+    return worklists.flatMap(wl => {
+      console.log(wl[0], section.schedule)
+      const newWl = addSection(wl, section);
+      console.log(newWl[0])
+      return newWl ? [newWl] : [];
+    })
   })
+  return solve(newWorklists, i + 1, arrangement);
 }
 
-// (DayBlockSet, DayBlockSet) => DayBlockSet or false
-// smallSet will usually have single blocks, and may have a standard block
-function combineBlockSets(smallSet, largeSet) {
-  console.log("Function combineBlockSets(smallSet, largeSet) was called!");
-  let result = largeSet;
-  let smallStandard = smallSet.standardBlock;
-  ["sunday", "monday", "tuesday", "thursday", "friday", "saturday"].filter(day => smallSet[day])
-    .forEach((day) => {
-      let combined = combineDays(
-        (smallStandard || smallSet[day]),
-        (largeSet[day] || [])
-      );
-      if (combined) {
-        result[day] = combined;
-      } else {
+// function variations() { }
+
+/**
+ * @param {DayBlockSet[]} worklist 
+ * @param {SectionInfo} section
+ * @returns {DayBlockSet[]|false}
+ */
+export function addSection(worklist, section) {
+  console.log(worklist)
+  console.log(section.schedule)
+
+  let ret = worklist.map(dbs => copyBlockSet(dbs));
+
+  for (let sec_dbs of section.schedule) {
+
+    let targetTerm = ret.findIndex(wl_dbs => wl_dbs.term === sec_dbs.term);
+    if (targetTerm === -1) {
+      ret.push(combineBlockSets({ term: sec_dbs.term }, sec_dbs, section));
+      console.log('this should happen like twice')
+    } else {
+      ret[targetTerm] = combineBlockSets(ret[targetTerm], sec_dbs, section);
+      if (!ret[targetTerm]) {
         return false;
       }
-    })
-  return result;
+    }
+  }
+  console.log(ret)
+  return ret;
 }
 
-// (Block, Block[]) => Block[] or false
-// (Block[], Block[]) => Block[] or false
-function combineDays(smallDay, largeDay) {
-  console.log("Function combineDays(smallDay, largeDay) was called!");
-  if (typeof smallDay === "object") {
-    return (insertBlock([], smallDay, largeDay))
+/**
+ * @param {DayBlockSet} largeSet 
+ * @param {DayBlockSet} smallSet 
+ * @returns {DayBlockSet|false}
+ */
+function combineBlockSets(largeSet, smallSet, section) {
+  let ret = copyBlockSet(largeSet);
+  // console.log(largeSet)
+  // console.log(smallSet)
+  for (let day in smallSet) {
+    if (!['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].find(i => i === day)) { continue; }
+    let combined = combineDays(largeSet[day] || [], smallSet[day], section);
+    // console.log(combined)
+    if (!combined) { return false; }
+    ret[day] = combined;
+  }
+  // console.log(ret)
+  return ret;
+}
+
+/**
+ * @param {Block[]} largeDay 
+ * @param {Block[]} smallDay 
+ * @returns {Block[]|false}
+ */
+function combineDays(largeDay, smallDay, section) {
+  let ret = [...largeDay];
+  for (let block of smallDay) {
+    let fail = insertBlock(ret, block, section);
+    if (fail) return false;
+  }
+  return ret;
+}
+
+/**
+ * @param {Block[]} blocks - is modified
+ * @param {Block} newBlock 
+ * @returns {string} only on fail
+ */
+function insertBlock(blocks, newBlock, section) {
+  for (let b of blocks) {
+    if (newBlock.startTime <= b.endTime && b.startTime <= newBlock.endTime) {
+      return 'yea';
+    }
+  }
+  let target = blocks.findIndex(b => b.startTime > newBlock.startTime);
+  if (target !== -1) {
+    blocks.splice(target, 0, { ...newBlock, section });
   } else {
-    let result = largeDay
-    smallDay.forEach((block) => { insertBlock([], block, result) })
-    return result;
+    blocks.push({ ...newBlock, section });
   }
 }
 
-// Block[]s are ORDERED
-// ([], Block, Block[]) => Block[] or false
-function insertBlock(earlier, block, blocks) {
-  console.log("Function insertBlock(earlier, block, blocks)  was called!");
-  if (earlier.length > 0 && block.startTime < earlier[earlier.length - 1].endTime) {
-    return false;
-  } else {
-    if (blocks.length === 0 || block.endTime <= blocks[0].startTime) {
-      return [...earlier, block, ...blocks]
-    } else {
-      return insertBlock([...earlier, blocks[0]], block, blocks.slice(1))
-    }
+function copyBlockSet(dbs) {
+  return {
+    ...dbs.sun && { sun: [...dbs.sun] },
+    ...dbs.mon && { mon: [...dbs.mon] },
+    ...dbs.tue && { tue: [...dbs.tue] },
+    ...dbs.wed && { wed: [...dbs.wed] },
+    ...dbs.thu && { thu: [...dbs.thu] },
+    ...dbs.fri && { fri: [...dbs.fri] },
+    ...dbs.sat && { sat: [...dbs.sat] },
+    ...dbs.term && { term: dbs.term },
   }
 }
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// DATABASE FUNCTIONS //////////////////////////////////////////////////////////// DATABASE FUNCTIONS //////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const database = [exportjust001, exportcpsc213, exportcpsc213a] // TODO
-
-function courseExists(courseId) { return true && retrieveCourse(courseId) }
-function courseSemesterExists(courseId, semesterId) { return true && retrieveCourseSemester(courseId, semesterId) }
-function courseSectionExists(courseId, semesterId, sectionId) { return true && retrieveSection(courseId, semesterId, sectionId) }
-
-// string =DATABASE=> Course or false
-function retrieveCourse(courseId) {
-  return database.find((course) => course.id === courseId) || false;
-  // for(let i = 0; i < database.length; i++) {
-  // 	if (database[i].id === courseId) {return database[i];}
-  // }
-  // console.error("retrieveCourses couldn't find ", courseId, " in the database");;
-  // return false;
-}
-
-// (string, string) =DATABASE=> CourseSemester or false
-function retrieveCourseSemester(semesterId, courseId) {
-  try {
-    return (
-      retrieveCourse(courseId).singleSemesters.find(sem => sem.id === semesterId)
-      || retrieveCourse(courseId).otherSemesters.find(sem => sem.id === semesterId)
-      || false
-    );
-  } catch (e) {
-    console.log("Couldn't retrieve the specified course: ", courseId);
-    return false;
-  }
-}
-
-// (string, string? string) =DATABASE=> CourseSection or false
-function retrieveSection(sectionId, semesterId, courseId) {
-  try {
-    if (semesterId) {
-      return (
-        retrieveCourseSemester(semesterId, courseId).sections.find(sec => sec.id === sectionId)
-        || false
-      );
-    } else {
-      return retrieveSemestersOf(courseId).reduce(
-        (found, semId) => {
-          return (found || retrieveSection(sectionId, semId, courseId))//retrieveCourseSemester(semId, courseId).sections.find(sec => sec.id === sectionId) 
-        }, false
-      )
-    }
-  } catch (e) {
-    console.log("Couldn't retrieve the specified course or semester");
-    return false;
-  }
-}
-
-// string =DATABASE=> [string] or (rarely) false
-function retrieveSemestersOf(courseId) {
-  try {
-    return retrieveSingleSemestersOf(courseId).concat(retrieveOtherSemestersOf(courseId));
-  } catch (e) {
-    console.log("Couldn't retrieve the specified course: ", courseId);
-    return false;
-  }
-}
-
-function retrieveSingleSemestersOf(courseId) {
-  try {
-    return retrieveCourse(courseId).singleSemesters.map(sem => sem.id);
-  } catch (e) {
-    console.log("Couldn't retrieve the specified course: ", courseId);
-    return false;
-  }
-}
-
-function retrieveOtherSemestersOf(courseId) {
-  try {
-    return retrieveCourse(courseId).otherSemesters.map(sem => sem.id);
-  } catch (e) {
-    console.log("Couldn't retrieve the specified course: ", courseId);
-    return false;
-  }
-}
-
-// TODO: The map is currently unnecessary
-// string =DATABASE=> [SolvableNeed] (typical length = 1 or 2)
-function retrieveSolvableNeedsOf(semesterId, courseId) {
-  return retrieveCourseSemester(semesterId, courseId).requiredActivities.map(ra => {
-    return {
-      activity: ra.activity,
-      solutions: ra.solutions,
-      tiedTo: ra.tiedTo
-    }
-  })
-}
+//   console.log("Function getSectionOptions(parsedCourses) was called!");
+//   let badCourses = [];
+//   let sorted = {
+//     specSection: [],
+//     specSemester: [],
+//     unspec: []
+//   };
+//   parsedCourses.forEach((pc) => {
+//     let course = retrieveCourse(pc.name);
+//     if (!course) {
+//       badCourses.push({ index: pc.id, message: (`Could not find course ${pc.name}`) })
+//     } else {
+//       if (pc.mustBeSection) {
+//         let badSections = [];
+//         // if (pc.mustBeSemester){ //TODO: search with semesters
+//         // 	pc.mustBeSection.forEach((sec) => { 
+//         // 		if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
+//         // 	})
+//         // } else {
+//         pc.mustBeSection.forEach((sec) => {
+//           if (!courseSectionExists(sec, false, pc.name)) { badSections.push(sec); }
+//         })
+//         // }
+//         if (badSections.length === 0) { sorted.specSection.push(pc) } else { badCourses.push(`Found ${pc.name}, but could not find all of the specified sections: ${badSections}`) }
+//       } else if (pc.mustBeSemester) {
+//         let badSemesters = [];
+//         pc.mustBeSemester.forEach((sem) => {
+//           if (!courseSemesterExists(sem, pc.name)) { badSemesters.push(sem); }
+//         })
+//         if (badSemesters.length === 0) { sorted.specSemester.push(pc) } else { badCourses.push(`Found ${pc.name}, but could not find ${pc.name} in ${badSemesters}`) }
+//       } else {
+//         sorted.unspec.push(pc)
+//       }
+//     }
+//   });
+//   return badCourses.length > 0 ? badCourses : sorted;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// TYPE DEFINITIONS ////////////////////////////////////////////////////////////// TYPE DEFINITIONS ///////////////////////////////
@@ -473,90 +356,125 @@ function retrieveSolvableNeedsOf(semesterId, courseId) {
 /**
  * @typedef {Object} InputCourse
  * @property {string} name
- * @property {string[] | false} mustBeSemester
- * @property {string[] | false} mustBeSection
+ * @property {string[]?} mustBeSemester
+ * @property {string[]?} mustBeSection
  */
 
-/**
- * @typedef {Object} Block
- * @property {number} startTime
- * @property {number} endTime
- * @property {number} alternating
- * @property {false | string} subsetSectionActivities
- * @property {string} location
- * @property {string} prof
- * @property {string | undefined} renderName
- */
+// /**
+//  * @typedef {Object} Block
+//  * @property {number} startTime
+//  * @property {number} endTime
+//  * @property {number} alternating
+//  * @property {false | string} subsetSectionActivities
+//  * @property {string} location
+//  * @property {string} prof
+//  * @property {string | undefined} renderName
+//  */
 
 /**
 * @typedef {Object} DayBlockSet
-* @property {Block | false} standardBlock
-* @property {Block | Block[] | false} sunday
-* @property {Block | Block[] | false} monday
-* @property {Block | Block[] | false} tuesday
-* @property {Block | Block[] | false} wednesday
-* @property {Block | Block[] | false} thursday
-* @property {Block | Block[] | false} friday
-* @property {Block | Block[] | false} saturday
-* @property {string} semester
-* @property {Date | false} subsetStartDate
-* @property {Date | false} subsetEndDate
+* @property {Block[]} [sun]
+* @property {Block[]} [mon]
+* @property {Block[]} [tue]
+* @property {Block[]} [wed]
+* @property {Block[]} [thu]
+* @property {Block[]} [fri]
+* @property {Block[]} [sat]
+* @property {string} term
+* @property {Date?} subsetStartDate
+* @property {Date?} subsetEndDate
 */
 
 /**
- * @typedef {Object} CourseSection
+ * @typedef Arrangement
+ * If you pick one from each Requirement, you have a full, although maybe time-conflicting, schedule.
+ * If any requirement.sections is empty, the arrangement is doomed to fail.
+ * @property {Requirement[]} requirements - generally, sort ascending requirements.sections.length
+ * @property {Object} terms - kv pairs to intdicate # of courses per term
  */
 
 /**
- * @typedef {Object} CourseSemester
+ * @typedef Requirement
+ * "Pick any one to fill your needs."
+ * sections: All are equivalent, and this is the exhaustive list of applicable (same term and activity, and not removed for some reason) sections.
+ * @property {Course} course
+ * @property {string} term
+ * @property {string} activity
+ * @property {Section[]} sections
  */
 
 /**
- * @typedef {Object} Course
+ * @typedef Course
+ * @property {string} name
+ * @property {string} course
+ * @property {string} title
+ * @property {string} description
+ * @property {number} credits
+ * @property {string[]} comments
+ * @property {string} endpoint
+ * @property {string} link
+ * @property {Date} lastUpdated
+ * @property {SectionInfo[]} sections
  */
 
 /**
- * Course {
- *  name: string;
- *  subject: string;
- *  course: string;
- *  title: string;
- *  description: string;
- *  credits: number;
- *  comments: Array<string>;
- *  endpoint: string;
- *  link: string;
- *  lastUpdated: Date;
- *  sections: SectionInfo;
+ * @typedef SectionInfo
+ * @property {string} status
+ * @property {string} activity
+ * @property {string} name
+ * @property {string} subject
+ * @property {string} course
+ * @property {string} section
+ * @property {string[]} textbooks
+ * @property {string} prof
+ * @property {string} term
+ * @property {string} year
+ * @//property {Block[]} schedule
+ * @property {DayBlockSet[]} schedule
+ * @property {number} total_seats_remaining
+ * @property {number} currently_registered
+ * @property {number} general_seats_remaining
+ * @property {number} restricted_seats_remaining
+ * @property {string[]} seats_reserved_for
+ * @property {string} credits
+ * @property {string} link
+ * @property {number} lastUpdated
  */
 
 /**
- * SectionInfo {
- *  status: string,
- *  activity : string,
- *  name: string,
- *  subject: string,
- *  course: string,
- *  section: string,
- *  textbooks: Array<string>;
- *  prof: string; 
- *  term: string;
- *  year: string;
- *  schedule: Array<{
- *    day: string; 
- *    start_time: string; 
- *    end_time: string;
- *    term: string;
- *    building?: string;
- *    room?: string;
- *  }>;
- *  total_seats_remaining: number;
- *  currently_registered: number;
- *  general_seats_remaining: number;
- *  restricted_seats_remaining: number;
- *  seats_reserved_for: Array<string>;
- *  credits: string;
- *  link: string;
- *  lastUpdated: Date;
- *}
+ * @typedef Block
+ * @//property {string} day
+ * @property {string} startTime
+ * @property {string} endTime
+ * @//property {string} term
+ * @//property {string?} building
+ * @//property {string?} room
  */
+
+
+/**
+ * @typedef {activitySpecGroup|activitySpecLeaf} activitySpec
+ * @typedef {{or: activitySpec[]}|{and: activitySpec[]}} activitySpecGroup
+ * @typedef {{activity: string}} activitySpecLeaf
+ * @type {activitySpec}
+ */
+const ubcActivities = {
+  or: [
+    { activity: 'Distance Education' },
+    {
+      and: [
+        {
+          or: [{ activity: 'Lecture' }, { activity: 'Web-Oriented Course' }],
+        },
+        { activity: 'Laboratory' },
+        { activity: 'Tutorial' },
+        { activity: 'Seminar' },
+        { activity: 'Discussion' },
+        { activity: 'Thesis' },
+        { activity: 'Directed Studies' },
+        { activity: 'Practicum' },
+
+      ]
+    }
+  ],
+}

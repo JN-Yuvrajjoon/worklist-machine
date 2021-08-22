@@ -10,8 +10,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.all('/', function(req, res, next) {
-  res.send({message: 'worklist machine API!!!'});
+app.all('/', function (req, res, next) {
+  res.send({ message: 'worklist machine API!!!' });
 })
 
 app.get('/schools', function (req, res, next) {
@@ -24,9 +24,9 @@ app.get('/schools', function (req, res, next) {
     res.send({
       schools: doc.databases
         .filter(sch => sch.name.startsWith(db.schoolPrefix))
-        .map(sch => ({ 
-          dbName: sch.name, 
-          name: sch.name.slice(db.schoolPrefix.length) 
+        .map(sch => ({
+          dbName: sch.name,
+          name: sch.name.slice(db.schoolPrefix.length)
           // todo: valid semester list
         }))
     });
@@ -49,6 +49,7 @@ app.get('/:school/sessions', function (req, res, next) {
  * @param req.params.school db name minus prefix, e.g. 'ubc-vancouver'
  * @param req.params.session collection name
  * @param {name: string, section?: string}[] req.body.courses
+ * @todo filter sections using section + semester input
  */
 app.post('/:school/:session/courses', function (req, res, next) {
   // const query = {
@@ -89,15 +90,48 @@ app.post('/:school/:session/courses', function (req, res, next) {
       }
     }
   ];
-  
+
   db.wakeDb().then(mongo => {
     return mongo.db(db.schoolPrefix + req.params.school)
       .collection(req.params.session)
-      .aggregate(aggPipeline).toArray().then(x => {
-        res.send(x);
+      .aggregate(aggPipeline).toArray().then(courses => {
+        res.send({ courses: courses.map(c => formatSchedule(c)) });
       });
   }).catch(next);
 })
+
+// todo just store it this way instead of doing fat processing
+function formatSchedule(course) {
+  return {
+    ...course,
+    sections: course.sections.map(sec => ({
+      ...sec,
+      schedule: sec.schedule.reduce((dayblocksets, block) => {
+        const day = block.day.toLowerCase();
+        newblock = {
+          // term: block.term,
+          startTime: parseInt(block.start_time.replace(':', ''), 10),
+          endTime: parseInt(block.end_time.replace(':', ''), 10),
+          // building: block.building,
+          // room: block.room,
+          // term: block.term,
+        };
+
+        // Generally no multi-block days, but maybe.
+        let dbs = dayblocksets.find(d => d.term === block.term);
+        if (!dbs) {
+          dbs = { term: block.term };
+          dayblocksets.push(dbs);
+        }
+        let target = dbs[day] || [];
+        const spot = target.findIndex(block => block.start_time >= newblock.start_time);
+        target.splice(spot === -1 ? 0 : spot - 1, 0, newblock);
+        dbs[day] = target;
+        return dayblocksets;
+      }, [])
+    }))
+  }
+}
 
 /**
  * error handler called on .catch(next)

@@ -25,7 +25,8 @@ export default class WorklistRendering extends Component {
   // Output: A renderable worklist regardless of the props
   returnRenderable() {
     let toRender = this.props.worklist;
-    if (!toRender || !toRender.dateSpans || toRender.dateSpans.length === 0) {
+    if (!toRender || !toRender.dateSpans || !toRender.dateSpans.length) {
+      console.info(toRender)
       console.info("WorklistRendering is rendering the default worklist");
       return defaultWorklist;
     }
@@ -128,7 +129,7 @@ class Timetable extends Component {
   render() {
     let title = this.generateTableTitle(this.props.dateSpan.semesterId, this.props.startDate, this.props.endDate);
     let dbs = this.state.toRender.dayBlocks;
-    let days = this.state.hideWeekends ? ["monday", "tuesday", "wednesday", "thursday", "friday"] : ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    let days = this.state.hideWeekends ? [ 'mon', 'tue', 'wed', 'thu', 'fri'] : [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     return (
       <React.Fragment>
         <div className="card p-2 mb-2 zero-space text-center wm-table-title">
@@ -232,8 +233,8 @@ class DayColumn extends Component {
 
   renderCourse(block) {
     let blockHeight = this.rows(block.endTime - block.startTime) * this.state.standardHeight;
-    let courseName = block.courseId;
-    let courseSection = block.sectionId;
+    let courseName = block.section.name;
+    let courseSection = '';
     return (<div className="wm-course-block rounded" style={{ height: blockHeight + "rem" }}>{courseName + " section " + courseSection}</div>); //fix height
   }
 

@@ -2,67 +2,57 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 
 import React, { useState } from 'react';
-import engineFunction from "./scheduling-engine.js";
 
 import InputMenu from "./components/InputMenu";
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
 import WorklistRendering from "./components/WorklistRendering";
+
+import generateResults from "./scheduling-engine.js";
 import { postApi } from './api'
 
 export default function App() {
-  // https://reactjs.org/docs/hooks-state.html
-  //    [state, functionToSetState] = useState(initial state)
+  // https://reactjs.org/docs/hooks-state.html [state, functionToSetState] = useState(initial state)
   const [cachedRequest, setCachedRequest] = useState({});
   const [results, setResults] = useState([]);
   const [schedulePage, setSchedulePage] = useState(0);
   const [variationPage, setVariationPage] = useState(0);
 
   /**
+   * @description query backend for courses, send to scheduling engine, and return
    * @param {InputCourse} inputCourses 
-   * @param {InputCustom} requestedCustoms 
+   * @param {InputCustom} customs 
    * @param {Settings} settings 
    */
-  // Formats inputCourses, then sends userRequest to the scheduler
-  function globalSubmit(inputCourses, requestedCustoms, settings) {
-    
-    let userRequest = {
-      settings: settings,
-      customs: requestedCustoms
-    };
-    fetchCourses(inputCourses).then(parsed => {
-      userRequest.courses = parsed;
-      console.info(parsed)
-      console.group("App.js is sending this request to the SE:", userRequest);
-      return engineFunction(userRequest);
+  function globalSubmit(inputCourses, customBlocks, settings) {
+    fetchCourses(inputCourses).then(resp => {
+      console.group('App.js is sending the following to the SE', resp.courses);
+      return generateResults(resp.courses, {inputCourses, customBlocks, settings});
     }).then(engineOutput => {
-      // if (engineOutput.databaseError) {
-      //   console.log("Engine produced database errors:", engineOutput.databaseErrors);
-      // } else if (engineOutput.schedulingError) {
-      //   console.log("Engine produced a scheduling error:", engineOutput.schedulingError);
-      // } else {
-        console.groupEnd("Engine successfuly produced results:", engineOutput);
-        setResults(engineOutput);
-        setSchedulePage(1);
-        setVariationPage(1);
-        setCachedRequest(userRequest);
-      // }
-    });
+      console.groupEnd();
+      console.log("Engine successfuly produced results:", engineOutput);
+      setResults(engineOutput);
+      setSchedulePage(1);
+      setVariationPage(1);
+      // setCachedRequest(userRequest);
+    }).catch(err => console.log);
   }
 
-  // Removes blank-named courses
-  // formats course name, semester, and section for scheduler
+  /**
+   * @param {*} inputCourses 
+   */
   function fetchCourses(inputCourses) {
-    const reqCourses = inputCourses.map(ic => !ic.name ? undefined : {
-      name: ic.name.replace(/[^A-Za-z0-9]/g, '').toUpperCase(),
-      mustBeSemester: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(sem => sem),
-      mustBeSection: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec),
-      id: ic.id
-    })
+    const reqCourses = inputCourses.map(ic =>
+      !ic.name.trim() ?
+        undefined : 
+        {
+          name: ic.name.replace(/[^A-Za-z0-9]/g, '').toUpperCase(),
+          mustBeSemester: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(sem => sem),
+          mustBeSection: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec),
+          id: ic.id
+        });
 
     return postApi('/ubc-vancouver/2021/courses', { courses: reqCourses });
   }
-
-  
 
 
   // Output: Result
@@ -92,6 +82,7 @@ export default function App() {
   // Renderer will only ever access days (sun-sat) of a DBS
   // Package necessary info alongside DBS's
   function getRenderable() {
+    return results;
     // let base = [];
     // let variation = [];
 
