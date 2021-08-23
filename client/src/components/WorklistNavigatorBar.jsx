@@ -52,8 +52,8 @@ export default class WorklistNavigatorBar extends Component{
             currentPage={this.props.currentVariation}
           />
         <div className="ml-auto" id="worklistVariationButtons">
-          <button className="btn btn-sm btn-outline-danger">Warnings</button>
-          <button className="btn btn-sm btn-outline-dark mx-2">Export</button>
+          <button className="btn btn-sm btn-light ">Warnings</button>
+          <button className="btn btn-sm btn-light ml-2 ">Export</button>
         </div>
       </div>
       <hr></hr>

@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { emptyDayBlockSet } from "../example-results.js";
 
 const defaultWorklist = {
   info: {},
-  dateSpans: [
-    { semesterId: "1", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet },
-    { semesterId: "2", startDate: false, endDate: false, dayBlocks: emptyDayBlockSet }
+  dayBlockSets: [
+    { term: '1', subsetStartDate: false, subsetEndDate: false },
+    { term: '2', subsetStartDate: false, subsetEndDate: false },
   ],
-  unscheduled: []
+  variations: [],
+  unscheduled: [],
 }
 
 export default class WorklistRendering extends Component {
@@ -25,8 +25,7 @@ export default class WorklistRendering extends Component {
   // Output: A renderable worklist regardless of the props
   returnRenderable() {
     let toRender = this.props.worklist;
-    if (!toRender || !toRender.dateSpans || !toRender.dateSpans.length) {
-      console.info(toRender)
+    if (!toRender || !toRender.dayBlockSets || !toRender.dayBlockSets.length) {
       console.info("WorklistRendering is rendering the default worklist");
       return defaultWorklist;
     }
@@ -47,61 +46,42 @@ export default class WorklistRendering extends Component {
 
   render() {
     let worklist = this.returnRenderable();
-    let topTime = this.checkEarliest();
-    let bottomTime = this.checkLatest();
-    let hideWeekends = this.checkNoWeekends();
 
     return (
       <div className="row p-0 m-0 container-fluid">
-        {worklist.dateSpans.map(dateSpan => {
-          return (
-            <div className="col-lg-6 p-2 m-0" key={dateSpan.semesterId}>
-              <Timetable
-                dateSpan={dateSpan}
-                currentResult={this.props.currentResult}
-                currentVariation={this.props.currentVariation}
-                standardHeight={this.findHeight()}
-                hideWeekends={hideWeekends}
-                topTime={topTime}
-                bottomTime={bottomTime} />
-            </div>
-          )
+        {worklist.dayBlockSets.map(dbs =>
+          <div className="col-lg-6 p-2 m-0" key={dbs.term}>
+            <Timetable
+              dayBlockSet={dbs}
+              currentResult={this.props.currentResult}
+              currentVariation={this.props.currentVariation}
+              standardHeight={this.findHeight()}
+              hideWeekends={this.checkNoWeekends()}
+              topTime={this.checkEarliest()}
+              bottomTime={this.checkLatest()} />
+          </div>)
         }
-        )}
-
         {/* Do something about unscheduled sections here */}
-
       </div>
     );
   }
 }
 
-// TODO: Alternating week courses? make two timetables?
 class Timetable extends Component {
   constructor(props) {
     super(props);
 
     this.generateTableTitle = this.generateTableTitle.bind(this);
     this.renderTimeRuler = this.renderTimeRuler.bind(this);
-
-    this.state = {
-      toRender: this.props.dateSpan,
-
-      hideWeekends: this.props.hideWeekends,
-      topTime: this.props.topTime,
-      bottomTime: this.props.bottomTime,
-      standardHeight: this.props.standardHeight
-    }
   }
 
-  // 1. what is this sidebar called
-  // 2. looks like a ruler to me
+  // looks like a ruler to me
   renderTimeRuler() {
-    const timeRuler = [<div className="p-0 m-0" key="timeRuler" style={{ height: this.state.standardHeight + "rem" }}></div>]
-    for (let i = this.state.topTime; i < this.state.bottomTime; i += 100) {
+    const timeRuler = [<div className="p-0 m-0" key="timeRuler" style={{ height: this.props.standardHeight + "rem" }}></div>]
+    for (let i = this.props.topTime; i < this.props.bottomTime; i += 100) {
       let iColon = `${i.toString().slice(0, -2)}:00`
-      timeRuler.push(<div className="wm-hour-marker" style={{ height: (this.state.standardHeight) + "rem" }}>{iColon}</div>);
-      timeRuler.push(<div className="wm-hour-marker" style={{ height: (this.state.standardHeight) + "rem" }}></div>);
+      timeRuler.push(<div className="wm-hour-marker" style={{ height: (this.props.standardHeight) + "rem" }}>{iColon}</div>);
+      timeRuler.push(<div className="wm-hour-marker" style={{ height: (this.props.standardHeight) + "rem" }}></div>);
     }
     return timeRuler;
   }
@@ -127,15 +107,14 @@ class Timetable extends Component {
   }
 
   render() {
-    let title = this.generateTableTitle(this.props.dateSpan.semesterId, this.props.startDate, this.props.endDate);
-    let dbs = this.state.toRender.dayBlocks;
-    let days = this.state.hideWeekends ? [ 'mon', 'tue', 'wed', 'thu', 'fri'] : [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    let title = this.generateTableTitle(this.props.dayBlockSet.term, this.props.startDate, this.props.endDate);
+    let dbs = this.props.dayBlockSet;
+    console.log(dbs);
+    let days = this.props.hideWeekends ? ['mon', 'tue', 'wed', 'thu', 'fri'] : ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     return (
       <React.Fragment>
-        <div className="card p-2 mb-2 zero-space text-center wm-table-title">
-          <p className="m-0">
-            <b>{title.semester}</b> {" " + title.interval} {" " + title.navigation}
-          </p>
+        <div className="wm-table-title">
+          <b>{title.semester}</b> {" " + title.interval} {" " + title.navigation}
         </div>
 
         <div className="row p-0 m-0 zero-space">
@@ -149,11 +128,11 @@ class Timetable extends Component {
                 return (
                   <DayColumn
                     day={day}
-                    key={(this.props.dateSpan.semesterId + day)}
+                    key={(this.props.dayBlockSet.term + day)}
                     topTime={this.props.topTime}
                     bottomTime={this.props.bottomTime}
-                    standardHeight={this.state.standardHeight}
-                    toRender={dbs[day]} />
+                    standardHeight={this.props.standardHeight}
+                    dayBlocks={dbs[day] || []} />
                 )
               })}
             </div>
@@ -164,41 +143,6 @@ class Timetable extends Component {
   }
 }
 
-// const fakeDayColumnProps = {
-//   day: "Zonday",
-//   topTime: 800,
-//   bottomTime: 1700,
-//   standardHeight: "not going in",
-//   rows: "not going in either",
-
-//   toRender: [
-//     {
-//       courseId: "CPSC 213",
-//       sectionId: "101",
-//       activityType: "Lecture",
-//       startTime: 800,
-//       endTime: 930,
-//       alternating: 0
-//     },
-//     {
-//       courseId: "CPSC 213",
-//       sectionId: "L01",
-//       activityType: "Laboratory",
-//       startTime: 930,
-//       endTime: 1130,
-//       alternating: 0
-//     },
-//     {
-//       courseId: "COMM 202",
-//       sectionId: "101",
-//       activityType: "Lecture",
-//       startTime: 1600,
-//       endTime: 1700,
-//       alternating: 1
-//     }
-//   ]
-// }
-
 // This item likely doesn't need to be a Component
 class DayColumn extends Component {
   constructor(props) {
@@ -206,15 +150,6 @@ class DayColumn extends Component {
 
     this.renderGap = this.renderGap.bind(this);
     this.renderCourse = this.renderCourse.bind(this);
-
-    this.state = {
-      toRender: this.props.toRender,
-
-      day: this.props.day,
-      topTime: this.props.topTime,
-      bottomTime: this.props.bottomTime,
-      standardHeight: this.props.standardHeight
-    }
   }
 
   rows(timeDiff) {
@@ -226,29 +161,35 @@ class DayColumn extends Component {
   renderGap(time) {
     let gap = [];
     for (let i = 0; i < this.rows(time); i++) {
-      gap.push(<li className="list-group-item p-0 m-0" style={{ height: this.state.standardHeight + "rem" }}></li>);
+      gap.push(<li className="list-group-item p-0 m-0" style={{ height: this.props.standardHeight + "rem" }}></li>);
     }
     return gap;
   }
 
   renderCourse(block) {
-    let blockHeight = this.rows(block.endTime - block.startTime) * this.state.standardHeight;
+    let blockHeight = this.rows(block.endTime - block.startTime) * this.props.standardHeight;
     let courseName = block.section.name;
     let courseSection = '';
-    return (<div className="wm-course-block rounded" style={{ height: blockHeight + "rem" }}>{courseName + " section " + courseSection}</div>); //fix height
+    return (
+      <a href={block.section.link}>
+        <div className="wm-course-block rounded" style={{ height: blockHeight + "rem" }}>
+          {courseName + " section " + courseSection}
+        </div>
+      </a>
+    ); //fix height
   }
 
   render() {
-    let unrendered = this.state.toRender;
-    let curr = this.state.topTime;
-    let end = this.state.bottomTime;
+    let unrendered = [...this.props.dayBlocks];
+    let curr = this.props.topTime;
+    let end = this.props.bottomTime;
     let nextBlock = 0; //idx of next block to render
     let col = [];
 
     while (curr < end) {
 
       // No more blocks in the day
-      if (!unrendered || unrendered.length === 0 || nextBlock >= unrendered.length) {
+      if (!unrendered || !unrendered.length || nextBlock >= unrendered.length) {
         col = col.concat(this.renderGap(end - curr));
         curr = end; //break
 
@@ -273,8 +214,8 @@ class DayColumn extends Component {
     return (
       <div className="col card flex-nowrap p-0 m-0">
         <ul className="list-group list-group-flush p-0 m-0">
-          <li className="list-group-item p-0 m-0 text-center" style={{ height: this.state.standardHeight + "rem" }}>
-            {this.state.day.charAt(0).toUpperCase()}
+          <li className="list-group-item p-0 m-0 text-center" style={{ height: this.props.standardHeight + "rem" }}>
+            {this.props.day.charAt(0).toUpperCase()}
           </li>
           {col}
         </ul>

@@ -12,7 +12,7 @@ const emptyBlockSet = { standardBlock: false, sunday: false, monday: false, tues
  * @returns {Result[] | Object} results
  * @throws errors lol
  */
-export default function generateResults(courses, userRequest) {
+export function generateResults(courses, userRequest) {
   /**
    * step 1: get list of ways to complete each course (not all activities are necessary)
    */
@@ -22,7 +22,7 @@ export default function generateResults(courses, userRequest) {
   /**
    * step 2: get ways to complete all courses
    */
-  let arrangements = arrange(paths);
+  let arrangements = arrange(paths, userRequest.settings.maxParallelCourses);
   arrangements.forEach(arr => { arr.requirements.sort((r1, r2) => r1.sections.length - r2.sections.length) });
   // todo: if there are a LOT of arrangements, maybe ask user to pick a few
   console.log('2. arrangements', arrangements);
@@ -30,22 +30,27 @@ export default function generateResults(courses, userRequest) {
   /**
    * step 3: create schedules from each arrangement (first one for now)
    */
-  arrangements = [arrangements[0]];
+  // arrangements = [arrangements[0]];
 
   let scheds = arrangements.flatMap(a => solve([], 0, a)) // map if you want to keep them separate
   console.log(scheds);
 
-  return {
+  return scheds.map((s, idx) => ({
     info: {},
-    dateSpans: scheds.map((s, idx) => ({
-      startDate: false,
-      endDate: false,
-      id: idx,
-      dayBlocks: s[0],
-    })),
-    variations: []
-  }
-  // return step4Solvables;
+    dayBlockSets: s,
+    variations: [],
+    unscheduled : [],
+  }))
+  // {
+  //   info: {},
+  //   dayBlockSets: scheds.map((s, idx) => ({
+  //     startDate: false,
+  //     endDate: false,
+  //     id: idx,
+  //     dayBlocks: s[0],
+  //   })),
+  //   variations: []
+  // }
   return [{
     info: {},
     base: [
@@ -76,7 +81,7 @@ export default function generateResults(courses, userRequest) {
 // //TODO: returns basic sched
 // // CustomBlock[] => DayBlockSet[] or false
 // function customsToBlockSets(customBlocks) {
-//   console.log("Function customsToBlockSet(customBlocks)  was called!");
+  // console.log("Function customsToBlockSet(customBlocks)  was called!");
 //   //blockSet.reduce(combineBlockSets)
 //   let result1 = emptyBlockSet;
 //   let result2 = emptyBlockSet;
@@ -110,12 +115,14 @@ function getCompletionPaths(course, activities = ubcActivities) {
     if (de) { paths.push([de]); }
     const lec = sectionTree[term]['Lecture'];
     const woc = sectionTree[term]['Web-Oriented Course'];
+    const fl = sectionTree[term]['Flexible Learning'];
     const otherActivities = Object.keys(sectionTree[term])
-      .filter(activity => (activity !== 'Distance Education') && (activity !== 'Waiting List') && (activity !== 'Lecture') && (activity !== 'Web-Oriented Course'))
+      .filter(activity => (activity !== 'Distance Education') && (activity !== 'Waiting List') && (activity !== 'Lecture') && (activity !== 'Web-Oriented Course') && (activity !== 'Flexible Learning'))
       .map(activity => ({ course, activity, term, sections: sectionTree[term][activity] }));
 
     if (lec) { paths.push([{ activity: 'Lecture', course, term, sections: lec }].concat(otherActivities)) }
     if (woc) { paths.push([{ activity: 'Web-Oriented Course', course, term, sections: woc }].concat(otherActivities)) }
+    if (fl) { paths.push([{ activity: 'Flexible Learning', course, term, sections: woc }].concat(otherActivities)) }
     if (!lec && !woc) { paths.push(otherActivities) }
   }
   // console.log(paths)
@@ -126,7 +133,7 @@ function getCompletionPaths(course, activities = ubcActivities) {
  * @param {Requirement[][][]} coursePaths
  * @returns {Arrangement[]}
  */
-function arrange(coursePaths, maxCoursesPerTerm = 3) {
+function arrange(coursePaths, maxCoursesPerTerm = 5) {
   // apply each course to each arrangement
   return coursePaths.reduce((arrangements, course, idx, arr) => {
     if (idx === 0) {
@@ -167,21 +174,25 @@ function solve(worklists, i, arrangement) {
   console.log(arrangement)
   console.log(worklists)
   if (i === arrangement.requirements.length) { console.log('base case, returning wls so far'); return worklists; }
+  console.group('current requirement:',  arrangement.requirements[i])
   // if (arrangement.requirements.length - i <= arrangement.requirements.length / 4) { return variations(worklists, i + 1, arrangement); }
   
-  const newWorklists = (i === 0) ?
   // one section on each worklist, returns dbs[][]
+  const newWorklists = (i === 0) ?
     arrangement.requirements[0].sections.map(sec => addSection([], sec))
     : arrangement.requirements[i].sections.flatMap((section, sec_idx) => {
-      console.log(section.subject, section.course, '-', section.section)
+      console.log('current section:', section.subject, section.course, '-', section.section);
 
-      return worklists.flatMap(wl => {
-        console.log(wl[0], section.schedule)
+      const worklistsPlusASection = worklists.flatMap(wl => {
+        // console.log(wl[0], section.schedule)
         const newWl = addSection(wl, section);
-        console.log(newWl[0])
+        // console.log(newWl[0])
         return newWl ? [newWl] : [];
       })
+      console.log(worklistsPlusASection)
+      return(worklistsPlusASection)
     })
+  console.groupEnd();
   return solve(newWorklists, i + 1, arrangement);
 }
 
@@ -193,8 +204,8 @@ function solve(worklists, i, arrangement) {
  * @returns {DayBlockSet[]|false}
  */
 export function addSection(worklist, section) {
-  console.log(worklist)
-  console.log(section.schedule)
+  // console.log(worklist)
+  // console.log(section.schedule)
 
   let ret = worklist.map(dbs => copyBlockSet(dbs));
 
@@ -211,7 +222,7 @@ export function addSection(worklist, section) {
       }
     }
   }
-  console.log(ret)
+  // console.log(ret)
   return ret;
 }
 
@@ -283,7 +294,7 @@ function copyBlockSet(dbs) {
 
 
 
-//   console.log("Function getSectionOptions(parsedCourses) was called!");
+  // console.log("Function getSectionOptions(parsedCourses) was called!");
 //   let badCourses = [];
 //   let sorted = {
 //     specSection: [],
@@ -458,13 +469,19 @@ function copyBlockSet(dbs) {
  * @typedef {{activity: string}} activitySpecLeaf
  * @type {activitySpec}
  */
+
+// the sections needed to complete a course
 const ubcActivities = {
   or: [
     { activity: 'Distance Education' },
     {
       and: [
         {
-          or: [{ activity: 'Lecture' }, { activity: 'Web-Oriented Course' }],
+          or: [
+            { activity: 'Lecture' }, 
+            { activity: 'Web-Oriented Course' },
+            { activity: 'Flexible Learning' },
+          ],
         },
         { activity: 'Laboratory' },
         { activity: 'Tutorial' },
@@ -473,7 +490,7 @@ const ubcActivities = {
         { activity: 'Thesis' },
         { activity: 'Directed Studies' },
         { activity: 'Practicum' },
-
+        // everything else goes here for now
       ]
     }
   ],

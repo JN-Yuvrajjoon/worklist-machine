@@ -7,7 +7,7 @@ import InputMenu from "./components/InputMenu";
 import WorklistNavigatorBar from "./components/WorklistNavigatorBar";
 import WorklistRendering from "./components/WorklistRendering";
 
-import generateResults from "./scheduling-engine.js";
+import { generateResults } from "./scheduling-engine.js";
 import { postApi } from './api'
 
 export default function App() {
@@ -41,15 +41,15 @@ export default function App() {
    * @param {*} inputCourses 
    */
   function fetchCourses(inputCourses) {
-    const reqCourses = inputCourses.map(ic =>
+    const reqCourses = inputCourses.flatMap(ic =>
       !ic.name.trim() ?
-        undefined : 
-        {
+        [] : 
+        [{
           name: ic.name.replace(/[^A-Za-z0-9]/g, '').toUpperCase(),
           mustBeSemester: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(sem => sem),
           mustBeSection: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec),
           id: ic.id
-        });
+        }]);
 
     return postApi('/ubc-vancouver/2021/courses', { courses: reqCourses });
   }
@@ -61,6 +61,7 @@ export default function App() {
     if (results.length > 0) {
       if (0 <= resultIndex && resultIndex < results.length) {
         return (results[resultIndex]);
+        console.log(results)
       }
     }
     return ({ variations: [] }); //an empty result
@@ -82,7 +83,7 @@ export default function App() {
   // Renderer will only ever access days (sun-sat) of a DBS
   // Package necessary info alongside DBS's
   function getRenderable() {
-    return results;
+    return getCurrentResult();
     // let base = [];
     // let variation = [];
 
@@ -141,7 +142,7 @@ export default function App() {
           <WorklistRendering
             currentResult={schedulePage}
             currentVariation={variationPage}
-            worklist={getRenderable()}
+            worklist={results[schedulePage]}
           />
         </div>
       </div>

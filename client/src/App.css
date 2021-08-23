@@ -1,6 +1,14 @@
+/* a mess !!! */
+
 :root {
-  --dark-background: #002046;
-  --active-color: #2d5c7d;
+  /* --ubc-blue: #002046; */
+  /* --ubc-blue-fade: #00204699; */
+  /* --ubc-blue-2: #2d5c7d; */
+  --blue-1: #3333bf;
+  --blue-1-fade: #3333bfaa;
+  --pink-1: #cc00ff;
+  --red-1: #b13131;
+  --red-1-fade: #b13131aa;
 
   --corner-radius: 0.75rem;
 
@@ -12,8 +20,18 @@
   --minimum-display-width: 400px;
 }
 
+* {
+  font-family: "Source Sans Pro", "Open Sans", sans-serif;
+}
+
 .custom-corners {
   border-radius: var(--corner-radius);
+}
+
+.global-gradient {
+  background: var(--red-1);
+  background: linear-gradient(to top right, var(--red-1), var(--pink-1));
+  background-attachment: fixed;
 }
 
 #contains-everything {
@@ -35,103 +53,88 @@ hr {
 
 /* Row 1: Logo */
 #wm-logo-row {
-  height: var(--logo-height);
-
   padding: 0;
   margin-bottom: var(--gap);
+  line-height: 1;
+  display: grid;
+  grid-template-columns: 30% 60%;
+  font-size: 2rem;
 }
 
+#wm-logo-row > img {
+  padding: 0.5rem;
+  height: var(--logo-height);
+  width: auto;
+}
 
 /* Row 2: Tabbed input menu */
 #wm-menu-row {
   padding: 0;
   margin: 0;
-  height: calc(
-    100vh 
-    - var(--standard-height)
-    - var(--logo-height)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)); /* it's like flexbox but bad */
+  height: calc(100vh - var(--standard-height) - var(--logo-height) - var(--gap) - var(--gap) - var(--gap) - var(--gap));
   min-height: calc(
-    var(--minimum-display-height)
-    - var(--standard-height)
-    - var(--logo-height)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)); /* it's like flexbox but bad */
-} 
+    var(--minimum-display-height) - var(--standard-height) - var(--logo-height) - var(--gap) - var(--gap) - var(--gap) -
+      var(--gap)
+  ); /* it's like flexbox but bad */
+}
 
 #wm-tab-menu-content {
-  background-color: var(--dark-background);
-  color: #FFFFFF;
-  border-radius: 
-    var(--corner-radius) 
-    var(--corner-radius) 
-    0 
-    0;
+  /* background-color: var(--ubc-blue); */
+  color: #ffffff;
+  /* background-color: white; */
+  /* color: var(--ubc-blue); */
+
+  border-radius: var(--corner-radius) var(--corner-radius) 0 0;
   padding: var(--gap);
-  border: 1rem var(--dark-background);
+  border: 1rem var(--ubc-blue);
   overflow: scroll;
-  height: calc(100vh 
-    - var(--standard-height)
-    - var(--standard-height)
-    - var(--logo-height)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)); 
+  height: calc(
+    100vh - var(--standard-height) - var(--standard-height) - var(--logo-height) - var(--gap) - var(--gap) - var(--gap) -
+      var(--gap)
+  );
 
   min-height: calc(
-    var(--minimum-display-height)
-    - var(--standard-height)
-    - var(--standard-height)
-    - var(--logo-height)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)
-    - var(--gap)); 
-  /* box-shadow: 
-    inset 0 0 1rem 1rem var(--dark-background), 
-    0 .5rem 1rem rgba(0,0,0,.15); 
-    does not work
-    */
+    var(--minimum-display-height) - var(--standard-height) - var(--standard-height) - var(--logo-height) - var(--gap) -
+      var(--gap) - var(--gap) - var(--gap)
+  );
   font-size: small;
 }
 
-#wm-tab-menu-content hr{
-  border-color: #001036;
+#wm-tab-menu-content hr {
+  border-color: #ffffff60;
 }
 
 #wm-tab-list {
   height: var(--standard-height);
 }
 
-#settings-tab, #courses-tab, #about-tab {
+#settings-tab,
+#courses-tab,
+#about-tab {
   height: var(--standard-height);
-  border-radius: 
-    0 
-    0 
-    var(--corner-radius) 
-    var(--corner-radius);
+  border-radius: 0 0 var(--corner-radius) var(--corner-radius);
   border: none;
-  background-color: #FFFFFF;
-  color: var(--dark-background);
+  /* background-color: #FFFFFF; */
+  color: var(--ubc-blue);
+  background-color: var(--blue-1-light);
+  z-index: 10;
 }
 
-#settings-tab:hover, #courses-tab:hover, #about-tab:hover {
-  background-color: var(--active-color);
-  color: #FFFFFF;
-  transition: 0.2s;
+#settings-tab:hover,
+#courses-tab:hover,
+#about-tab:hover {
+  background-color: #ffffff;
+  transition: 0.1s;
 }
 
-#settings-tab.active, #courses-tab.active, #about-tab.active {
-  background-color: var(--dark-background);
-  color: #FFFFFF;
+#settings-tab.active,
+#courses-tab.active,
+#about-tab.active {
+  background: var(--red-1);
+  background: linear-gradient(to top right, var(--red-1), var(--pink-1));
+  background-attachment: fixed;
+  color: #ffffff;
 }
-
 
 /* Row 3: Go button */
 
@@ -145,31 +148,25 @@ hr {
 }
 
 #wm-go-button {
-  background-color: var(--active-color);
-  color: #FFFFFF;
+  background-color: var(--red-1);
+  color: #ffffff;
   height: var(--standard-height);
   margin: 0;
   padding: 0.75rem;
   border: none;
-  
 }
 
-#wm-go-button:hover:not(:disabled):not(.disabled){
-  background-color: var(--dark-background);
+#wm-go-button:hover:not(:disabled):not(.disabled) {
+  background-color: var(--red-1-fade);
 }
 
 /**************** Right side (Navbars and timetables) ****************/
 
 #wm-output-panel {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   margin: 0;
   padding: var(--gap);
   overflow: scroll;
-  /* box-shadow:
-    0.35rem 0.35rem 0.5rem #00000022,
-    -0.15rem -0.15rem 0.25rem #00000022,
-    -0.35rem -0.35rem 0.5rem #ffffff;  */
-    /* attempting to make it pop out as part of the surface */
 }
 
 #wm-output-panel > div {
@@ -177,25 +174,27 @@ hr {
 }
 
 .wm-table-title {
-  color: white;
-  background: var(--purple);
+  margin: 0.75rem;
+  border-bottom: 3px solid #444;
+}
+
+.timetable {
+  border-top: none;
   border: none;
 }
 
-.timetable { 
-  border-top: none;
-  border:none;
-}
-
-.zero-space {
-  line-height: 1;
-}
-
 .wm-course-block {
-  background: var(--purple);
+  line-height: 1.2;
+  background: var(--blue-1);
   color: white;
+  font-size: 0.7rem;
   border-bottom: 1px solid #ddd; /* TODO: Fix the curve */
   padding: 0.25rem;
+}
+
+.wm-course-block:hover {
+  background: var(--blue-1-fade);
+  transition: 0.1s;
 }
 
 .wm-hour-marker {
@@ -204,56 +203,44 @@ hr {
   background: #ffffff;
   text-align: right;
   padding: 0.1rem;
-
 }
 
 /**************** Responsive sizing ****************/
 
-@media only screen and (max-width:768px) {
+@media only screen and (max-width: 768px) {
   /* Stacked column mobile layout */
 
   #wm-input-column {
-    margin:0;
+    margin: 0;
     padding-top: 0;
     padding-right: 0;
     padding-bottom: var(--gap);
     padding-left: 0;
   }
-  
+
   #wm-output-column {
     padding-top: 0;
     padding-right: 0;
     padding-bottom: var(--gap);
     padding-left: 0;
   }
-/* 
-  #worklistVariationButtons {
-    margin-right: auto;
-    margin-top: var(--gap);
-  } */
-
 }
 
-@media only screen and (min-width:768px) {
+@media only screen and (min-width: 768px) {
   /* Side-by-side desktop layout */
 
   #wm-input-column {
     height: 100%;
     max-width: calc(
-      var(--gap)
-      
-      + var(--standard-height)
-      + var(--standard-height)
-      + var(--standard-height)
-      + var(--standard-height)
-      + var(--standard-height)
-      );
+      var(--gap) + var(--standard-height) + var(--standard-height) + var(--standard-height) + var(--standard-height) +
+        var(--standard-height)
+    );
     padding-top: 0;
     padding-right: var(--gap);
     padding-bottom: 0;
     padding-left: 0;
   }
-  
+
   #wm-output-column {
     height: 100%;
     padding-top: 0;
@@ -261,5 +248,4 @@ hr {
     padding-bottom: 0;
     padding-left: 0;
   }
-
 }
