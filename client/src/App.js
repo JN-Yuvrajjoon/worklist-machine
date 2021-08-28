@@ -46,8 +46,10 @@ export default function App() {
         [] : 
         [{
           name: ic.name.replace(/[^A-Za-z0-9]/g, '').toUpperCase(),
-          mustBeSemester: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(sem => sem),
-          mustBeSection: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec),
+          terms: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(term => term.trim()),
+          sections: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec.trim()),
+          // mustBeSemester: ic.mustBeSemester && ic.mustBeSemester.replace(/\s/g, '').toUpperCase().split(",").filter(sem => sem),
+          // mustBeSection: ic.mustBeSection && ic.mustBeSection.replace(/\s/g, '').toUpperCase().split(",").filter(sec => sec),
           id: ic.id
         }]);
 
@@ -60,8 +62,8 @@ export default function App() {
     let resultIndex = schedulePage - 1;
     if (results.length > 0) {
       if (0 <= resultIndex && resultIndex < results.length) {
+        // console.log(results)
         return (results[resultIndex]);
-        console.log(results)
       }
     }
     return ({ variations: [] }); //an empty result
@@ -88,36 +90,6 @@ export default function App() {
     // let variation = [];
 
     // let test = combineSchedules()
-
-    return {
-      info: {},
-      dateSpans: [
-        {
-          semesterId: "1",
-          startDate: false,
-          endDate: false,
-          dayBlocks: {
-            wednesday: [{ courseId: "hello", startTime: 900, endTime: 1200 }, { courseId: "test", startTime: 1300, endTime: 1700 }]
-          }
-        },
-        {
-          semesterId: "2",
-          startDate: false,
-          endDate: false,
-          dayBlocks: {
-            wednesday: [{ courseId: "middle", startTime: 1200, endTime: 1300 }],
-            thursday: [{ courseId: "hello", startTime: 900, endTime: 1200 }, { courseId: "test", startTime: 1300, endTime: 1700 }]
-          }
-        },
-        {
-          semesterId: "3",
-          startDate: false,
-          endDate: false,
-          dayBlocks: {}
-        }
-      ],
-      unscheduled: []
-    }
   }
 
   return (

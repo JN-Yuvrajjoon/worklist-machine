@@ -51,30 +51,6 @@ export function generateResults(courses, userRequest) {
   //   })),
   //   variations: []
   // }
-  return [{
-    info: {},
-    base: [
-      { id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-      { id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-      { id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-      { id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet }
-    ],
-    variations: [
-      [
-        { id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet }
-      ],
-      [
-        { id: "1", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "2", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "A", startDate: false, endDate: false, dayBlocks: emptyBlockSet },
-        { id: "B", startDate: false, endDate: false, dayBlocks: emptyBlockSet }
-      ]
-    ],
-    abnormalSections: []
-  }];
 }
 
 
@@ -267,7 +243,7 @@ function combineDays(largeDay, smallDay, section) {
  */
 function insertBlock(blocks, newBlock, section) {
   for (let b of blocks) {
-    if (newBlock.startTime <= b.endTime && b.startTime <= newBlock.endTime) {
+    if (newBlock.startTime < b.endTime && b.startTime < newBlock.endTime) {
       return 'yea';
     }
   }

@@ -153,7 +153,7 @@ class DayColumn extends Component {
   }
 
   rows(timeDiff) {
-    return (((timeDiff / 100) * 2) | 0) // | 0 for integer division
+    return (((timeDiff / 100) | 0) * 2)// | 0 for integer division
       + (timeDiff % 100 !== 0 ? 1 : 0) // one more row for half hour
   }
 

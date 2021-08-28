@@ -6,8 +6,7 @@
   /* --ubc-blue-2: #2d5c7d; */
   --blue-1: #3333bf;
   --blue-1-fade: #3333bfaa;
-  --pink-1: #cc00ff;
-  --red-1: #b13131;
+  --red-1: #ac1b1b;
   --red-1-fade: #b13131aa;
 
   --corner-radius: 0.75rem;
@@ -30,7 +29,7 @@
 
 .global-gradient {
   background: var(--red-1);
-  background: linear-gradient(to top right, var(--red-1), var(--pink-1));
+  background: linear-gradient(to top right, var(--red-1), var(--blue-1));
   background-attachment: fixed;
 }
 
@@ -131,7 +130,7 @@ hr {
 #courses-tab.active,
 #about-tab.active {
   background: var(--red-1);
-  background: linear-gradient(to top right, var(--red-1), var(--pink-1));
+  background: linear-gradient(to top right, var(--red-1), var(--blue-1));
   background-attachment: fixed;
   color: #ffffff;
 }

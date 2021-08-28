@@ -8,29 +8,33 @@ A labour of love. (my love for making shortcuts that net me a -100x time savings
 ## What it does + why
 A **worklist** is UBC's word for a "tentative course schedule." It's the list of courses you plan to enrol in, and usually do, unless you're a second year, in which case you pick up the scraps from the other students. Worklist machine is meant to generate and (soon) optimize these schedules according to your preferences.
 
-Why? In short: I had a swiss-cheese schedule in first year and found myself spending a lot of time making sure my second-year schedule didn't have gaping holes in it.
+Why? In short: I had a swiss-cheese schedule in first year. The next year, I found myself spending a lot of time making sure my schedule didn't have gaping holes in it.
 
 
 ## How to use it
-Input courses and preferences on the left; view and navigate outputs on the right. 
+Input your courses and preferences on the left; view and navigate outputs on the right. 
 
-There is currently a default input that is easier to figure out than a description here, so go check it out! If you don't know what courses to pick, interesting + massive outputs come with multi-activity courses such as CPSC 110, CPSC 121, CPSC 221. 
+There is currently a default input that is easier to figure out than a description here, so go check it out! This input is the list of courses I'm taking in 2021-2022 school year. (just term 2 since I'm still working through term 1.) At the top of the page, enter **1197** to navigate to the worklist I chose.
 
-![demo image](./readme-files/demo-2021-aug-22.png)
+If you don't know what courses to enter, interesting + massive outputs come with multi-activity courses such as CPSC 110, CPSC 121, CPSC 221. 
+
+If no worklists show up, it's possible the "maximum courses per term" (default 6) setting is incompatible with the courses you've entered. 
+
+![demo image](./readme-files/demo-2021-aug-28.png)
 ###### UI, colours, everything subject to change. Logo not subject to change i'm very proud of it
 
 ## How it works
 
-#### Data
+### Data
 Data is from [Liang and Adrian's UBC courses API](https://docs.ubccourses.com/) and stored in my own database (MongoDB Atlas free tier, $0). I do plan to write my own data scraper though (or fork theirs), since their schema isn't really conducive to comparing overlapping course times.
 
-#### Backend
+### Backend
 A simple Node and Express server hosted for $0 on repl.it
 
-#### Frontend
+### Frontend
 Written with React and Javascript– Typescript might have been a better choice here. Also a lot of Bootstrap (that I added when I didn't know how to use computers) which I'd like to get rid of. Hosted for $0 using Firebase Hosting. 
 
-#### Schedule generation
+### Schedule generation
 see [scheduling engine](./client/src/scheduling-engine.js)
 
 1. **Completion pathways -** Figure out all ways of completing a course, for each course.
@@ -56,8 +60,7 @@ see [scheduling engine](./client/src/scheduling-engine.js)
 
 ## todo
 
-#### things that automatically get priority because there's a not-working UI element for them:
-- Term specification for each course (very important, I don't think scheduling 10 courses in one go is feasible otherwise). Section specification too.
+### things that automatically get priority because there's a not-working UI element for them:
 - Most things in the settings panel. Only "max courses per term" has any effect on output for now.
 - adding custom blocks (e.g. walk the dog every day 8 - 830, don't schedule classes here)
 - "warnings" button in the top-right 
@@ -65,8 +68,9 @@ see [scheduling engine](./client/src/scheduling-engine.js)
   - if a course in the given worklist is full or blocked
 - "export" button in the top right
   - Likely just a pile of links to all the courses in the current worklist
+- Show when there's a section without any presence on the timetable. "unscheduled courses"
 
-#### future
+### future
 - keyboard for view navigation
 - my own course scraper
 - "or" input groups (e.g. I want to take cpsc 313 or 317 this year)

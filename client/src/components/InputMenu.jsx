@@ -1,12 +1,16 @@
-import React, { Component } from "react";
-import SettingsMenu from "./tab-menus/SettingsMenu";
-import CoursesMenu from "./tab-menus/CoursesMenu";
-import AboutMenu from "./tab-menus/AboutMenu";
+import React, { Component } from 'react';
+import SettingsMenu from './tab-menus/SettingsMenu';
+import CoursesMenu from './tab-menus/CoursesMenu';
+import AboutMenu from './tab-menus/AboutMenu';
 
-const CPSC313 = { id: 0, name: "CPSC 313", mustBeSemester: false, mustBeSection: "101" }
-const CPSC313lab = { id: 1, name: "CPs C 313", mustBeSemester: "1,  2", mustBeSection: "L1B" }
-const CPSC312 = { id: 2, name: "CPSC312", mustBeSemester: "1", mustBeSection: false }
-const MATH221 = { id: 3, name: "MATH 221", mustBeSemester: "2", mustBeSection: false }
+const defaultCourses = [
+  { id: 0, name: 'CPSC 313', mustBeSemester: '2', mustBeSection: '204, T2F' },
+  { id: 1, name: 'CPSC 317', mustBeSemester: '2', mustBeSection: false },
+  { id: 2, name: 'COMM 390', mustBeSemester: '2', mustBeSection: false },
+  { id: 3, name: 'MATH 221', mustBeSemester: '2', mustBeSection: false },
+  { id: 4, name: 'COMM 298', mustBeSemester: '2', mustBeSection: false },
+  { id: 5, name: 'COMM 296', mustBeSemester: '2', mustBeSection: false },
+];
 
 export default class InputMenu extends Component {
   constructor(props) {
@@ -18,14 +22,14 @@ export default class InputMenu extends Component {
     this.setSettings = this.setSettings.bind(this);
 
     this.state = {
-      inputCourses: [CPSC313, CPSC313lab, CPSC312, MATH221],
+      inputCourses: defaultCourses,
       customBlocks: [],
       settings: {
         school: undefined,
         session: undefined,
-        maxParallelCourses: "5",
+        maxParallelCourses: '6',
         maxConsecutiveHours: false,
-        preferredTime: "afternoon",
+        preferredTime: 'afternoon',
         reduceGaps: true,
         reduceDays: true,
         increaseConsistency: true,

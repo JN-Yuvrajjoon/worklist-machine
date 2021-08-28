@@ -45,10 +45,9 @@ app.get('/:school/sessions', function (req, res, next) {
 });
 
 /**
- * maybe make this a get with a fat query string idk
  * @param req.params.school db name minus prefix, e.g. 'ubc-vancouver'
  * @param req.params.session collection name
- * @param {name: string, section?: string}[] req.body.courses
+ * @param {{name: string, term?: string[], section?: string[]}[]} req.body.courses - name is currently formatted by frontend to be uppercase, no spaces
  * @todo filter sections using section + semester input
  */
 app.post('/:school/:session/courses', function (req, res, next) {
@@ -69,7 +68,8 @@ app.post('/:school/:session/courses', function (req, res, next) {
   //     })
   // }).catch(next);
 
-  // inefficient way of dealing with the space between dept name and course code
+  // inefficient way of dealing with the space between dept name and course code in database
+  // todo store it without the space pls
   const aggPipeline = [
     {
       $addFields: {
@@ -95,16 +95,33 @@ app.post('/:school/:session/courses', function (req, res, next) {
     return mongo.db(db.schoolPrefix + req.params.school)
       .collection(req.params.session)
       .aggregate(aggPipeline).toArray().then(courses => {
-        res.send({ courses: courses.map(c => formatSchedule(c)) });
+        res.send({ courses: courses.map(c => formatSchedule(c, req.body.courses)) });
       });
   }).catch(next);
 })
 
-// todo just store it this way instead of doing fat processing
-function formatSchedule(course) {
+/**
+ * formats section schedules for best "combinability"
+ * todo just store it this way instead of doing fat processing
+ * 
+ * filters sections by term and section name 
+ * @param {Course} course 
+ * @param {{name: string, term?: string[], section?: string[]}[]} request
+ * @returns 
+ */
+function formatSchedule(course, request) {
   return {
     ...course,
-    sections: course.sections.map(sec => ({
+    sections: course.sections.filter(sec => {
+      /** should not be undefined; all courses here are ones we asked for */
+      const reqCourse = request.find(r => fuzzyMatch(r.name, sec.subject + sec.course));
+      return reqCourse.sections && reqCourse.sections.length ? // prioritize specified sections; ignore terms
+        reqCourse.sections.includes(sec.section) :
+        reqCourse.terms && reqCourse.terms.length ? // no sections; filter by terms
+          reqCourse.terms.includes(sec.term) :
+          true; // else return every section
+
+    }).map(sec => ({
       ...sec,
       schedule: sec.schedule.reduce((dayblocksets, block) => {
         const day = block.day.toLowerCase();
@@ -131,6 +148,16 @@ function formatSchedule(course) {
       }, [])
     }))
   }
+}
+
+/**
+ * f('math 2 2 1', 'MATH221') = true
+ * @param {string} s1
+ * @param {string} s2
+ * @returns {boolean}
+ */
+function fuzzyMatch(s1, s2) {
+  return s1.toUpperCase().replace(/\s/g, '') === s2.toUpperCase().replace(/\s/g, '');
 }
 
 /**
